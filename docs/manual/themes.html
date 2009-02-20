@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>theme_template</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H1 ALIGN="CENTER">Themes for server generated responses</H1>
+
+Nanoweb allows to use themes for server generated output like error messages
+or directory listings.
+<br>
+The look and feel of all error messages can now be changed very easily and
+quickly, because the actual themes are rather simple and thus can be changed
+to your needs with only little time effort.
+
+<br>
+<br>
+
+The <b>default.theme</b> file gives also a good example on how to include
+response messages in different languages (which Nanoweb selects
+automagically based on the browsers configured preferred language). After
+creating your own custom theme file, you just need to load it with
+the <A HREF="core.html#loadtheme">LoadTheme</A> directive and enable it
+where needed using <A HREF="core.html#servertheme">ServerTheme</A>.
+
+<br>
+
+<TABLE BORDER="0" CALLPADDING="2" CELLSPACING="3">
+<COLGROUP><COL WIDTH="15%"><COL WIDTH="10%"><COL WIDTH="75%"></COLGROUP>
+
+<TR>
+  <TD COLSPAN="3"> <br><b>currently available themes</b><br> </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B>default.theme</B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>core</b> </TD>
+  <TD> This is the theme file which gets applied to all server messages,
+       until you define another one. It looks as plain as the server
+       messages from all other common webservers, but contains already
+       some translations.
+  </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B>fancy.theme</B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>core</b> </TD>
+  <TD> Generates more icon-centric directory listings. It utilizes
+       client-side Javascript to achieve correcter table layouts, which
+       may be a hurdle for some search enignes and outdated browsers. How
+       the name tells it is really fancy nevertheless and thus worth to
+       give it a try! (your servers visitors will thank your)
+  </TD>
+</TR>
+</TABLE>
+
+<br>
+
+If you create a pretty server message theme, just feel free to send it to
+<A HREF="mailto:sIX@aEGiS-corp.org">sIX</A> for inclusion with the next
+release or extension repository.
+
+<br>
+
+<br>
+<BR><HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

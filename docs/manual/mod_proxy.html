@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>mod_proxy</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H1 ALIGN="CENTER">mod_proxy</H1>
+
+With the nanoweb internal proxy server you can save download time as it
+caches all requests gone through it. This is especially useful if you have a
+local network with one internet gateway server which also works as firewall
+to the local network (in this special case you are really encouraged to use
+mod_proxy).
+<br>
+Beside its caching facility it can help you to filter unwanted content
+(whole sites, images and popups as well).
+
+<br>
+<br>
+
+In order to make use of mod_proxy, you have to make it loaded by nanoweb
+by uncommenting the according <A HREF="core.html#loadmodule">LoadModule
+directive</A> in the <tt>modules.conf</tt>; and you need of course to setup
+proxy usage in all browsers you want to use on the computers of your local
+network (use port 80 as for accessing nanoweb itself).
+
+<br>
+<br>
+
+You may want to tweak the behaviour of mod_proxy with following directives:
+
+<BR>
+<H3><A NAME="proxyaccesslog">ProxyAccessLog directive</A></H3>
+<B>Syntax:</B> ProxyAccessLog = /var/log/nanoweb/proxy.log <BR>
+<B>Context:</B> Server Config <BR>
+<P>
+The proxy module generates an additonal seperate log file, as you probably
+don't want the main server log to be intermixed with request informations
+for files that are not located in your servers docroot.
+</P>
+
+
+<BR>
+<H3><A NAME="proxyallowip">ProxyAllowIP directive</A></H3>
+<B>Syntax:</B> ProxyAllowIP = 168.192. <BR>
+<B>Context:</B> Server Config <BR>
+<P>
+Use this directive to allow hosts or all hosts from a network (with an
+abbreviated IP address range) to access the www via the nanoweb internal
+proxy server. Hosts not listed here cannot make use of the nanoweb proxy.
+</P>
+
+
+<BR>
+<H3><A NAME="proxycachedir">ProxyCacheDir directive</A></H3>
+<B>Syntax:</B> ProxyCacheDir = /var/cache/nanoweb <BR>
+<B>Context:</B> Server Config <BR>
+<P>
+The proxy module of course needs a dedicated directory where it can save all
+the files that were requested in the past, so that they do not need to be
+fetched a second time from the real server if they get requested another
+time.
+</P>
+
+
+<BR>
+<H3><A NAME="proxydenysite">ProxyDenySite directive</A></H3>
+<B>Syntax:</B> ProxyDenySite = /etc/nanoweb/badsites <BR>
+<B>Context:</B> Server Config <BR>
+<P>
+If you want some servers not to be accessible through your proxy you just
+need to list them in a text file (one server name per line) which you
+specify here; so access to such servers will be forbidden.
+</P>
+
+
+
+<br>
+<BR><HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>mod_include</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H1 ALIGN="CENTER">mod_include</H1>
+
+mod_include enables you to utilize the so called <b>Server Side includes</b>
+in documents with the file extension <tt>.shtml</tt> (per default, refer
+to <A HREF="core.html#parseext">ParseExt directive</A> for changing this).
+<br>
+<br>
+
+SSI commands appear in HTML documents` comments:<br>
+<pre class="code">&lt;!--#</b><i><VAR STYLE="color:#990000;">SSI_COMMAND</VAR></i> ... <b>--&gt;</b></pre>
+<small>(don't forget the '#', no spaces allowed at the beginning!)</small><br>
+<br>
+
+where <i><VAR>SSI_COMMAND</VAR></i> may be one of:
+<DL>
+   <DT><b>include virtual</b> <i>"<VAR>uri</VAR>"</i></DT>
+       <DD>replaces the SSI-comment with the contents of the specified file URI
+           (virtual means corresponding to the client-visible directory structure)
+       </DD>
+   <DT><b>include file</b> <i>"<VAR>file</VAR>"</i></DT>
+       <DD>includes contents of the given file into the document (the
+           SSI-comment is replaced with the files content)
+       </DD>
+   <DT><b>exec cmd</b> <i>"<VAR>command</VAR>"</i></DT>
+       <DD>executes the given CGI (and afterwards throws this CGIs output
+           where the SSI-comment was)
+       </DD>
+</DL>
+
+<br>
+<BR><HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

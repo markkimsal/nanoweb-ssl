@@ -1,0 +1,14 @@
+To install and run nanoweb properly, you need a php4 binary built with the 
+following configuration options :
+
+--enable-cli (build the command line interpreter, default with PHP>=4.3)
+--enable-sockets (for sockets manipulations)
+--enable-pcntl (process forking and signal handling)
+--enable-mime-magic (optional)
+--with-zlib (optional, used by mod_gzip)
+--with-mysql (optional, used by mod_mysqllog, mod_auth_mysql)
+--with-ldap (optional, used by mod_auth_ldap)
+
+for PHP>=4.3, use 'make install-cli' after building
+
+When you are done with PHP, run ./install-sh and follow instructions ...

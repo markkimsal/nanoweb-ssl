@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>Virtual Hosts</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H1 ALIGN="CENTER">Virtual Hosts Configuration</H1>
+
+The configuration files of nanoweb usually reside in the /etc/nanoweb/
+directory. Nereby the main configuration file »nanoweb.conf« you'll find the
+file »<b>vhosts.conf</b>« which should contain the directives to setup
+separate configurations for the »virtual hosts«, which are just other
+directories bound to other servernames than the main one.
+<br>
+<br>
+In the vhosts.conf you start a new virtual host with its DNS-name in square
+brackets: <b>[<VAR>www.example.com</VAR>]</b>
+followed by all the common directives you can use in the main configuration
+file, like DocumentRoot, ServerAlias and FileBrowser, ...
+<br>
+<br>
+an example:<br>
+<pre class="samp">
+[www.example.com]
+ServerAlias       = www.example.org
+DocumentRoot      = /var/www/nanoweb/vhosts/www.example.com
+Log               = /var/log/nanoweb/access_www.example.com
+</pre>
+
+<br>
+
+You could add [/www.example.com] below this, as section names
+beginning with a slash [/whatever] tell Nanoweb to return to the [global]
+scope again.
+
+<br>
+<br>
+
+There can be a port number behind the virtual hosts name in the square
+brackets [www.example.net:8080].
+
+<br>
+<br>
+
+<br>
+<BR><HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

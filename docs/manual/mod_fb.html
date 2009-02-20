@@ -1,0 +1,168 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>mod_fb</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H1 ALIGN="CENTER">mod_fb</H1>
+
+mod_fb is the »filebrowser« (directory listing generator) that got extracted
+from the main server (in 1.8.0-dev) to a module. As it now doesn't intermix
+with core server code it's easier to extend and more functions will be
+implemented in near future.
+<br>
+<br>
+It currently takes these <a HREF="core.html#filebrowser">configuration directives</a>:
+<br>
+<br>
+
+
+<BR>
+<HR NOSHADE COLOR="#063239"><!--##################################################################-->
+<H3><A NAME="filebrowser">FileBrowser</A></H3>
+<B>Syntax:</B> FileBrowser = 1 <BR>
+<B>Context:</B> Server Config <BR>
+<P>
+Activates or Disables the automatic generation of directory listings. You
+shouldn't disable it however, as this is a essential service of nanoweb.
+<br>
+If a file with a name allowed in the
+<A HREF="core.html#directoryindex">DirectoryIndex directive</A> exists in
+the requested directory no listing will be generated of course.
+</P>
+
+<BR>
+<HR><!--##################################################################-->
+<H3><A NAME="fbdescfile">FBDescFile directive</A></H3>
+<B>Syntax:</B> FBDescFile = .desc <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<P>
+Descriptions of each file out of a directory may be given in the file
+specified here. Such a description file should look like:
+<pre class="samp">filename.ext   desc of this file
+index.html  main/homepage...</pre>
+</P>
+
+
+<BR>
+<HR><!--##################################################################-->
+<H3><A NAME="fbiconbytype">FBIconByType directive</A></H3>
+<B>Syntax:</B> FBIconByType = /icons/image.gif mime/type <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<P>
+Associates icons pictures to mime types for output in directory listings
+produced by mod_fb.
+<br>
+You may specify partial mime-types only; so you can associtate fall-back
+icons for general mime types like »application«, »text« or »image«.
+<br>
+The default configuration of nanoweb also utilizes the <A
+HREF="#alias">Alias</A> directive to keep all icons in a single directory
+(/icons/ which is rewritten to absolute real path /var/www/icons/) accessible
+from all the virtual hosts.
+</P>
+
+
+<BR>
+<HR><!--##################################################################-->
+<H3><A NAME="fbicondefault">FBIconDefault directive</A></H3>
+<B>Syntax:</B> FBIconDefault = /icons/misc.gif <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<P>
+If none of the <A HREF="#fbiconbytype">FBIconByType</A> directives defines
+an appropriate icon for a file (or if a files mime type is unknown) this
+directive gives the name of the image to be used.
+</P>
+
+
+<BR>
+<HR><!--##################################################################-->
+<H3><A NAME="fbicondirectory">FBIconDirectory directive</A></H3>
+<B>Syntax:</B> FBIconDirectory = /icons/directory.gif <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<P>
+Defines the icon to be printed for directories.
+</P>
+
+
+<BR>
+<HR><!--##################################################################-->
+<H3><A NAME="fbshowdotfiles">FBShowDotFiles directive</A></H3>
+<B>Syntax:</B> FBShowDotFiles = 1 <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<P>
+This tells mod_fb to include files which names start with a dot to be
+included in directory listings. On UNIX machines these »dotfiles« should be
+treaten as invisible files by standard programs; and because nanoweb keeps
+some of its per-directory configurations in .nwaccess and .nwauth you
+probably want to set this directive to the default of 1.
+</P>
+
+
+<BR>
+<HR><!--##################################################################-->
+<H3><A NAME="fbsortorder">FBSortOrder directive</A></H3>
+<B>Syntax:</B> FBSortOrder = name | size | date [ desc ] <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<P>
+Directory listings are sorted by mod_fb according to this setting (»name« is
+the default). The use of »desc« reverses the order.
+</P>
+
+
+<BR>
+<HR><!--##################################################################-->
+<H3><A NAME="fbtemplatefooter">FBTemplateFooter directive</A></H3>
+<B>Syntax:</B> FBTemplateFooter = .fbfooter <BR>
+<B>Context:</B> Server Config, Virtual Hosts <BR>
+<P>
+Define a footer template filename (printed below directory listings).
+<br>
+The macro "@genpage_signature@" can be used in such a file to display the
+standard nanoweb server signature.
+</P>
+
+
+<BR>
+<HR><!--##################################################################-->
+<H3><A NAME="fbtemplateheader">FBTemplateHeader directive</A></H3>
+<B>Syntax:</B> FBTemplateHeader = .fbheader <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<P>
+Define a header template for use with the file browser.
+<br>
+Available macros for use in the files specified with this directive are
+"@real_uri@" to display the requested directory, and "@welcome_formated@"
+for the formated welcome file (if any is present).
+</P>
+
+
+<BR>
+<HR><!--##################################################################-->
+<H3><A NAME="fbwelcomefile">FBWelcomeFile directive</A></H3>
+<B>Syntax:</B> FBWelcomeFile = .welcome <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<P>
+Whenever a directory listing (»filebrowser«) is to be sent back to the
+client, the server searches for a file with the hereby given name to be
+included in the sent output.
+</P>
+
+
+<br>
+<BR><HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

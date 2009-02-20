@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>mod_libphp</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H2 ALIGN="CENTER">mod_libphp</H2>
+
+mod_libphp is an experimental attemp to process php scripts without the need
+to invoke a new php interpeter, because this may be under some circumstances
+a bit slower. However it turned out, that there is often NO SPEED GAIN,
+if you use this module instead of mod_cgi!!
+<br>
+Please note, that this module makes use of the PHP <b>pcntl</b> extension,
+and thus <b>CANNOT BE USED UNDER WINDOWS</b>, as current Windows versions
+don't support UNIX compatible process forking.
+
+
+
+<H4>Limitations</H4>
+
+Before you start to test (don't forget this step!!) this module, you should
+know that it uses very stupid tricks to achieve this "internal processing"
+of php scripts, and thus <b>following things don't work</b>:
+<ul>
+
+<li> scripts run inside mod_libphp <b>cannot define functions</b> that were already
+     used inside nanoweb (for example: "errexit", "techo", "loadfile",
+     "load_modules", "modules_init", "access_query", "log_srv",
+     "reload_config", "send_response", ...) </li>
+
+<li> header() and setcookie() won't work, so there is a new nwheader() which
+     must be used (nwsetcookie will be implemented later) </li>
+
+<li> mod_libphp only handles GET requests, anything else is passed to be
+     handled by mod_cgi, which works more accurately </li>
+
+</ul>
+<br>
+
+If you thought about all these drawbacks and have ensured that none of the
+nanoweb internal functions will be redefined by your script and that the
+unsupported ones are not critical to it, you can try to run it under
+mod_libphp instead of the real php.
+<br>
+To activate the module you must load it into the server and setup
+<A HREF="core.html#parseext">ParseExt</A> accordingly:
+<br>
+<PRE CLASS="samp">
+#ParseExt = php LPHP
+ParseExt = lphp LPHP
+</PRE>
+<br>
+You should activate mod_libphp for all scripts not before you really have
+tested that it works! Instead of activating it for all scripts you may only
+want to run some of them inside nanoweb by changing their extension to
+<tt>.lphp</tt> as defined by the above ParseExt directive (such a .lphp
+script may itself include() any other ordinary .php of course).
+
+<br>
+<br>
+
+This module is deactivated per default of course, due to its guessworking
+nature; and may not even be included in your nanoweb tarball. You have to
+edit <tt>nanoweb.php</tt>, search for "libphpHACK" and uncomment these few
+lines that make it work.
+
+<br>
+<br>
+
+bugreports are welcome: mario&#x40;erphesfurt&middot;de
+
+<BR>
+<BR><HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

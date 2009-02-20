@@ -1,0 +1,57 @@
+SSL with Nanoweb HOWTO
+======================
+
+Introduction
+============
+
+First, nanoweb has no official support for HTTP over Secure Sockets Layer (also
+known as HTTPS).
+
+There is however a mean to make it work, with some help from the popular 
+"stunnel" application.
+
+Starting from version 1.8.0, nanoweb supports running as an inetd service, and 
+this is necessary for wrapping nanoweb with stunnel.
+
+
+Prerequisites
+=============
+
+You will need the following to make it work :
+
+- READ README.inetd AND TRY INETD MODE WITHOUT SSL FIRST
+
+- stunnel (http://www.stunnel.org)
+- openssl (http://www.openssl.org)
+
+
+Installation
+============
+
+1/ Read the prerequisites and properly install the needed stuff (Debian : 
+"apt-get install stunnel").
+
+2/ Generate a certificate for nanoweb :
+
+~# cd /etc/ssl/certs
+/etc/ssl/certs# openssl req -new -x509 -nodes -out nanoweb.pem -keyout nanoweb.pem -days 9999
+/etc/ssl/certs# ln -s nanoweb.pem `openssl x509 -noout -hash < nanoweb.pem`.0
+
+3/ Add in your inetd.conf :
+"https stream tcp nowait root /usr/sbin/in.nanoweb nanoweb -ssl"
+
+You may also want to split the conf files for running different vhosts on SSL.
+In this case, you will have to edit the in.nanoweb wrapper.
+
+
+Testing
+=======
+
+Once all this is done, open your favorite SSL enabled web browser, and try to
+open "https://localhost". If it works, you should see the default web page,
+and your browser should tell you some things about the cert not being signed
+by a trusted authority (this is not a bug, just send your CSR for signing to a
+trusted CA if you want).
+
+If it does not, stunnel log files are quite informative :)
+

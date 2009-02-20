@@ -1,0 +1,28 @@
+Nanoweb Access Files
+====================
+
+Access files in nanoweb are similar to what they are in apache : files with a 
+defined name, that can be placed anywhere in the www tree, and that allow you
+to override conf values for certain directories or files.
+
+With nanoweb, access files overrides apply to the directory which they reside
+in, and all its subdirectories.
+
+Access files format is the same as configuration files.
+
+Here is a small example of the access file on the nanoweb homepage. It is
+located in /var/www/nanoweb.si.kz/downloads/.nwaccess, and provides some
+fancy display to the file browser only for the 'downloads' directory, and all
+its subdirs :
+
+-------- cut here -------------------------------------------------------------
+# Special case for downloads
+
+FBSortOrder       = date desc
+
+# Use nanoweb downloads templates
+
+FBTemplateHeader  = /var/www/nanoweb.si.kz/downloads/.fbheader
+FBTemplateFooter  = /var/www/nanoweb.si.kz/downloads/.fbfooter
+-------- cut here -------------------------------------------------------------
+

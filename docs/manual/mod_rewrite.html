@@ -1,0 +1,269 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>mod_rewrite</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H1 ALIGN="CENTER">mod_rewrite</H1>
+
+
+<p>
+This module tries to imitate the famous apache module. However not all
+features supported in the original one can be used with this version.
+<br>
+See bottom of this file for what it <a href="#bottom">doesn't understand</a>.
+</p>
+
+<p>
+mod_rewrite is used to map requested file names to existing files by using
+regular expressions. For example, if your browser wants to GET say<br>
+http://www.example.com/thisfile.html<br>
+you can use the keyword "RewriteRule" to change the requested filename:<br>
+
+<pre class="code">
+  RewriteRule  thisfile  changedfilename &nbsp;
+</pre>
+
+so that a file named "changedfilename.html" gets sent back to the
+browser.
+</p>
+
+<p>
+Such keywords must be written into files named ".htaccess" in the
+directory the rewriting shall take place.
+</p>
+
+<p>
+This mod_rewrite supports most of the regular expression syntax that you
+can use with apache's module:
+<br>
+<pre>
+
+    .        matches any character  
+    .+       matches many of any character, at a minimum of 1  
+    .*       matches also zero length character string  
+
+    [a-z]    matches one character out of specified range  
+    [4x#]    matches one of the specified characters  
+ 
+    ()       grouping (and for backreferences in replacement string)  
+    (a|bc)   matches "a" or "bc"  
+ 
+    .{2,5}   exactly specified repeat count (here: 2 to 5 of any character)  
+</pre>
+<br>
+   An exclamation mark ! at the beginning of a regex means that the rule
+   matches only if the regular expression pattern itself doesn't match the
+   filename of the requested URL.
+<br>
+<br>
+   If you used one of the special regular expression characters in a
+   filename you just have to prepend this character with an backslash to
+   mask it, <br>
+   for example \* just matches the asterisk character and not a row of
+   backslashes.
+<br>
+<br>
+
+<small>an example:<br></small>
+<pre class="samp">
+  RewriteRule  file([a-z])+[.]html  new$1.php &nbsp;
+</pre>
+
+</pre>
+would rewrite specified name "fileABC.html" to "newABC.php", where the dot
+occurred in square brackets to only match the dot and not _any_ character.
+</p>
+
+
+<br><br>
+<HR NOSHADE><BIG><big><b>RewriteRule</b></big></big><HR>
+
+<p>
+RewriteRules may also have some flags specified (write these in brackets!,
+comma separated list of flags), so the complete Syntax is:
+</p>
+
+<pre class="code">
+    RewriteRule  REGEX  REPLACEMENT  [flag1,flag2,...]
+</pre>
+
+<dl>
+   <dt> [NC|nocase] </dt>
+       <dd>make regular-expression match case-insensitive</dd>
+   <dt> [R|redirect] </dt>
+       <dd>send an redirection header back to the browser, default HTTP
+       errorcode will be 302 (TEMP), you can specify others
+       by appending the code [R=301] or these special values:
+       [R=TEMP] (default), [R=permanent], [REDIRECT=seeother]</dd>
+   <dt> [P|proxy] </dt>
+       <dd>if <A HREF="mod_proxy.html">mod_proxy</A> is loaded, you may
+       do an (internal) redirect to another server for virtual inclusion
+       of thats content; use http://example.com/... as replacement string to
+       make this work </dd>
+   <dt> [F|forbidden] </dt>
+       <dd>sends http status code, that tells client "no permission"</dd>
+   <dt> [G|gone] </dt>
+       <dd>tells browser, that requested page no longer exists</dd>
+   <dt> [L|last] </dt> 
+       <dd>stop rewriting URLs after this Rule</dd>
+   <dt> [N|next] </dt>
+       <dd>restart rewriting with first rule</dd>
+   <dt> [chain|C] </dt>
+       <dd>if this rule does not match, do not use following one (you can
+       chain several rules together by use of this flag)</dd>
+   <dt> [type|T=MIME-type] </dt>
+       <dd>set mime of the target file</dd>
+   <dt> [qsappend|QSA] </dt>
+       <dd>if you rewrite a filename and specify ?var1=xy any previous
+       query-string will be lost; this flags preserves former values
+       and just appends your new ?var1=xy</dd>
+   <dt> [skip|S=num] </dt>
+       <dd>skip next "num" rules, if the current one matches</dd>
+   <dt> [env|E=VAR:VAL] </dt>
+       <dd>set environment variable to specified value (may contain
+       backreferences to regex) if rule matches</dd>
+   <dt> [header|H=X-Header:Content] </dt>
+       <dd>sets the disired HTTP response header to given value; Note that
+           overriding default response headers may not work in all cases.
+           <BR>
+           This flag is not found in apache's mod_rewrite, so using it will
+           make this rule a trap for the apache module.
+       </dd>
+</dl>
+<br>   
+But see also the much more complete <A HREF="http://httpd.apache.org/docs/mod/mod_rewrite.html#RewriteRule">apache documentation</A> about RewriteRule.
+<br>
+
+
+<br>
+<HR NOSHADE><BIG><big><b>RewriteCond</b></big></big><HR>
+
+<p>
+There exists another keyword, which just does regex matches, but no
+rewritings; and by failure prevents following RewriteRules from being
+executed:
+</p>
+
+<pre class="code">
+  RewriteCond  TESTSTRING  CONDPATTERN   [NOCASE,ORnext] &nbsp;
+</pre>
+
+<p>Here the second argument is the regular expression, and NC and OR are the
+only allowed flags. <br>
+TESTSTRING can be constructed by using %{SERVER_VARS} or backreferences
+to last RewriteRule-groups $NN or RewriteCond-groups %NN.
+For more Information see the documentation of apache's mod_rewrite.
+<br>
+<br>
+Available vars are for now:
+<ul>
+<li><b>%{ENV:PATH}</b>
+    &nbsp; &nbsp; &nbsp; &nbsp; 
+    any UNIX environment variable may be specified</li>
+<li><b>%{HTTP:header}</b>
+    &nbsp; &nbsp; &nbsp; &nbsp; 
+    any HTTP request header can be used</li>
+<li><b>%{VARNAME}</b>
+    &nbsp; &nbsp; &nbsp; &nbsp; 
+    any of the <a href="env.html">nanoweb internal variables</a></li>
+</ul>
+
+<p>
+CONDPATTERN may be a regular expression as seen above, or:
+</p>
+<br>
+   -d  tests TESTSTRING to be an existing directory <br>
+   -f  tests TESTSTRING to be an existing file <br>
+   -s  file specified by TESTSTRING must be grater than 0 bytes <br>
+<br>
+   &gt;CONDPATTERN   must be lexically greater than TESTSTRING  <br>
+   =CONDPATTERN   must be lexically equal to TESTSTRING  <br>
+   &lt;CONDPATTERN   must be lexically lower than TESTSTRING  <br>
+<br>
+
+
+<HR><!--##################################################################-->
+<H3><A NAME="reflectrewriting">ReflectRewriting directive</A></H3>
+<B>Syntax:</B> ReflectRewriting = 1 <BR>
+<B>Context:</B> Server Config <BR>
+<B>Status:</B> <A HREF="mod_rewrite.html">mod_rewrite</A>, <A HREF="mod_multiviews.html">mod_multiviews</A> <BR>
+<P>
+will reflect changes to the requested path name in server error
+responses, when for example the rewritten file name does not
+exist or has no read permissions set; otherwise the url from the
+request will be printed in such server messages.
+<br>
+Note: This config directive affects mod_multiviews as well.
+</p>
+
+<br>
+<HR>
+
+
+<h3><a name="bottom">differences to apache</a></h3>
+
+in nanoweb the main server formerly (pre 1.8.0) used to append 'index.html' to
+the request_uri, when it existed in the given path, the workaround was to
+use following regular expression (not necessary anymore):
+<br>
+<pre class="samp">
+  RewriteRule  ^(index.html)*$  otherpath/new-index.html  &nbsp;
+</pre>
+
+<br><br>
+<HR>
+
+<p>
+this mod_rewrite clone does not support:
+</p>
+
+ - some of that very special Rule-flags <br>
+ - rewriterules in main server config (not yet) <br>
+ - all the other keywords: <br>
+&nbsp; RewriteEngine (not yet) <br>
+&nbsp; RewriteBase (not yet) <br>
+&nbsp; RewriteOptions (inheritance of rules, not yet) <br>
+&nbsp; RewriteLog*, RewriteLock, RewriteMap <br>
+<br>
+
+<HR>
+<br>
+
+<h3>examples</h3>
+
+<pre class="samp">
+  #-- WAP-redirect, based upon accepted file type
+
+  RewriteCond %{HTTP_ACCEPT} (x-)*(application|text)/(x-)*(vnd[-.])*(wap[-.]|wml)+
+
+  RewriteRule ^(index.html)*$ index.wml [L]
+
+
+
+  #-- redirect file names to google search
+  
+  RewriteRule  ^(.+)$   http://www.google.de/search?q=$1  [R=seeother]
+</pre>
+
+<br>
+But, see also the <A HREF="http://httpd.apache.org/docs/misc/rewriteguide.html">URL rewriting guide</A> from
+the apache.org team (they must know it!) ;>
+
+
+<BR><BR><HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

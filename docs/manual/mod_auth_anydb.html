@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>mod_auth_anydb</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H2 ALIGN="CENTER">mod_auth_anydb</H2>
+
+If you don't use one of the common databases like
+<A HREF="mod_auth_mysql.html">MySQL</A> or
+<A HREF="mod_auth_pgsql.html">Postgres</A>, you may want to utilize one
+of the database abstraction interfaces for database based user
+<A HREF="authentication.html">authentication</A>:
+<UL>
+  <LI> <a href="http://www.php.net/manual/en/ref.dbx.html">dbx_</a> </LI>
+  <LI> <a href="http://www.google.com/search?q=ADOdb">ADOdb</a> </LI>
+  <LI> <a href="http://pear.php.net/DB">PEAR::DB</a> </LI>
+</UL>
+
+To use it you must first get one of these wrappers (PEAR is usually part of
+PHP, and the dbx is a compile-time PHP extension).
+
+<br>
+<br>
+
+The <A HREF="core.html#anydbloadinterface">AnydbLoadInterface</A> (to
+include the PEAR::DB or ADOdb wrapper - not dbx!) must be given <b>before</b>
+the  A HREF="core.html#loadmodule">LoadModule</A> directive of
+<tt>mod_auth_anydb.php</tt>!
+
+<br>
+<br>
+
+The database to be used is specifed in a <i>DSN</i>-like syntax using the
+directive
+<PRE> <A HREF="core.html#authanydb">AuthAnydb</A> = database://dbuser:password@dbserver.example.com/dbname/table
+</PRE>
+<br>
+
+When you specify the database to search authentication data (user/login
+names and their passwords) for, you must use the database abbreviation your
+database abstraction layer is using (PEAR, ADO, dbx). In their current
+versions, there are:
+
+<TABLE BORDER="0" CALLPADDING="2" CELLSPACING="3">
+<COLGROUP><COL WIDTH="25%"><COL WIDTH="75%"></COLGROUP>
+
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> PHP dbx </TD>
+  <TD> 
+       mysql, odbc, pgsql, mssql, fbsql, sybase_ct, oci8
+  </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> PEAR::DB </TD>
+  <TD> 
+       fbsql, ibase, ifx, msql, mssql, mysql, oci8, odbc, pgsql, storage,
+       sybase
+  </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> ADOdb </TD>
+  <TD>
+       access, ado, ado_access, ado_mysql, db2, vfp, fbsql, ibase, firebird,
+       borland_ibase, informix, informix72, mssql, mssqlpo, mysql, mysqlt,
+       maxsql, oci8, oci8po, oci805, odbc, odbc_mssql, odbc_oracle, oracle,
+       postgres, postgres64, postgres7, sqlanywhere, sybase
+  </TD>
+</TR>
+</TABLE>
+<br>
+You should however have a look at the documentation of your db abstraction
+layer.
+
+<br>
+<br>
+
+The <A HREF="core.html#authanydb">password column</A> can be
+either the plain or the crypt() or md5() encoded string. You do not need to
+give the encoding type, because this is auto-probed.
+
+
+
+<BR>
+<BR><HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

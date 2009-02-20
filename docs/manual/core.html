@@ -1,0 +1,2285 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>Nanoweb Configuration Directives</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H1 ALIGN="CENTER">Nanoweb Configuration Directives</H1>
+
+The nanoweb configuration files reside in <tt>/etc/nanoweb/</tt> and the
+following configuration directives can currently be used in the
+<A HREF="file://localhost/etc/nanoweb/nanoweb.conf">main server
+configuration file <tt>/etc/nanoweb/nanoweb.conf</tt></A> but often also in
+<A HREF="nwaccess.html">per-directory configuration files (<tt>.nwaccess</tt>)</A>:
+
+
+
+
+<UL>
+   <LI><A HREF="#accessfile">AccessFile</A></LI>
+   <LI><A HREF="#accessblock">AccessBlock</A></LI>
+   <LI><A HREF="#accessmerge">AccessMerge</A></LI>
+   <LI><A HREF="#accessoverride">AccessOverride</A></LI>
+   <LI><A HREF="#accesspolicy">AccessPolicy</A></LI>
+   <LI><A HREF="#access_rbl">Access_RBL</A></LI>
+   <LI><A HREF="#acpolicy">ACPolicy</A></LI>
+   <LI><A HREF="#acallowip">ACAllowIP</A></LI>
+   <LI><A HREF="#acallowhost">ACAllowHost</A></LI>
+   <LI><A HREF="#acblockerror">ACBlockError</A></LI>
+   <LI><A HREF="#acblockmessage">ACBlockMessage</A></LI>
+   <LI><A HREF="#acdenyip">ACDenyIP</A></LI>
+   <LI><A HREF="#acdenyhost">ACDenyHost</A></LI>
+   <LI><A HREF="#addheader">AddHeader</A></LI>
+   <LI><A HREF="#addservervar">AddServerVar</A></LI>
+   <LI><A HREF="#addtype">AddType</A></LI>
+   <LI><A HREF="#alias">Alias</A></LI>
+   <LI><A HREF="#allowsymlinkto">AllowSymlinkTo</A></LI>
+   <LI><A HREF="#allowpathinfo">AllowPathInfo</A></LI>
+   <LI><A HREF="#anydbloadinterface">AnydbLoadInterface</A></LI>
+   <LI><A HREF="#authanydb">AuthAnydb</A></LI>
+   <LI><A HREF="#authanonymousnames">AuthAnonymousNames</A></LI>
+   <LI><A HREF="#authanonymoussmtpcheck">AuthAnonymousSmtpCheck</A></LI>
+   <LI><A HREF="#authhtpasswdfilename">AuthHtpasswdFilename</A></LI>
+   <LI><A HREF="#authlocation">AuthLocation</A></LI>
+   <LI><A HREF="#authnwauthfilename">AuthNwauthFilename</A></LI>
+   <LI><A HREF="#authmysql">AuthMysql* directives</A></LI>
+   <LI><A HREF="#authpgsql">AuthPgsql* directives</A></LI>
+   <LI><A HREF="#authsimpleuserpass">AuthSimpleUserPass</A></LI>
+   <LI><A HREF="#authrealm">AuthRealm</A></LI>
+   <LI><A HREF="#authrequire">AuthRequire</A></LI>
+   <LI><A HREF="#bandwidth">Bandwidth</A></LI>
+   <LI><A HREF="#bspallowsource">BSPAllowSource</A></LI>
+   <LI><A HREF="#cgifilterpathinfo">CGIFilterPathInfo</A></LI>
+   <LI><A HREF="#cgiscriptsdir">CGIScriptsDir</A></LI>
+   <LI><A HREF="#cgiscriptnoexec">CGIScriptNoExec</A></LI>
+   <LI><A HREF="#cgiphpoption">CGIPHPOption</A></LI>
+   <LI><A HREF="#childlifetime">ChildLifeTime</A></LI>
+   <LI><A HREF="#childlifetime">ChildLifeTime</A></LI>
+   <LI><A HREF="#configdir">ConfigDir</A></LI>
+   <LI><A HREF="#defaultcontenttype">DefaultContentType</A></LI>
+   <LI><A HREF="#defaulthandler">DefaultHandler</A></LI>
+   <LI><A HREF="#directoryindex">DirectoryIndex</A></LI>
+   <LI><A HREF="#disablemimemagic">DisableMimeMagic</A></LI>
+   <LI><A HREF="#documentroot">DocumentRoot</A></LI>
+   <LI><A HREF="#dosevasiveerror">DosEvasiveError</A></LI>
+   <LI><A HREF="#dosevasivemaxreqs">DosEvasiveMaxReqs</A></LI>
+   <LI><A HREF="#dosevasivetimer">DosEvasiveTimer</A></LI>
+   <LI><A HREF="#errordocument">ErrorDocument</A></LI>
+   <LI><A HREF="#errorheader">ErrorHeader</A></LI>
+   <LI><A HREF="#fallbackpriority">FallBackPriority</A></LI>
+   <LI><A HREF="#fbdescfile">FBDescFile</A></LI>
+   <LI><A HREF="#fbiconbytype">FBIconByType</A></LI>
+   <LI><A HREF="#fbicondefault">FBIconDefault</A></LI>
+   <LI><A HREF="#fbicondirectory">FBIconDirectory</A></LI>
+   <LI><A HREF="#fbshowdotfiles">FBShowDotFiles</A></LI>
+   <LI><A HREF="#fbsortorder">FBSortOrder</A></LI>
+   <LI><A HREF="#fbwelcomefile">FBWelcomeFile</A></LI>
+   <LI><A HREF="#fcgifilterpathinfo">FCGIFilterPathInfo</A></LI>
+   <LI><A HREF="#fcginoheader">FCGINoHeader</A></LI>
+   <LI><A HREF="#filebrowser">FileBrowser</A></LI>
+   <LI><A HREF="#filterenable">FilterEnable</A></LI>
+   <LI><A HREF="#filter">Filter</A></LI>
+   <LI><A HREF="#forcehandler">ForceHandler</A></LI>
+   <LI><A HREF="#group">Group</A></LI>
+   <LI><A HREF="#gzipenable">GzipEnable</A></LI>
+   <LI><A HREF="#gziplevel">GzipLevel</A></LI>
+   <LI><A HREF="#gzipmaxratio">GzipMaxRatio</A></LI>
+   <LI><A HREF="#hostnamelookups">HostnameLookups</A></LI>
+   <LI><A HREF="#hostnamelookupsby">HostnameLookupsBy</A></LI>
+   <LI><A HREF="#ignoredotfiles">IgnoreDotFiles</A></LI>
+   <LI><A HREF="#include">Include</A></LI>
+   <LI><A HREF="#keepalive">KeepAlive</A></LI>
+   <LI><A HREF="#languagepriority">LanguagePriority</A></LI>
+   <LI><A HREF="#listeninterface">ListenInterface</A></LI>
+   <LI><A HREF="#listenport">ListenPort</A></LI>
+   <LI><A HREF="#listenqueue">ListenQueue</A></LI>
+   <LI><A HREF="#loadlimit">LoadLimit</A></LI>
+   <LI><A HREF="#loadlimitaction">LoadLimitAction</A></LI>
+   <LI><A HREF="#loadlimiterror">LoadLimitError</A></LI>
+   <LI><A HREF="#loadlimiterrormessage">LoadLimitErrorMessage</A></LI>
+   <LI><A HREF="#loadlimitredirect">LoadLimitRedirect</A></LI>
+   <LI><A HREF="#loadmodule">LoadModule</A></LI>
+   <LI><A HREF="#loadtheme">LoadTheme</A></LI>
+   <LI><A HREF="#log">Log</A></LI>
+   <LI><A HREF="#logdir">LogDir</A></LI>
+   <LI><A HREF="#loggerprocess">LoggerProcess</A></LI>
+   <LI><A HREF="#loggeruser">LoggerUser</A></LI>
+   <LI><A HREF="#loggergroup">LoggerGroup</A></LI>
+   <LI><A HREF="#loghitstoconsole">LogHitsToConsole</A></LI>
+   <LI><A HREF="#loghitstoconsole">LogHitsToServerLog</A></LI>
+   <LI><A HREF="#logtype">LogType</A></LI>
+   <LI><A HREF="#maxrequestbodylength">MaxRequestBodyLength</A></LI>
+   <LI><A HREF="#maxrequesturilength">MaxRequestURILength</A></LI>
+   <LI><A HREF="#maxservers">MaxServers</A></LI>
+   <LI><A HREF="#metafetch">MetaFetch</A></LI>
+   <LI><A HREF="#methodhandler">MethodHandler</A></LI>
+   <LI><A HREF="#mispellaction">MispellAction</A></LI>
+   <LI><A HREF="#mimetypes">MimeTypes</A></LI>
+   <LI><A HREF="#modulesdir">ModulesDir</A></LI>
+   <LI><A HREF="#multiviews">MultiViews</A></LI>
+   <LI><A HREF="#mysqlloghost">MySQLLogHost</A></LI>
+   <LI><A HREF="#mysqllogdatabase">MySQLLogDatabase</A></LI>
+   <LI><A HREF="#mysqlloguser">MySQLLogUser</A></LI>
+   <LI><A HREF="#mysqllogpassword">MySQLLogPassword</A></LI>
+   <LI><A HREF="#otherpriority">OtherPriority</A></LI>
+   <LI><A HREF="#parseext">ParseExt</A></LI>
+   <LI><A HREF="#pathinfotryext">PathInfoTryExt</A></LI>
+   <LI><A HREF="#pidfile">PidFile</A></LI>
+   <LI><A HREF="#proxyaccesslog">ProxyAccessLog</A></LI>
+   <LI><A HREF="#proxyallowip">ProxyAllowIP</A></LI>
+   <LI><A HREF="#proxycachedir">ProxyCacheDir</A></LI>
+   <LI><A HREF="#proxycachemaxage">ProxyCacheMaxAge</A></LI>
+   <LI><A HREF="#proxydenysite">ProxyDenySite</A></LI>
+   <LI><A HREF="#proxydenypopup">ProxyDenyPopup</A></LI>
+   <LI><A HREF="#proxydenypub">ProxyDenyPub</A></LI>
+   <LI><A HREF="#refererallow">RefererAllow</A></LI>
+   <lI><A HREF="#referercheck">RefererCheck</A></LI>
+   <LI><A HREF="#reflectrewriting">ReflectRewriting</A></LI>
+   <LI><A HREF="#rewriterule">RewriteRule</A></LI>
+   <LI><A HREF="#rewritecond">RewriteCond</A></LI>
+   <LI><A HREF="#requesttimeout">RequestTimeout</A></LI>
+   <LI><A HREF="#serveradmin">ServerAdmin</A></LI>
+   <LI><A HREF="#serveralias">ServerAlias</A></LI>
+   <LI><A HREF="#serverfakesignature">ServerFakeSignature</A></LI>
+   <LI><A HREF="#serverlog">ServerLog</A></LI>
+   <LI><A HREF="#servermode">ServerMode</A></LI>
+   <LI><A HREF="#servername">ServerName</A></LI>
+   <LI><A HREF="#serversignature">ServerSignature</A></LI>
+   <LI><A HREF="#servertheme">ServerTheme</A></LI>
+   <LI><A HREF="#singleprocessmode">SingleProcessMode</A></LI>
+   <LI><A HREF="#statusallowhost">StatusAllowHost</A></LI>
+   <LI><A HREF="#staticbuffersize">StaticBufferSize</A></LI>
+   <LI><A HREF="#staticdisablepartial">StaticDisablePartial</A></LI>
+   <LI><A HREF="#tempdir">TempDir</A></LI>
+   <LI><A HREF="#user">User</A></LI>
+   <LI><A HREF="#userdir">UserDir</A></LI>
+   <LI><A HREF="#wormsrun">WormsRun</A></LI>
+   <LI><A HREF="#wormswpoptext">WormsWpopText</A></LI>
+   <LI><A HREF="#writeaccess">WriteAccess</A></LI>
+</UL>
+
+
+<BR>
+Starting from nanoweb 1.8.1 you <i>may</i> write all directives in
+apache style without the equal sign in between a directives` name and its
+value.
+<BR>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="accessfile">AccessFile</A></B> directive</BIG></DIV>
+<B>Syntax:</B> AccessFile = .nwaccess <BR>
+<B>Context:</B> Server Config, Virtual Hosts <BR>
+<B>Module:</B> Core <BR>
+<P>
+Specifies the filename of the <A HREF="nwaccess.html">per-directory config
+files</A> to be read. This is .nwaccess per default, but you may want to set
+it to .htaccess so nanoweb takes the files you previously used
+<A HREF="apachecompat.html">with apache</A>.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="accessblock">AccessBlock</A></B> directive</BIG></DIV>
+<B>Syntax:</B> AccessBlock = this_directive <BR>
+<B>Context:</B> Server Config, Virtual Hosts <BR>
+<B>Module:</B> Core <BR>
+<P>
+Use this directive to disallow overriding of configuration settings made in
+the main configuration files for just the given directive,
+regardless of what the default behaviour given in <a href="#accesspolicy">AccessPolicy</a>
+is.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="accessmerge">AccessMerge</A></B> directive</BIG></DIV>
+<B>Syntax:</B> AccessMerge = directive-name <BR>
+<B>Context:</B> Server Config, Virtual Hosts <BR>
+<B>Module:</B> Core <BR>
+<P>
+Use this directive to allow settings from the main configuration file to get
+merged with the ones found in .nwaccess files for the directive named here,
+regardless of the default behaviour given by <a href="#accesspolicy">AccessPolicy</a>.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="accessoverride">AccessOverride</A></B> directive</BIG></DIV>
+<B>Syntax:</B> AccessOverride = name_of_a_directive <BR>
+<B>Context:</B> Server Config, Virtual Hosts <BR>
+<B>Module:</B> Core <BR>
+<P>
+This enables overriding of settings made in the main configuration files with
+the ones found in .nwaccess files for the directive name given here,
+regardless of the default behaviour given with <a href="#accesspolicy">AccessPolicy</a>.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="accesspolicy">AccessPolicy</A></B> directive</BIG></DIV>
+<B>Syntax:</B> AccessPolicy = block | override | merge <BR>
+<B>Context:</B> Server Config, Virtual Hosts <BR>
+<B>Module:</B> Core <BR>
+<P>
+Defines the default access files policy regarding overriding of configuration
+values from higher level configuration files (for example .nwaccess file in
+another directory). You can override the default behaviour defined here
+for some directives using <a href="#accessmerge">AccessMerge</a>,
+<a href="#accessblock">AccessBlock</a> or
+<a href="#accessoverride">AccessOverride</a>.
+<br>
+<b>block</b> means that, configuration values cannot be overriden by
+settings in a .nwaccess file. Setting <b>override</b> here allows that per
+default. <b>merge</b> defines that settings from the main configuration
+files are merged with the ones found in .nwaccess files.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="access_rbl">Access_RBL</A></B> directive</BIG></DIV>
+<B>Syntax:</B> Access_RBL = dns | web <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> <A HREF="mod_access_rbl.html">mod_access_rbl</A> <BR>
+<P>
+Gives the prefered RBL query method. The default "dns" is much faster than
+the http access method "web".
+<br>
+See also <A HREF="http://mail-abuse.org/rbl">mail-abuse.org/rbl</A> for
+further informations on the RBL system.
+<br>
+<small><b>Note</b>: The maps service is free for personal usage only; but
+you can easily edit this nanoweb modules` code to use another one if
+desired.</small>
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="acpolicy">ACPolicy</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ACPolicy = allow | deny <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> Core, <a href="mod_ac.html">mod_ac</a> <BR>
+<P>
+This directive sets the default access control policy. For public webservers
+you may wish to leave this value to <b>allow</b>, for intranet systems
+however <b>deny</b> is recommended.
+<br>
+The default behaviour can be tweaked for individual hosts using
+<a href="#acallowip">ACAllowIP</a>, <a href="#acallowhost">ACAllowHost</a>,
+<a href="#acdenyip">ACDenyIP</a> and <a href="#acdenyhost">ACDenyHost</a>.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="acallowip">ACAllowIP</A></B> directive</BIG></DIV>
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="acallowhost">ACAllowHost</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ACAllowIP = 192.168.* <BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ACAllowHost = *.example.net <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> Core, <a href="mod_ac.html">mod_ac</a> <BR>
+<P>
+These directives effectively allow the specified hosts to access files from
+your webserver. You may give complete IP addresses and host names for a
+single host here as well.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="acblockerror">ACBlockError</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ACBlockError = 403 <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> Core, <a href="mod_ac.html">mod_ac</a> <BR>
+<P>
+Defines the response code for hosts which you denied access to the server.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="acblockmessage">ACBlockMessage</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ACBlockMessage = You won't get access! Go away! <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> Core, <a href="mod_ac.html">mod_ac</a> <BR>
+<P>
+You can also set an individual greeting for hosts that have no permission to
+access the server.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="acdenyip">ACDenyIP</A></B> directive</BIG></DIV>
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="acdenyhost">ACDenyHost</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ACDenyIP = 54.7.* <BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ACAllowHost = *.microsoft.com <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> Core, <a href="mod_ac.html">mod_ac</a> <BR>
+<P>
+Using this directives you can deny the specified hosts access to files from
+your webserver, even if the default access control policy was set to
+'allow'.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="addheader">AddHeader</A></B> directive</BIG></DIV>
+<B>Syntax:</B> AddHeader = X-HTTP-Header: value <BR>
+<B>Context:</B> Server Config, Virtual Hosts <BR>
+<B>Module:</B> Core <BR>
+<P>
+You can append additional headers to the HTTP responses nanoweb sends back
+to the client (browser). This is a very powerful feature if you know the
+headers recognized by special http clients (or you've written one of your
+own).
+<br>
+A good example is the "P3P:" http header, which states the privacy policy
+of your site. A funny example mentioned in the distributed main server config
+file is "X-Powered-by: beer", you can do this because current browsers ignore
+all unknown headers.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="addservervar">AddServerVar</A></B> directive</BIG></DIV>
+<B>Syntax:</B> AddServerVar = CGIENVVAR value <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> Core <BR>
+<P>
+Using the AddServerVar directive you can pass arbitrary environmental
+variables to any executed CGI program. You may also overwrite one of the
+<A HREF="env.html">default server vars</A> with any static value you
+would like to (so you can fault any CGI, for example let it assume a
+different webserver or tell it a false request uri).
+<br>
+Don't use an equal sign between the variable name (uppercase letters are
+recommended) and its new value! You may use this directive
+in .nwaccess files, too, of course.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="addtype">AddType</A></B> directive</BIG></DIV>
+<B>Syntax:</B> AddType = .ext mime/type <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+This directive allows you to add a mime type for an extension on the fly
+without modifying your systems` <tt>mime.types</tt> file, it can however be
+used in the main server configuration file only.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="alias">Alias</A></B> directive</BIG></DIV>
+<B>Syntax:</B> Alias = /virtual/  /real/path/ <BR>
+<B>Context:</B> Server Config, Virtual Hosts <BR>
+<B>Module:</B> Core <BR>
+<P>
+Declares an alias directory name to an existing path of the real
+filesystem. This directive can be used to get access to a directory
+from within any virtual host, as in the rewriting process the docroot
+gets changed.
+<br>
+This directive is used by <A HREF="mod_fb.html">mod_fb</A> for example,
+to always keep the /icons/ directory reachable.
+<br>
+<br>
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B>AllowExtSymlinks</B> (obsolete)</BIG></DIV>
+<B>Syntax:</B> AllowExtSymlinks = 1 <BR>
+<B>Replaced-By:</B>  <BR>
+<P>
+The newer <A HREF="#allowsymlinkto">AllowSymlinkTo</A> directive allows now
+much finer grained configuration of which symlinks are allowes within the docroot.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="allowsymlinkto">AllowSymlinkTo</A></B> directive</BIG></DIV>
+<B>Syntax:</B> AllowSymlinkTo = /usr/lib/nanoweb <BR>
+<B>Context:</B> Server Config, Virtual Hosts <BR>
+<B>Module:</B> Core <BR>
+<P>
+Nanoweb will generelly reject symlinks to outside of the
+<A HREF="#documentroot">DocumentRoot</A> for security reasons.
+Using this directive you can give destination paths where symlinks are
+however allowed to (the directive can be given multiple times).
+<br>
+If you just set it to the root directory <b>/</b>&nbsp; symlinks will
+always be allowed.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="allowpathinfo">AllowPathInfo</A></B> directive</BIG></DIV>
+<B>Syntax:</B> AllowPathInfo = 1 <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> Core <BR>
+<P>
+Any CGI may be called with a »pathinfo« appended to its filename (think of
+<tt>http://www.example.com/cgi-bin/program.php/arg1/arg2</tt>), which is
+treaten by many CGI interpreters as additional data input beside the »query
+string«.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="anydbloadinterface">AnydbLoadInterface</A></B> directive</BIG></DIV>
+<B>Syntax:</B> AnydbLoadInterface = .../adodb/adodb.inc.php <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> <A HREF="mod_auth_anydb.html">mod_auth_anydb</A> <BR>
+<P>
+You must specify this directive before the <A HREF="#loadmodule">LoadModule</A>
+directive for mod_auth_anydb, if you want to use the ADOdb or the PEAR::DB
+database abstraction layer.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="authanydb">AuthAnydb</A></B> directive</BIG></DIV>
+<B>Syntax:</B> AuthAnydb = dbtype://user:password@server/dbname/table <BR>
+&nbsp; &nbsp; AuthAnydbLoginColumn = login_field_name <BR>
+&nbsp; &nbsp; AuthAnydbPasswordColumn = password_field_name <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <A HREF="mod_auth_anydb.html">mod_auth_anydb</A> <BR>
+<P>
+With the ANYDB authentication method you can allow access to a restricted
+area using the auth data (login/user names and passwords) from any PEAR::DB,
+dbx or ADOdb supported database.
+<br>
+The syntax for this directive is often called "dsn" (data source name), but
+additonally contains the name of the database table with the login names and
+passwords. The dbtype part tells which RDBMS you use, but the value depends
+highly on the database abstraction layer you choose (PEAR, ADO, dbx).
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="authanonymousnames">AuthAnonymousNames</A></B> directive</BIG></DIV>
+<B>Syntax:</B> AuthAnonymousNames = anonymous anonym guest nobody <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <A HREF="mod_auth_anonymous.html">mod_auth_anonymous</A> <BR>
+<P>
+The ANONYMOUS authentication method allows to login suppling a email address
+as password for either "anonymous" or any other symbolic user name specified
+with this directive. You can give additonal names in one line or within
+multiple directive lines.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="authanonymoussmtpcheck">AuthAnonymousSmtpCheck</A></B> directive</BIG></DIV>
+<B>Syntax:</B> AuthAnonymousSmtpCheck = 0 <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <A HREF="mod_auth_anonymous.html">mod_auth_anonymous</A> <BR>
+<P>
+The email address given as password for ANONYMOUS http authentication logins
+can be verified, and if the quick SMTP check fails, the mail address is
+rejected and cannot be used to access the restricted area.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B>AuthFile</B> (obsolete)</BIG></DIV>
+<B>Syntax:</B> AuthFile = .nwauth <BR>
+<P>
+This directive was used until 1.9.0, and is called AuthNwauthFilename now
+and used by mod_auth_nwauth.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="authhtpasswdfilename">AuthHtpasswdFilename</A></B> directive</BIG></DIV>
+<B>Syntax:</B> AuthHtpasswdFilename = /path/to/.htpasswd <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <A HREF="mod_auth_htpasswd.html">mod_auth_htpasswd</A> <BR>
+<P>
+With the HTPASSWD authentication method you can reuse the password files from
+the apache webserver, these are often called <tt>.htpasswd</tt>
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="authlocation">AuthLocation
+</A></B> directive</BIG></DIV>
+<B>Syntax:</B> AuthLocation = /path/to/protect <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> Core <BR>
+<P>
+Using the AuthLocation in the global, virtualhost, or access file will restrict the need for authentication to the specified locations. 
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="authnwauthfilename">AuthNwauthFilename</A></B> directive</BIG></DIV>
+<B>Syntax:</B> AuthNwauthFilename = /path/to/.nwauth <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <A HREF="mod_auth_nwauth.html">mod_auth_nwauth</A> <BR>
+<P>
+You can give just ".nwauth" to this directive to activate the authentication
+with "AuthRequire=NWAUTH" from a directories <tt>.nwaccess</tt>
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="authmysql">AuthMysql* directives</A></B></BIG></DIV>
+<B>Syntax:</B> <BR>
+&nbsp; &nbsp; AuthMysqlHost = localhost <BR>
+&nbsp; &nbsp; AuthMysqlUser = db_user <BR>
+&nbsp; &nbsp; AuthMysqlPass = db_pass <BR>
+&nbsp; &nbsp; AuthMysqlDB = db_name <BR>
+&nbsp; &nbsp; AuthMysqlTable = table_name <BR>
+&nbsp; &nbsp; AuthMysqlLoginColumn = login_field_name <BR>
+&nbsp; &nbsp; AuthMysqlPassColumn = password_field_name <BR>
+&nbsp; &nbsp; AuthMysqlPassType = plain | crypt | md5 | mysql <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <A HREF="mod_auth_mysql.html">mod_auth_mysql</A> <BR>
+<P>
+These directives specify the mysql database + server, the database table and
+the columns which hold the user names and passwords to check for when using
+the MYSQL authentication method. The PassType setting tells if the password
+is saved unencoded in the table (plain) or using one of the system password
+hash algortithms (crypt, md5) or the according MySQL function (mysql).
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="authpgsql">AuthPgsql* directives</A></B></BIG></DIV>
+<B>Syntax:</B> <BR>
+&nbsp; &nbsp; AuthPgsqlHost = localhost <BR>
+&nbsp; &nbsp; AuthPgsqlUser = db_user <BR>
+&nbsp; &nbsp; AuthPgsqlPass = db_pass <BR>
+&nbsp; &nbsp; AuthPgsqlDB = db_name <BR>
+&nbsp; &nbsp; AuthPgsqlTable = table_name <BR>
+&nbsp; &nbsp; AuthPgsqlLoginColumn = login_field_name <BR>
+&nbsp; &nbsp; AuthPgsqlPassColumn = password_field_name <BR>
+&nbsp; &nbsp; AuthPgsqlPassType = plain | md5 <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <A HREF="mod_auth_pgsql.html">mod_auth_pgsql</A> <BR>
+<P>
+Use these directives to give the name of the database of the PostgreSQL server
+with the column names which hold the user names and passwords to check for when using
+the PGSQL authentication method shall be used (see <A
+HREF="#authrequire">AuthRequire</A>). The PassType setting tells if the password
+is saved as <b>plain</b> text in the table or was encoded using <b>md5</b>()
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="authsimpleuserpass">AuthSimpleUserPass</A></B> directive</BIG></DIV>
+<B>Syntax:</B> AuthSimpleUserPass = login password <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <A HREF="mod_auth_simple.html">mod_auth_simple</A> <BR>
+<P>
+The SIMPLE authentication method allows you to specify the login and
+password pairs directly in the config file (.nwaccess most often, but may be
+also in one of the vhost sections to restrict access to the whole server).
+<br>
+You need to give one directive with space seperated login name and password
+for each user, most often in the same config file where you activated the
+authentication (with <A HREF="#authrequire">AuthRequire</A>).
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="authrealm">AuthRealm</A></B> directive</BIG></DIV>
+<B>Syntax:</B> AuthRealm = realm name<BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> Core, <A HREF="authentication.html">Authentication</A> <BR>
+<P>
+This directive is to be used to give the different authentication areas
+(most often single directories or directory trees) a name, to help users to
+remember the correct login and password to be granted access.
+<br>
+Most often this is shown as info text in common browsers, so you may want to
+give a notice or a greeting message here.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="authrequire">AuthRequire</A></B> directive</BIG></DIV>
+<B>Syntax:</B> AuthRequire = METHOD <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> Core, <A HREF="authentication.html">Authentication</A> <BR>
+<P>
+The different modules give you different choices on where to keep the
+authentication passwords and login names, so you need to specify which auth
+module to use for the current directory (or server if you want to restrict
+one of your vhosts at whole).
+<br>
+Currently there a 6 different auth modules (have a look into the
+<A HREF="modules.html">modules section</A>), and thus you can specify
+<A HREF="mod_auth_simple.html">SIMPLE</A>, <A HREF="mod_auth_htpasswd.html">HTPASSWD</A>,
+<A HREF="mod_auth_nwauth.html">NWAUTH</A> or the <A HREF="mod_auth_mysql.html">MYSQL</A>,
+<A HREF="mod_auth_pgsql.html">PGSQL</A>, <A HREF="mod_auth_ldap.html">LDAP</A>
+authentication method/module here.
+<br>
+<br>
+The AuthRequire is the directive out of the bunch of authentication
+directives that really triggers if the access to a directory is restricted,
+so you may specify all your passwords (say with AuthSimpleUserPass
+directives) in the main server configuration file but activate it
+occassionally in the .nwaccess files of some directories only.
+<br>
+You can enable more than one authentication method by using this directive
+two or more times in one of your .nwaccess files. This leads to a logical
+OR, which means that the users login name and password needs to be verified
+by one of the authentication modules only to grant him or her access.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="bandwidth">Bandwidth</A></B> directive</BIG></DIV>
+<B>Syntax:</B> Bandwidth = 100K/s <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <A HREF="mod_throttle.html">mod_throttle</A> <BR>
+<P>
+Limits the average download throughput to the given fixed amount for the
+server area it was specified ([global], [vhost] or a single directory via
+.htaccess).
+<br>
+As the module only estimates the transfer size for every second, so the "/s"
+is optional (because the time slices cannot be influenced). You can however
+give the speed amount in bytes or in kilobytes (with an appended "K").
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="bspallowsource">BSPAllowSource</A></B> directive</BIG></DIV>
+<B>Syntax:</B> BSPAllowSource = 1 <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> <A HREF="mod_bsp.html">mod_bsp</A> <BR>
+<P>
+Allows to view the source of .bsp scripts when <b>?source</b> is appended to
+the requested url.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="cgifilterpathinfo">CGIFilterPathInfo</A></B> directive</BIG></DIV>
+<B>Syntax:</B> CGIFilterPathInfo = 1 <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> <A HREF="mod_cgi.html">mod_cgi</A> <BR>
+<P>
+If you plan to use the CGI version of PHP you may want to leave this
+directive enabled, as there still is a unfixed bug in PHP-CGI that
+forbids passing the $PATH_INFO server var to the scripts as this would
+trash the $PHP_SELF var. If you don't use the latter one in your scripts you
+otherwise should probably disable this option, and use the more reliable
+$SCRIPT_NAME in favour of $PHP_SELF.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="cgiscriptsdir">CGIScriptsDir</A></B> directive</BIG></DIV>
+<B>Syntax:</B> CGIScriptsDir = /var/lib/cgi-bin <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> <A HREF="mod_cgi.html">mod_cgi</A> <BR>
+<P>
+This directive tells nanoweb, that the specified directory contains CGI
+scripts only. It is very common to have at least one such directory, which
+is often called /cgi-bin/ (and accessible with this name by using the
+<A HREF="#alias">Alias</A> directive).
+<br>
+If you do not want to have just one seperate directory for all your CGIs,
+you may set this directive to <b>/</b> to allow files located anywhere on
+your server to be treated as CGIs if they have the executable flag set.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="cgiscriptnoexec">CGIScriptNoExec</A></B> directive</BIG></DIV>
+<B>Syntax:</B> CGIScriptNoExec = error | raw <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> <A HREF="mod_cgi.html">mod_cgi</A> <BR>
+<P>
+If a file in a CGIScriptsDir is accessed which is not marked executable, this
+directive tells nanoweb how to treat this. The value »error« leads to an
+error response message if a script without exec-bit is found, »raw« will
+deliver the according file as is (this is discouraged because of security
+reasons).
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="cgiphpoption">CGIPHPOption</A></B> directive</BIG></DIV>
+<B>Syntax:</B> CGIPHPOption = phpini_setting="value" <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> <A HREF="mod_cgi.html">mod_cgi</A> <BR>
+<P>
+You may override php.ini directives on a per directory basis with this
+directive. Don't put any spaces in between the equal sign and the option
+name and its value. If the value contains spaces you have to enclose it in
+quotation marks. For settings that expect on/off in php.ini please use 0 and
+1 only.
+<br>
+This directive corresponds to apaches php_flag, php_option, ... directives.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="childlifetime">ChildLifeTime</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ChildLifeTime = 21600 <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+The absolute maximum time (in seconds) a child process is allowed to live.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="childlifetime">ChildLifeTime</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ContentMD5 = 1 <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <A HREF="modules.html">mod_digest</A> <BR>
+<P>
+Enabling this will add the HTTP header <b>Content-MD5</b>: for static
+responses, which contains the md5() hash summary of the served file to
+allow the client to verify correct transmission.
+<BR>
+This requires the <A HREF="modules.html#mod_digest">mod_digest</A> extension module.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="configdir">ConfigDir</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ConfigDir = /etc/nanoweb <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+Sets the default directory to contain all Nanoweb configuration files. This
+allows you to leave it out for <A HREF="#include">Include</A> and
+<A HREF="#loadtheme">LoadTheme</A> directives.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="defaultcontenttype">DefaultContentType</A></B> directive</BIG></DIV>
+<B>Syntax:</B> DefaultContentType = text/plain <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+When the server cannot determine a MIME-type by examining the extensions of
+the requested file, it will tell the client the file is of the type set
+with this directive. The default of text/plain may not always suit your
+requirements, so setting this value to text/html can do a better job in some
+cases.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="defaulthandler">DefaultHandler</A></B> directive</BIG></DIV>
+<B>Syntax:</B> DefaultHandler = static <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+Nanoweb feeds all files internally through an "parser"; you may specify one of
+them here (say CGI or SSI) if desired, but it is very rarely a good idea to
+feed standard static files through the PHP parser for example.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="directoryindex">DirectoryIndex</A></B> directive</BIG></DIV>
+<B>Syntax:</B> DirectoryIndex = index.html index.php /path/to/dirhandler.cgi <BR>
+<B>Context:</B> Server Config, Virtual Hosts <BR>
+<B>Module:</B> Core <BR>
+<P>
+With this directive you may specify one or more files, which get sent in
+favour of a directory listing when found - this is very often called the
+»start file« and <tt>index.html</tt> per default. You can alternatively
+define the absolute path to a cgi script, which will then be activated to
+generate a directory listing (instead of Nanowebs
+<A HREF="mod_fb.html">mod_fb</A>) if none of the other index files exists.
+<br>
+The value of this directive may also be overriden finally in the per-directory
+configuration files (<A HREF="nwaccess.html">.nwaccess</A>).
+<br>
+You may want to set it to just "index" if you activated
+<a href="mod_multiviews.html">mod_multiviews</a>, as this is more flexible.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="disablemimemagic">DisableMimeMagic</A></B> directive</BIG></DIV>
+<B>Syntax:</B> DisableMimeMagic = 0 <BR>
+<B>Context:</B> Server Config, Virtual Hosts <BR>
+<B>Module:</B> Core <BR>
+<P>
+If nanoweb cannot determine the mime type from a files` extension then the
+PHP4.3 function mime_content_type() will be engaged to analyze the first 100
+bytes of a file to guess the correct mime type. This directive can be used
+to disable this behaviour if you fear it slows down your server too much.
+<br>
+If disabled Nanoweb will always report the
+<a href="#defaultcontenttype">DefaultContentType</a> if a extension is
+unknown. You must set the according php.ini option if your mime-magic.data
+file is not located at its usual place.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="documentroot">DocumentRoot</A></B> directive</BIG></DIV>
+<B>Syntax:</B> DocumentRoot = /var/www <BR>
+<B>Context:</B> Server Config, Virtual Hosts <BR>
+<B>Module:</B> Core <BR>
+<P>
+Base directory path nanoweb will serve files from and where you should put
+all your html files and images into, as nanoweb doesn't allow to deliver
+files which are not located in there.
+<BR>
+This directive needs to be present in each
+<a href="vhosts.html">virtual host</a> configuration section.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="dosevasiveerror">DosEvasiveError</A></B> directive</BIG></DIV>
+<B>Syntax:</B> DosEvasiveError = 403 <BR>
+<B>Context:</B> Server Config, Virtual Hosts <BR>
+<B>Module:</B> <a href="mod_dosevasive.html">mod_dosevasive</a> <BR>
+<P>
+Sets the http response code for »Denial of Service« attacks.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="dosevasivemaxreqs">DosEvasiveMaxReqs</A></B> directive</BIG></DIV>
+<B>Syntax:</B> DosEvasiveMaxReqs = 5 <BR>
+<B>Context:</B> Server Config, Virtual Hosts <BR>
+<B>Module:</B> <a href="mod_dosevasive.html">mod_dosevasive</a> <BR>
+<P>
+The maximal number of requests one host may make in the time slice specified
+with <a href="#dosevasivetimer">DosEvasiveTimer</a> before it is considered
+to be an attack.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="dosevasivetimer">DosEvasiveTimer</A></B> directive</BIG></DIV>
+<B>Syntax:</B> DosEvasiveTimer = 10 <BR>
+<B>Context:</B> Server Config, Virtual Hosts <BR>
+<B>Module:</B> <a href="mod_dosevasive.html">mod_dosevasive</a> <BR>
+<P>
+Gives a delay in seconds that is used to detect denial of service attacks.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="errordocument">ErrorDocument</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ErrorDocument = CODE errorNNN.html <BR>
+<B>Context:</B> Server Config, Virtual Hosts <BR>
+<B>Module:</B> Core <BR>
+<P>
+Defines files which get send on errors instead of the default (built-in)
+nanoweb messages. These documents must reside in the docroot.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="errorheader">ErrorHeader</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ErrorHeader = CODE  HTTP-header: value <BR>
+<B>Context:</B> Server Config, Virtual Hosts <BR>
+<B>Module:</B> Core <BR>
+<P>
+You can attach additional HTTP headers to responses with an error code above
+400; see also <A HREF="#addheader">AddHeader</A>.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="fallbackpriority">FallBackPriority</A></B> directive</BIG></DIV>
+<B>Syntax:</B> FallBackPriority = smallest | largest | newest | oldest <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <A HREF="mod_multiviews.html">mod_multiviews</A> <BR>
+<P>
+If the mime qualities of all available file variants are equal, then
+mod_multiviews can at least select the smallest, largest, newest or
+the oldest file out of them.
+</P>
+
+
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="fbdescfile">FBDescFile</A></B> directive</BIG></DIV>
+<B>Syntax:</B> FBDescFile = .desc <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <A HREF="mod_fb.html">mod_fb</A> <BR>
+<P>
+Descriptions of each file in a directory may be given in the file
+specified here, its content is used to enhance the output of directory
+listings produced by the <A HREF="mod_fb.html">file browser module</A>.
+<br>
+Such a description file should look like that:
+<pre class="samp">filename.ext   desc of this file
+index.html  main/homepage...</pre>
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="fbiconbytype">FBIconByType</A></B> directive</BIG></DIV>
+<B>Syntax:</B> FBIconByType = /icons/image.gif mime/type <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <A HREF="mod_fb.html">mod_fb</A>, <A HREF="mod_fb2.html">mod_fb2</A> <BR>
+<P>
+Associates icons pictures to mime types for output in directory listings
+produced by mod_fb.
+<br>
+You may specify partial mime-types only; so you can associtate fall-back
+icons for general mime types like »application«, »text« or »image«.
+<br>
+The default configuration of nanoweb also utilizes the <A
+HREF="#alias">Alias</A> directive to keep all icons in a single directory
+(/icons/ which is rewritten to absolute real path /var/www/icons/) accessible
+from all the virtual hosts.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="fbicondefault">FBIconDefault</A></B> directive</BIG></DIV>
+<B>Syntax:</B> FBIconDefault = /icons/misc.gif <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <A HREF="mod_fb.html">mod_fb</A>, <A HREF="mod_fb2.html">mod_fb2</A> <BR>
+<P>
+If none of the <A HREF="#fbiconbytype">FBIconByType</A> directives defines
+an appropriate icon for a file (or if a files mime type is unknown) this
+directive gives the name of the image to be used.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="fbicondirectory">FBIconDirectory</A></B> directive</BIG></DIV>
+<B>Syntax:</B> FBIconDirectory = /icons/directory.gif <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <A HREF="mod_fb.html">mod_fb</A>, <A HREF="mod_fb2.html">mod_fb2</A> <BR>
+<P>
+Defines the icon to be printed for directories.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="fbshowdotfiles">FBShowDotFiles</A></B> directive</BIG></DIV>
+<B>Syntax:</B> FBShowDotFiles = 1 <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <A HREF="mod_fb.html">mod_fb</A>, <A HREF="mod_fb2.html">mod_fb2</A> <BR>
+<P>
+This tells mod_fb to include files which names start with a dot to be
+included in directory listings. On UNIX machines these »dotfiles« should be
+treaten as invisible files by standard programs; and because nanoweb keeps
+some of its per-directory configurations in .nwaccess and .nwauth you
+probably want to set this directive to the default of 1.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="fbsortorder">FBSortOrder</A></B> directive</BIG></DIV>
+<B>Syntax:</B> FBSortOrder = name | size | date [ desc ] <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <A HREF="mod_fb.html">mod_fb</A>, <A HREF="mod_fb2.html">mod_fb2</A> <BR>
+<P>
+Directory listings are sorted by mod_fb according to this setting (»name« is
+the default). The use of »desc« reverses the order.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B>FBTemplateFooter</B> (obsolete)</BIG></DIV>
+<B>Syntax:</B> FBTemplateFooter = .fbfooter <BR>
+<P>
+Dropped in favour of <A HREF="#servertheme">ServerThemes</A>.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B>FBTemplateHeader</B> (obsolete)</BIG></DIV>
+<B>Syntax:</B> FBTemplateHeader = .fbheader <BR>
+<P>
+Removed in favour of <A HREF="#servertheme">ServerThemes</A>.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="fbwelcomefile">FBWelcomeFile</A></B> directive</BIG></DIV>
+<B>Syntax:</B> FBWelcomeFile = .welcome <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <A HREF="mod_fb.html">mod_fb</A> <BR>
+<P>
+Whenever a directory listing (»filebrowser«) is to be sent back to the
+client, the server searches for a file with the hereby given name to be
+included in the sent output.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="fcgifilterpathinfo">FCGIFilterPathInfo</A></B> directive</BIG></DIV>
+<B>Syntax:</B> FCGIFilterPathInfo = 1 <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core, <a href="mod_fcgi.html">mod_fcgi</a> <BR>
+<P>
+See <A HREF="#cgifilterpathinfo">CGIFilterPathInfo</A> on informations about
+this directive. The name of this directive was renamed from
+FastCGIFilterPathInfo in 2.1.0 to normalize its name with all the other
+ones.
+</P>
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="fcginoheader">FCGINoHeader</A></B> directive</BIG></DIV>
+<B>Syntax:</B> FCGINoHeader = Powered-By <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> <A HREF="mod_fcgi.html">mod_fcgi</A> <BR>
+<P>
+Strips the given header from the output of a CGI.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="filebrowser">FileBrowser</A></B> directive</BIG></DIV>
+<B>Syntax:</B> FileBrowser = 1 <BR>
+<B>Context:</B> Server Config, Virtual Hosts <BR>
+<B>Module:</B> <A HREF="mod_fb.html">mod_fb</A>, <A HREF="mod_fb2.html">mod_fb2</A> <BR>
+<B>Compatibility:</B> separated out from the core server in 1.8-dev <BR>
+<P>
+Is to activate / disactivate the automatic generation of directory
+listings by the server.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="filterenable">FilterEnable</A></B> directive</BIG></DIV>
+<B>Syntax:</B> FilterEnable = 1 <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <A HREF="mod_pfilters.html">mod_pfilters</A> <BR>
+<P>
+This directive can be used to deactivate all filter rules on a per directory
+basis (in .nwaccess files).
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="filter">Filter</A></B> directive</BIG></DIV>
+<B>Syntax:</B> Filter = mime/type  filtername [args] <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <A HREF="mod_pfilters.html">mod_pfilters</A> <BR>
+<P>
+Sets a filter rule which is applied to all files matching the mime pattern
+(most often text/html, but may be just */*).
+<br>
+The second argument to this directive is the name of one of the internal
+filters which you may pass additional arguments.
+<br>
+The most powerful filter is 'pipe' which passes the current content through
+an external filter program given as argument to it ("/usr/bin/tidy" for
+example). The 'unchunk' filter is very often required to be listed before
+the first 'pipe'. Other filters are currently 'null', 'shrink', 'downcase'
+and 'wap' (you need to load »mod_html_filters« to make them available).
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="forcehandler">ForceHandler</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ForceHandler = PARSER <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> Core <BR>
+<P>
+This directive is to be used in .nwaccess files to enforce one of the
+nanoweb parsers (like CGI, static or SSI) to handle all files. So if you
+want to ensure, that none of the files in a directory is activated as CGI
+script, you could put the line "ForceHandler=static" into the .nwaccess file.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="group">Group</A></B> directive</BIG></DIV>
+<B>Syntax:</B> Group = groupid <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+Default group nanoweb will run as (defaults to »www-data«).
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="gzipenable">GzipEnable</A></B> directive</BIG></DIV>
+<B>Syntax:</B> GzipEnable = 1 <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <A HREF="mod_gzip.html">mod_gzip</A> <BR>
+<P>
+This directive allows you to enable/disable mod_gzip for each virtual host
+or different directories (in <tt>.nwaccass</tt> files).
+<br>
+Chunked CGI output will not get compressed as this often leads to poor
+results and is not supported by some browsers. You can however enforce
+compression of such content streams by setting this directive to 2 - A much
+better solution is however to apply the "unchunk"
+<A HREF="#filter">Filter</A>, which will help mod_gzip. For PHP scripts you
+may wish to enable automagic output compression via php.ini rather.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="gziplevel">GzipLevel</A></B> directive</BIG></DIV>
+<B>Syntax:</B> GzipLevel = 5 <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> <A HREF="mod_gzip.html">mod_gzip</A> <BR>
+<P>
+This options tells mod_gzip how much time to spend on compression. A value
+of 1 leads to very fast processing, 9 means maximum compression, which
+is of course very time consuming. So you probably want to have some value in
+between to achieve good compression in a justifiable amount of time.
+<br>
+BTW, 0 means no compression, but this is stupid; see the above configuration
+directive for this.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="gzipmaxratio">GzipMaxRatio</A></B> directive</BIG></DIV>
+<B>Syntax:</B> GzipMaxRatio = 90 <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> <A HREF="mod_gzip.html">mod_gzip</A> <BR>
+<P>
+Max compression ratio (percentage of original size). If it is higher, the
+content is likely to be already compressed and does not need a recompression.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="hostnamelookups">HostnameLookups</A></B> directive</BIG></DIV>
+<B>Syntax:</B> HostnameLookups = 1 <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+Use reverse-DNS to put hostnames instead of IP addresses into server log.
+<br>
+Note that using DNS slows down nanoweb a bit, so if you need some more speed
+you should think about disabling this feature, as you can get the names of
+the hosts which requested pages from your server later too by evaluating the
+server logs with appropriate software.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="hostnamelookupsby">HostnameLookupsBy</A></B> directive</BIG></DIV>
+<B>Syntax:</B> HostnameLookupsBy = server | logger <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+Using the value "logger" in this directive tells nanoweb to delay DNS
+lookups and let these be done by the logger processes after the page already
+has been delivered. This is a speed improvement, because there is actually no
+need to do the slow DNS query for the requesting host in the main server;
+some modules may however depend on it, so you can set this directive to
+"server" for the old behaviour.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="ignoredotfiles">IgnoreDotFiles</A></B> directive</BIG></DIV>
+<B>Syntax:</B> IgnoreDotFiles = 1 <BR>
+<B>Context:</B> Server Config, Virtual hosts, .nwaccess <BR>
+<B>Module:</B> Core <BR>
+<P>
+Setting this directive to 1 will make nanoweb ignore .xxx files. This is
+for security reasons (not allowing clients to request .nwaccess or .nwauth
+files for example). You shouldn't change this unless you know exactly what
+you're doing.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="include">Include</A></B> directive</BIG></DIV>
+<B>Syntax:</B> Include = /path/to/file.conf <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+This directive reads another (swapped out) configuration file into the
+current one. In standard installations the main configuration file is
+<tt>/etc/nanoweb/nanoweb.conf</tt> which additionally loads
+<tt>modules.conf</tt> and <tt>vhosts.conf</tt> using this directive.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="keepalive">KeepAlive</A></B> directive</BIG></DIV>
+<B>Syntax:</B> KeepAlive = 25 <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+Maximum number of http requests per connection (A client may get more than
+one file after it opened a connection to nanoweb, to speed up downloading of
+multiple files). To disable the keep-alive feature of nanoweb just set this
+value to 0.
+</P>
+
+
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="languagepriority">LanguagePriority</A></B> directive</BIG></DIV>
+<B>Syntax:</B> LanguagePriority = en fr de <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <A HREF="mod_multiviews.html">mod_multiviews</A> <BR>
+<P>
+Content-negotiation occurs if the requested file does not exist, but some
+variants can be found instead. If the client doesn't specifies a preferred
+language this setting will come into use.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="listeninterface">ListenInterface</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ListenInterface = 127.0.0.1 <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+Specify the IP address the server shall listen to for incoming connections.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="listenport">ListenPort</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ListenPort = 80 <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+Specify the TCP port number the server shall listen on for incoming
+connections. 80 is the default for web servers, but 8080 is also very
+common and you must use this to run nanoweb if you're not root (as ports
+below 1024 are reserved for system daemons).
+<br>
+Starting with version 2.0 you can make Nanoweb listen on more than one TCP
+port, if you give this directive multiple times:
+<PRE CLASS="samp">ListenPort = 80
+ListenPort = 8080
+ListenPort = 12080
+</PRE>
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="listenqueue">ListenQueue</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ListenQueue = 20 <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+Maximum number of queued connections.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="loadlimit">LoadLimit</A></B> directive</BIG></DIV>
+<B>Syntax:</B> LoadLimit = 25.0 <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> <A HREF="mod_load_limit.html">mod_load_limit</A> <BR>
+<P>
+Defines the maximum load average after which the server will return an error
+and won't serve documents until load goes down.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="loadlimitaction">LoadLimitAction</A></B> directive</BIG></DIV>
+<B>Syntax:</B> LoadLimitAction = error | redir <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> <A HREF="mod_load_limit.html">mod_load_limit</A> <BR>
+<P>
+Per dafault nanoweb stops serving any further requests if the load limit is
+reached, but instead of just sending an <b>error</b> message response nanoweb is also
+able to <b>redir</b>ect the request to another server (and thus probably all
+further queries from the requesting client).
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="loadlimiterror">LoadLimitError</A></B> directive</BIG></DIV>
+<B>Syntax:</B> LoadLimitError = 503 <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> <A HREF="mod_load_limit.html">mod_load_limit</A> <BR>
+<P>
+This directive sets the http response code for error messages that are
+send back when the the server load gets too high. (rarely needed)
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="loadlimiterrormessage">LoadLimitErrorMessage</A></B> directive</BIG></DIV>
+<B>Syntax:</B> LoadLimitErrorMessage = Sorry, our server gets too slow... <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> <A HREF="mod_load_limit.html">mod_load_limit</A> <BR>
+<P>
+Defines a custom error message that is send if your server gets too slow.
+Besides the common nanoweb server vars, you can use %CUR_LOAD and %MAX_LOAD
+in the message text.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="loadlimitredirect">LoadLimitRedirect</A></B> directive</BIG></DIV>
+<B>Syntax:</B> LoadLimitRedirect = http://www2.example.com/%REQUEST_URI <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> <A HREF="mod_load_limit.html">mod_load_limit</A> <BR>
+<P>
+If enabled with the <A HREF="#loadlimitaction">LoadLimitAction</A> directive,
+clients are redirected to the server given by this directive as soon
+as the load limit is reached.
+<br>
+Please note that %DOCUMENT_ROOT may be useful together with %REQUEST_URI if
+your fallback server holds backups of different sites.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="loadmodule">LoadModule</A></B> directive</BIG></DIV>
+<B>Syntax:</B> LoadModule = /usr/lib/nanoweb/modules/mod_fb.php <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+This directive is usually found in <tt><a href="file://localhost/etc/nanoweb/modules.conf">/etc/nanoweb/<b>modules.conf</b></a></tt>
+(or <tt><a href="file://localhost/C|/nanoweb/modules.conf">C:\nanoweb\modules.conf</a></tt> on Windows),
+which is <a href="#include">included</a> into the main server configuration
+file. It registers the specified module to the server core in the startup
+sequence of nanoweb.
+<br>
+You don't need anymore to specify the full pathname of the PHP source file
+containing the module if you set <A HREF="#modulesdir">ModulesDir</A>
+accordingly.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="loadtheme">LoadTheme</A></B> directive</BIG></DIV>
+<B>Syntax:</B> LoadTheme = default.theme <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> Core <BR>
+<P>
+Nanoweb supports themes to be applied to server generated response messages.
+This directive loads a template file on server startup, which then can be
+activated on a per-directory basis using the
+<A HREF="#servertheme">ServerTheme</A> directive. You can give the full path
+to the theme file; but if you set the default configuration path using
+the <A HREF="#configdir">ConfigDir</A> directive you can leave that out,
+as theme files are usually located there, too.
+<br>
+Theme files can be loaded from inside a .nwaccess configuration file, too.
+<br>
+For more information about this, please see the manual section about
+<A HREF="themes.html">Themes</A>.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="log">Log</A></B> directive</BIG></DIV>
+<B>Syntax:</B> Log = /var/log/nanoweb/access.log <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+Specifies the file where nanoweb notes all served requests. This file will
+contain one line for each requested file with informations on where the
+request origined, when it occoured, and if it succeded (file found) beside
+with some other notes.
+<br> The format of this file is the same as with apache and often referred
+to as »common« or »combined« »log file format«, thus you can run some
+evalution program like "awstats" on it to generate a monthly traffic report
+for your site.
+<br> You can leave out the absolute path name, if a default path is already 
+set by <A HREF="#logdir">LogDir</A>.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="logdir">LogDir</A></B> directive</BIG></DIV>
+<B>Syntax:</B> LogDir = /var/log/nanoweb/ <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+Sets the default directory for log files (see <A HREF="log">Log</A> and
+<A HREF="serverlog">ServerLog</A>), so you can give simple file names
+there.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="loggerprocess">LoggerProcess</A></B> directive</BIG></DIV>
+<B>Syntax:</B> LoggerProcess = 2 <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+Logger Process support. If enabled, nanoweb will spawn logger processes at
+launch and all logging will be done by them. This can help if you are using
+User or Group directives or simply want more performance from the server.
+Set to the number of loggers you want, or 0 to disable.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="loggeruser">LoggerUser</A></B> directive</BIG></DIV>
+<B>Syntax:</B> LoggerUser = userid <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+User the nanoweb loggers will run as.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="loggergroup">LoggerGroup</A></B> directive</BIG></DIV>
+<B>Syntax:</B> LoggerGroup = groupid <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+Group the nanoweb loggers will run as.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG>LogToConsole (deprecated)</BIG></DIV>
+<B>Syntax:</B> LogToConsole = 1 <BR>
+<B>Module:</B> mod_stdlog <BR>
+<P>
+<A HREF="#loghitstoconsole">LogHitsToConsole</A> replaced this directive.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="loghitstoconsole">LogHitsToConsole</A></B> directive</BIG></DIV>
+<B>Syntax:</B> LogHitsToConsole = 1 <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> <A HREF="mod_stdlog.html">mod_stdlog</A> <BR>
+<P>
+Logs every hit to standard output. Of course this requires you not to run
+nanoweb in daemon mode via <tt>nanoctl start</tt>, you need to run
+nanoweb.php from your vterminal/shell. Additionally the --quiet option given
+to nanoweb.php allows you to disable this on the fly (this is neccessary for
+inetd mode for example), so you don't need to change the configuration files.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="loghitstoconsole">LogHitsToServerLog</A></B> directive</BIG></DIV>
+<B>Syntax:</B> LogHitsToServerLog = 1 <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> <A HREF="mod_stdlog.html">mod_stdlog</A> <BR>
+<P>
+Logs hits additionally to the standard server log, which normally wouldn't
+contain these (<tt>access.log</tt> used to contain hits).
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="logtype">LogType</A></B> directive</BIG></DIV>
+<B>Syntax:</B> LogType = common | common-with-vhost | combined<BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+Sets the format used for log files (see <A HREF="log">Log</A>) output.
+»common« is the NCSA Common Log Format (also known as »clf«),
+»common-with-vhost« is the same as CLF, but with support for multiple hosts,
+»combined« is the extended CLF format used by Apache, which also reports
+user agent and referer informations.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="maxrequestbodylength">MaxRequestBodyLength</A></B> directive</BIG></DIV>
+<B>Syntax:</B> MaxRequestBodyLength = 1000000 <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+Limits the size of the request body (the content of POST and PUT request),
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="maxrequesturilength">MaxRequestURILength</A></B> directive</BIG></DIV>
+<B>Syntax:</B> MaxRequestURILength = 512 <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+Sets the maximum length of the request URIs nanoweb will accept. Usually
+the size of URLs is already limited at client side (IE for example: 1024
+characters) but for security reasons you may wish to trim it here.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="maxservers">MaxServers</A></B> directive</BIG></DIV>
+<B>Syntax:</B> MaxServers = 25 <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+Limits the number of subservers (child processes) Nanoweb will create at
+maximum.
+A setting of 0 permits unlimited server processes.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="metafetch">MetaFetch</A></B> directive</BIG></DIV>
+<B>Syntax:</B> MetaFetch = fast | regex | no | 0 <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <a href="mod_meta.html">mod_meta</a> <BR>
+<P>
+This directive tells mod_meta how to fetch the http header fields given in
+the &lt;META&nbsp;HTTP-EQUIV&gt; tags in .html files. The default
+<b>fast</b> method is only suitable if your html files are very well formed,
+the <b>regex</b> method is often more reliable and fetches non-http meta
+information as well, but is therefor much slower. The <b>no</b> disables
+opening the .html files for scanning, so only the headers found in every
+files companion *.meta file are attached to http answers. mod_meta gets fully
+disabled only by setting this directive to <b>0</b>.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="methodhandler">MethodHandler</A></B> directive</BIG></DIV>
+<B>Syntax:</B> MethodHandler = METHOD /cgi-bin/METHOD_handler.php <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <a href="mod_method_handler.html">mod_method_handler</a> <BR>
+<P>
+Defines a 'httpd user space' CGI script that handles HTTP requests with
+non-standard methods. The given script is called like a standard handler
+(as in mod_misc_filters) with the requested file given in $PATH_INFO. The
+path to the handler script must be absolute to the docroot.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="mispellaction">MispellAction</A></B> directive</BIG></DIV>
+<B>Syntax:</B> MispellAction = advice <BR>
+<B>Context:</B> Server Config (modules.conf) <BR>
+<B>Module:</B> <A HREF="mod_mispell.html">mod_mispell</A> <BR>
+<P>
+The <A HREF="mod_mispell.html">mispell module</A> handles incorrectly
+entered URLs. If a file with the given name cannot be found on the server
+this module tries to figure out the correct name by checking the sounding of the
+filename against that of the files located on the server.
+<br> This directives says what to do if it finds the correct name for the
+requested file. Default is »<b>advice</b>« which sends back an error page to
+the user, presenting him the corrected URL. You can also specify »<b>redirect</b>«
+which will send back a HTTP redirection response to the browser, so the users
+browser automagically re-requests with the corrected URL.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="mimetypes">MimeTypes</A></B> directive</BIG></DIV>
+<B>Syntax:</B> MimeTypes = /etc/mime.types <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+Reads in the system-wide available MIME-types database from given file, and
+thus makes nanoweb recognize hundreds of typical file extensions.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="modulesdir">ModulesDir</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ModulesDir = /usr/lib/nanoweb/modules/ <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+This directive specifies the default location of the nanoweb extension
+modules, so you don't need to give the full path name in
+<A HREF="#loadmodule">LoadModule</A> directives. You must append
+a slash to the directory name.
+<br>
+You may give this directive multiple times, nanoweb will use the module
+it finds first in one of the given paths. Due to PHP's fopen wrapper
+mechanism you could also give a http:// address here to always have the most
+current module versions available - but this is still under devolopment (and
+would be mentioned in one of your configuration files then).
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="multiviews">MultiViews</A></B> directive</BIG></DIV>
+<B>Syntax:</B> MultiViews = 1 <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <A HREF="mod_multiviews.html">mod_multiviews</A> <BR>
+<P>
+This directive enables / disables mod_multiviews, so you can use the
+negotiation features only in directories you actually need them.
+</P>
+
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="mysqlloghost">MySQLLogHost</A></B> directive</BIG></DIV>
+<B>Syntax:</B> MySQLLogHost = localhost <BR>
+<B>Context:</B> Server Config (modules.conf) <BR>
+<B>Module:</B> <A HREF="mod_mysqllog.html">mod_mysqllog</A> <BR>
+<P>
+The mysqllog module saves request hits to a database instead of saving it to
+files as mod_stdlog does. So you need to give a hostname here, where a MySQL
+database server runs on.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="mysqllogdatabase">MySQLLogDatabase</A></B> directive</BIG></DIV>
+<B>Syntax:</B> MySQLLogDatabase = databasename <BR>
+<B>Context:</B> Server Config (modules.conf) <BR>
+<B>Module:</B> <A HREF="mod_mysqllog.html">mod_mysqllog</A> <BR>
+<P>
+Sets the name of the MySQL database for request logging.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="mysqlloguser">MySQLLogUser</A></B> directive</BIG></DIV>
+<B>Syntax:</B> MySQLLogUser = mysql_username <BR>
+<B>Context:</B> Server Config (modules.conf) <BR>
+<B>Module:</B> <A HREF="mod_mysqllog.html">mod_mysqllog</A> <BR>
+<P>
+You need an account for access to a MySQL database server.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="mysqllogpassword">MySQLLogPassword</A></B> directive</BIG></DIV>
+<B>Syntax:</B> MySQLLogPassword = mysql_password <BR>
+<B>Context:</B> Server Config (modules.conf) <BR>
+<B>Module:</B> <A HREF="mod_mysqllog.html">mod_mysqllog</A> <BR>
+<P>
+You need an account for access to a MySQL database server.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="otherpriority">OtherPriority</A></B> directive</BIG></DIV>
+<B>Syntax:</B> OtherPriority = php; qs=0.3, text/html; qs=0.2, image/*; q=0.1 <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <A HREF="mod_multiviews.html">mod_multiviews</A> <BR>
+<P>
+This gives additional preferences that will help mod_multiviews in selecting
+the "best" variant when the browser didn't send an Accept: header. Note that
+you can mix file extensions (without dot!) and mime types; quality-values
+help a lot.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="parseext">ParseExt</A></B></BIG></DIV>
+<B>Syntax:</B> ParseExt = extension TYPE [parameters] <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core, <A HREF="mod_cgi.html">mod_cgi</A>, <A HREF="mod_fcgi.html">mod_fcgi</A> <BR>
+<P>
+Defines which script interpreter must be run to parse files with a given
+file extension.
+<br>
+Valid parser TYPEs are defined by the modules you loaded and the parameters
+are type dependant. CGI is the most commonly used parser type and requires the
+absolute filename of the interpreter to execute. FCGI argument is the FastCGI
+server socket, while SSI never requires any parameter.
+<br>
+See also the pages for <A HREF="mod_cgi.html">mod_cgi</A>
+<A HREF="mod_fcgi.html">mod_fcgi</A> and <A HREF="mod_include.html">mod_include</A>
+and this example:
+<PRE CLASS="samp">ParseExt = php CGI /usr/local/bin/php
+ParseExt = awk CGI /usr/bin/awk $FILENAME
+ParseExt = js CGI /usr/bin/js $FILENAME</PRE>
+<BR>
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="pathinfotryext">PathInfoTryExt</A></B> directive</BIG></DIV>
+<B>Syntax:</B> PathInfoTryExt = php <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> Core <BR>
+<P>
+This directive gives CGI extensions that should be checked for if a file
+with a pathinfo is requested but no file extension is there. You should use
+multiple PathInfoTryExt lines, one for each CGI extension you would like to
+leave out.
+<br>
+See also <A HREF="#allowpathinfo">AllowPathInfo</A>
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="pidfile">PidFile</A></B> directive</BIG></DIV>
+<B>Syntax:</B> PidFile = /var/run/nanoweb.pid <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+This directive gives a filename where nanoweb logs which pid (=process id,
+on Unix systems) it runs as.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="proxyaccesslog">ProxyAccessLog</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ProxyAccessLog = /var/log/nanoweb/proxy.log <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> <A HREF="mod_proxy.html">mod_proxy</A> <BR>
+<P>
+The proxy module generates an additonal seperate log file, as you probably
+don't want the main server log to be intermixed with request informations
+for files that are not located in your servers docroot.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="proxyallowip">ProxyAllowIP</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ProxyAllowIP = 168.192. <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> <A HREF="mod_proxy.html">mod_proxy</A> <BR>
+<P>
+Use this directive to allow hosts or all hosts from a network (with an
+abbreviated IP address range) to access the www via the nanoweb internal
+proxy server. Hosts not listed here cannot make use of the nanoweb proxy.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="proxycachedir">ProxyCacheDir</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ProxyCacheDir = /var/cache/nanoweb <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> <A HREF="mod_proxy.html">mod_proxy</A> <BR>
+<P>
+The proxy module of course needs a dedicated directory where it can save all
+the files that were requested in the past, so that they do not need to be
+fetched a second time from the real server if they get requested another
+time.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="proxycachemaxage">ProxyCacheMaxAge</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ProxyCacheMaxAge = 2592000 <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> <A HREF="mod_proxy.html">mod_proxy</A> <BR>
+<P>
+Cached pages get invalid (need to be refetched) after an amount of time
+specified with this directive, the value is in seconds.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="proxydenysite">ProxyDenySite</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ProxyDenySite = /etc/nanoweb/badsites <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> <A HREF="mod_proxy.html">mod_proxy</A> <BR>
+<P>
+If you want some servers not to be accessible through your proxy you just
+need to list them in a text file (one server name per line) which you
+specify here; so access to such servers will be forbidden.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="proxydenypopup">ProxyDenyPopup</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ProxyDenyPopup = /etc/nanoweb/popup.txt <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> <A HREF="mod_proxy.html">mod_proxy</A> <BR>
+<P>
+The proxy module can additonally filter popups out of delivered pages, if
+they match one of the regexs listed in the specified file.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="proxydenypub">ProxyDenyPub</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ProxyDenyPub = /etc/nanoweb/images.txt <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> <A HREF="mod_proxy.html">mod_proxy</A> <BR>
+<P>
+This directive enables you to filter images. Just put a line with the
+filename or URL into the file »images.txt« for every image, that you do
+not want to be delivered through the proxy.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="refererallow">RefererAllow</A></B> directive</BIG></DIV>
+<B>Syntax:</B> RefererAllow = http://www.google.com <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <A HREF="mod_access_referer.html">mod_access_referer</A> <BR>
+<P>
+In a context where RefererCheck has been activated, this allows requests refered by the defined URL (or part of URL) to be processed as if they were coming from the local site
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="referercheck">RefererCheck</A></B> directive</BIG></DIV>
+<B>Syntax:</B> RefererCheck = 1 <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <A HREF="mod_access_referer.html">mod_access_referer</A> <BR>
+<P>
+When activated, nanoweb will answer every request which referer is nonempty and differs from the <A HREF="#servername">ServerName</a> with a 403 Forbidden error page.
+<br>
+Other exceptions than the <A HREF="#servername">ServerName</A> can be set with the <A HREF="#refererallow">RefererAllow</A> directive.
+</P>
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="reflectrewriting">ReflectRewriting</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ReflectRewriting = 1 <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <A HREF="mod_rewrite.html">mod_rewrite</A>, <A HREF="mod_multiviews.html">mod_multiviews</A> <BR>
+<P>
+If a URL is rewritten via a RewriteRule or because of some content
+negotiation, this setting influences if the rewritten URL (or if unset
+the requested one) shall be presented in error messages that may occur.
+<br>
+Enabling this probably leads to trouble if you also run
+<A HREF="mod_proxy.html">mod_proxy</A>.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="rewriterule">RewriteRule</A></B> directive</BIG></DIV>
+<B>Syntax:</B> RewriteRule REGEX REPLACEMENT [flags,...] <BR>
+<B>Context:</B> .nwaccess <BR>
+<B>Module:</B> <A HREF="mod_rewrite.html">mod_rewrite</A> <BR>
+<P>
+Mappes the requested file name to real one by rewriting with usage of
+regular expressions pattern matching. Please refer to the modules`
+documentation for a short explanation.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="rewritecond">RewriteCond</A></B> directive</BIG></DIV>
+<B>Syntax:</B> RewriteCond TESTSTRING CONDPATTERN [flags,...] <BR>
+<B>Context:</B> .nwaccess <BR>
+<B>Module:</B> <A HREF="mod_rewrite.html">mod_rewrite</A> <BR>
+<P>
+Does additional regex tests that trigger if the following RewriteRule gets
+executed (on success of this RewriteCond).
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="requesttimeout">RequestTimeout</A></B> directive</BIG></DIV>
+<B>Syntax:</B> RequestTimeout = 15 <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+Nanoweb will wait specified amount of time for receival of the actual http
+request after a TCP/IP connection was established, before it closes this
+connection again to not prevent others from correctly connecting.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="serveradmin">ServerAdmin</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ServerAdmin = webmaster@example.com <BR>
+<B>Context:</B> Server Config, Virtual Hosts <BR>
+<B>Module:</B> Core <BR>
+<P>
+Admin mail address present in most of the server generated pages (errors,
+status, directory listings).
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="serveralias">ServerAlias</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ServerAlias = www.secondname.example.net <BR>
+<B>Context:</B> Server Config, Virtual Hosts <BR>
+<B>Module:</B> Core <BR>
+<P>
+As there can be only one default <A HREF="#servername">ServerName</A>, you
+may use this directive to let nanoweb listen to additional DNS names (just
+give multiple lines here).
+<br>
+You can optionally give a port number after the server name.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="serverfakesignature">ServerFakeSignature</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ServerFakeSignature = apache/1.3.19 (Unix) Debian GNU/Linux PHP/4.0.6<BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> Core <BR>
+<P>
+If you'd like to annoy possible attackers to your webserver you can give
+them false informations on which webserver you are actually running using
+this directive.
+<br>
+You have to enable this behaviour by additionally changing the
+<a href="#serversignature">ServerSignature</a> directive to '<b>fake</b>'.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="serverlog">ServerLog</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ServerLog = /var/log/nanoweb/server.log  logmode<BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+The ServerLog directive may be given multiple times, to let nanoweb create separate
+files where runtime informational messages are written to. Having multiple
+of them makes sense, because the second parameter (logmode) to this directive allows
+you to filter parts of the possible server messages.
+<br>
+The internally generated server messages are divided into the classes: <b>error</b>,
+<b>notice</b> <b>warning</b>, <b>debug</b>, and <b>hit</b>. You can even say
+<b>all</b> or <b>default</b> here, or give multiple modes by connecting them with
+the plus sign, like "error+warning+hit" for example.
+<br>
+<PRE CLASS="samp">
+ServerLog = /var/log/nanoweb/server.log default+hit
+ServerLog = /dev/tty9 all
+ServerLog = /var/log/nanoweb/error.log error+warning
+ServerLog = /var/log/nanoweb/server.debug notice+warning
+</PRE>
+<br>
+If you leave out the logmode parameter, the default will apply, which is
+logging notices, errors and warnings to the specified file.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="servermode">ServerMode</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ServerMode = standalone <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+You may wish to run nanoweb in <b>standalone</b> mode in most cases. This is,
+the nanoweb server is started to stay resident in memory and waiting for
+incoming connections.
+<br>
+Another variant of using the nanoweb server is by invoking it via
+<b>inetd</b> - the »internet superserver« used on many UNIX systems to startup
+internet services on oncoming requests, which leads to some overhead and is
+slower in general as one copy of nanoweb.php needs to be executed for each
+requested file.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="servername">ServerName</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ServerName = www.example.com <BR>
+<B>Context:</B> Server Config, Virtual Hosts <BR>
+<B>Module:</B> Core <BR>
+<P>
+Default DNS-name of this server. You may append a port number to the name.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="serversignature">ServerSignature</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ServerSignature = full | os | prod | min | off | fake <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> Core <BR>
+<P>
+Webservers usually reveal their name and version in the HTTP answer headers,
+but you can restrict nanoweb in how much information it gives away. Per
+default (<b>full</b>) it tells "nanoweb/NW_VERSION OPERATING_SYS PHP_VERSION",
+with this directive set to <b>os</b> it leaves out the PHP version,
+<b>min</b> still includes the nanoweb version but <b>prod</b> only tells
+"nanoweb" (the product name).
+<br>
+Finally you can disable the output fully with <b>off</b>. But much more funny
+it is to give clients wrong information instead using <b>fake</b> and the
+<a href="#serverfakesignature">ServerFakeSignature</a>.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="servertheme">ServerTheme</A></B> directive</BIG></DIV>
+<B>Syntax:</B> ServerTheme = default <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> Core <BR>
+<P>
+This directive selects one of the theme templates (loaded using
+<A HREF="#loadtheme">LoadTheme</A>) to be applied to server generated
+responses like error messages or directory listings.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="singleprocessmode">SingleProcessMode</A></B> directive</BIG></DIV>
+<B>Syntax:</B> SingleProcessMode = 1 <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+This is used to force nanoweb in single process mode (which is usually slower
+than the default process forking mode). You should uncomment it when running
+in win32 or if your php binary was not compiled with pcntl.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="statusallowhost">StatusAllowHost</A></B> directive</BIG></DIV>
+<B>Syntax:</B> StatusAllowHost = 127.0.0.1 <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> <a href="mod_status.html">mod_status</a> <BR>
+<P>
+This gives an IP of a host allowed to consult the server status through
+<A HREF="http://localhost/server-status">/server-status</A>. Multiple lines
+with this directive may be specified; an
+incomplete IP address can be used to allow a range of host addresses to be
+granted access.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="staticbuffersize">StaticBufferSize</A></B> directive</BIG></DIV>
+<B>Syntax:</B> StaticBufferSize = 1048576 <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core (<a href="mod_static.html">mod_static</a>) <BR>
+<P>
+Limits the chunk size of static files to 1M per default, because nanoweb
+cannot keep files with unlimited size in memory. You may in fact speed up
+requests (for some cases) if you lower this value.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="staticdisablepartial">StaticDisablePartial</A></B> directive</BIG></DIV>
+<B>Syntax:</B> StaticDisablePartial = 0 <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core (<a href="mod_static.html">mod_static</a>) <BR>
+<P>
+Disallows http clients to retrieve only parts of a resource/file, when set
+to 1. Usually the partial GET is used by clients like 'wget' to resume a
+stopped/unfinished previous download attemp.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="tempdir">TempDir</A></B> directive</BIG></DIV>
+<B>Syntax:</B> TempDir = /tmp <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+This specifies where nanoweb shall put temporary files into, so this
+directory should be read+writeable by the user/group nanoweb will run as.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B>TempDirectory</B> (obsolete)</BIG></DIV>
+<B>Syntax:</B> TempDirectory = /tmp <BR>
+<B>Replaced by:</B> <A HREF="#tempdir">TempDir</A> <BR>
+<P>
+This directive was renamed to <A HREF="#tempdir">TempDir</A> in 2.1.1 to
+match general naming syntax.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="user">User</A></B> directive</BIG></DIV>
+<B>Syntax:</B> User = userid <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> Core <BR>
+<P>
+Default user nanoweb will run as (the user name is »www-data« per dafault).
+</P>
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="userdir">UserDir</A></B> directive</BIG></DIV>
+<B>Syntax:</B> UserDir = public_html <BR>
+<B>Context:</B> Server Config, Virtual Hosts <BR>
+<B>Module:</B> Core <BR>
+<P>
+This is the subpath which nanoweb will look for in users homedir
+when an URL like <tt>http://webserver/~user</tt> is requested.
+<br>
+This directive can be set in the global section or for each virtual host.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="wormsrun">WormsRun</A></B> directive</BIG></DIV>
+<B>Syntax:</B> WormsRun = /usr/bin/command [args...] <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> <a href="../README.mod_worms">mod_worms</a> <BR>
+<P>
+Commands specified with such directives are executed, if a worm is detected.
+<br>
+Please refer to the file <a href="../README.mod_worms">README.mod_worms</a>
+(in the docs/ directory of the unpacked tarball) as mod_worms requires
+additional preparation to work.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="wormswpoptext">WormsWpopText</A></B> directive</BIG></DIV>
+<B>Syntax:</B> WormsWpopText = message text ... <BR>
+<B>Context:</B> Server Config <BR>
+<B>Module:</B> mod_worms <BR>
+<P>
+Text that is sent to the offending IIS server console.
+</P>
+
+
+<BR>
+<BR><!--#################################################-->
+<DIV CLASS="directive"><HR NOSHADE><BIG><B><A NAME="writeaccess">WriteAccess</A></B> directive</BIG></DIV>
+<B>Syntax:</B> WriteAccess = 1 <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<B>Module:</B> <a href="mod_method_put.html">mod_method_PUT</a> <BR>
+<P>
+This directive enables writing files via HTTP for clients that support the
+PUT request method.
+<br>
+You shouldn't enable this setting in the main configuration file or one of
+the vhost sections; it is often a good idea to allows this type of access only
+for selected directories (in a .nwaccess file), even if the PUT module only
+can write to files and directories that have the world-writable bit set or
+that are owned by the default Nanoweb user/group.
+</P>
+
+
+
+<BR><BR><HR NOSHADE COLOR="#063039">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

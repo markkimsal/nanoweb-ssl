@@ -1,0 +1,25 @@
+#!/bin/sh
+
+# Nanoweb inetd wrapper script (c) 2002 by Vincent Negrier <six@aegis-corp.org>
+
+PEERNAME=`getpeername -n`
+export INETD_REMOTE_IP=`echo $PEERNAME |cut -d' ' -f1`
+export INETD_REMOTE_PORT=`echo $PEERNAME |cut -d' ' -f2`
+
+case "$1" in
+
+	-ssl)
+	
+		# SSL inetd operation (with stunnel)
+		/usr/sbin/stunnel -p/etc/ssl/certs/nanoweb.pem -l/usr/local/bin/php -- -q -f /usr/sbin/nanoweb.php --config="/etc/nanoweb/nanoweb.conf" --set-option="servermode=inetd"
+
+	;;
+
+	*)
+
+		# Normal inetd operation
+		/usr/sbin/nanoweb.php --config="/etc/nanoweb/nanoweb.conf" --set-option="servermode=inetd"
+
+	;;
+
+esac

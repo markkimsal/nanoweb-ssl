@@ -1,0 +1,345 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>nanoweb Modules</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H1 ALIGN="CENTER">nanoweb Modules</H1>
+
+The configuration files of nanoweb reside in <tt>/etc/nanoweb/</tt>; there
+you'll find <b>modules.conf</b> containing lots of
+<a href="core.html#loadmodule">LoadModule</a> directives registering
+extension modules to the server core. If you want to have another
+overview of supported features, have a look at the page with
+<A HREF="core.html">all available configuration directives</A>.
+
+
+<TABLE BORDER="0" CALLPADDING="2" CELLSPACING="3">
+<COLGROUP><COL WIDTH="15%"><COL WIDTH="10%"><COL WIDTH="75%"></COLGROUP>
+
+<TR>
+  <TD COLSPAN="3"> <br><b>core modules</b>
+  <br><small>following modules are essential parts of nanoweb and thus <i>must</i> always be loaded:</small></TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_static.html">mod_static</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>core</b> </TD>
+  <TD> This module makes standard files from the docroot accessible to nanoweb
+       through the internal "parser" interface.
+  </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_fb.html">mod_fb</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>core</b> </TD>
+  <TD> FileBrowser. Without this module you wouldn't get those fancy
+       directory listings, which is probably the most heavily used
+       nanoweb extension.
+  </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_pfilters.html">mod_pfilters</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>core</b> </TD>
+  <TD> Filters are an extension to the internal "parser" representation
+       of all files and content served by nanoweb. If this module isn't
+       loaded, you probably run into trouble with some other extensions.
+  </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_ac.html">mod_ac</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>core</b> </TD>
+  <TD> The Access Control module allows to restrict access to the webserver to
+       only some hosts, or to deny access only for some of them.
+  </TD>
+</TR>
+
+<TR>
+  <TD COLSPAN="3"> <br><b>standard modules</b> </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_cgi.html">mod_cgi</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>standard</b> </TD>
+  <TD> CGI Parsing Module. You can register any script language interpreter
+       (PHP, Perl, Python, AWK, Ruby, Shell, JavaScript, ...) with the
+       <A HREF="core.html#parseext">ParseExt</A> directive to let the
+       according files be processed by this module.
+  </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_include.html">mod_include</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>standard</b> </TD>
+  <TD> Server Side Includes support (therefore formerly called mod_ssi) </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_gzip.html">mod_gzip</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>standard</b> </TD>
+  <TD> GZIP Content Encoding support<br>
+       This module tries to compress all your files <b>on the fly</b> with
+       the gzip encoding, which is understood by all recent browsers.
+  </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_status.html">mod_status</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>standard</b> </TD>
+  <TD> online server status reports </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_load_limit.html">mod_load_limit</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>standard</b> </TD>
+  <TD> Stops nanoweb from serving pages if the load average gets too high. </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_mispell.html">mod_mispell</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>standard</b> </TD>
+  <TD> Mispelled URL correction support allows to select the correct file if
+       a user request had some typos. A redirect or a notice can be send
+       back. </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_auth_simple.html">mod_auth_simple</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>standard</b> </TD>
+  <TD> authentication with user names and passwords given in one of the
+       configuration files (.nwaccess files most probably) </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_auth_htpasswd.html">mod_auth_htpasswd</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>optional</b> </TD>
+  <TD> enables to use the authentication files from the apache webserver </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_auth_nwauth.html">mod_auth_nwauth</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>optional</b> </TD>
+  <TD> Nanoweb authentication files look pretty much like the apache-style
+       password-login files. </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_auth_mysql.html">mod_auth_mysql</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>optional</b> </TD>
+  <TD> This authentication module allows you to use an already existing
+       database with a table of user/password pairs to restrict access to
+       directories/areas of your webserver. </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_auth_pgsql.html">mod_auth_pgsql</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>optional</b> </TD>
+  <TD> likewise for PostgreSQL </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_auth_ldap.html">mod_auth_ldap</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>optional</b> </TD>
+  <TD> Authentication information (login names and passwords) can also
+       be accessed via LDAP using this module. </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_auth_anydb.html">mod_auth_anydb</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>optional</b> </TD>
+  <TD> This authentication module allows to use nearly any database, because
+       it can utilize itself one of the database abstraction interfaces
+       PEAR::DB, ADOdb or PHP dbx. </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_auth_anonymous.html">mod_auth_anonymous</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>optional</b> </TD>
+  <TD> Allows ftp-like "anonymous login" authentication (a user must only
+       submit its email address). </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_proxy.html">mod_proxy</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>optional</b> </TD>
+  <TD> Proxy Server inside nanoweb.
+       <br>
+       The Proxy server implemented by this module is primarily a caching
+       one (but introduces many filtering mechanisms as well), which means
+       that it can speed up http requests if all computers of your local
+       network are configured to request pages through nanoweb/mod_proxy. </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_dosevasive.html">mod_dosevasive</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>optional</b> </TD>
+  <TD> Prevents your server from going down due to attacks following the
+       »Denial of Service« routine.
+  </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_multiviews.html">mod_multiviews</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>optional</b> </TD>
+  <TD> MultiViews enables nanoweb to perform transparent content negotiation
+       with or without support from the requesting browser.
+ </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_meta.html">mod_meta</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>optional</b> </TD>
+  <TD> Reads .html files and makes the content of &lt;META&nbsp;HTTP-EQUIV&gt;
+       tags available as usual http response headers (for use by other
+       extension modules as well).
+ </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_fcgi.html">mod_fcgi</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>optional</b> </TD>
+  <TD> FastCGI support. </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_mysqllog.html">mod_mysqllog</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>optional</b> </TD>
+  <TD> Log is written into a MySQL database. </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_stdlog.html">mod_stdlog</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>optional</b> </TD>
+  <TD> Writes log to stdout (console). </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_rewrite.html">mod_rewrite</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>optional</b> </TD>
+  <TD> RewriteEngine (powerful URI to filename mapping) allows you to
+       introduce a very flexible virtual directory layer. </TD>
+</TR>
+
+<TR>
+  <TD COLSPAN="3"> <br><b>various other goodies</b> </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_method_put.html">mod_method_PUT</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>add-on</b> </TD>
+  <TD> Adds support for the "PUT" request method, which is used by some
+       clients to upload files (something like FTP over HTTP). </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_method_trace.html">mod_method_TRACE</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>add-on</b> </TD>
+  <TD> Enables Nanoweb to reply to requests with the HTTP "TRACE" request
+       method, which can be used to echo the incoming HTTP request. </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_method_handler.html">mod_method_handler</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>add-on</b> </TD>
+  <TD> Allows to use CGI's to extend nanoweb with non-standard (user defined,
+       experimental or other extension protocol) http request methods. </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_access_rbl.html">mod_access_rbl</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>add-on</b> </TD>
+  <TD> RBL checks (see <A HREF="http://mail-abuse.org/rbl">mail-abuse.org/rbl</A>) </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_emailprotect.html">mod_emailprotect</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>add-on</b> </TD>
+  <TD> Encodes &lt;A&nbsp;HREF="mailto:..."&gt; to hide email addresses
+       from spambots. It does so by requiring to POST submit a &lt;FORM&gt;
+       before a mail address gets clearly readable. </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_access_referer.html">mod_access_referer</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>add-on</b> </TD>
+  <TD> Deny linking from external sites </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_bsp.html">mod_bsp</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>add-on</b> </TD>
+  <TD> Brainfuck Server Pages </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_asis.html">mod_asis</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>add-on</b> </TD>
+  <TD> Support for apache-style .asis files, which carry http headers
+       before the actual content. </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_lnk.html">mod_lnk</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <B>optional</B> </TD>
+  <TD> This module allows to use .lnk files to reference to another
+       filesystem location or remote proto:// source. Additonally enables
+       Win32 visual shortcut files to be used like symlinks.
+  </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A NAME="mod_digest">mod_digest</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>add-on</b> </TD>
+  <TD> Computes the MD5 checksum of transmitted static content if the
+       <A HREF="core.html#contentmd5">ContentMD5</A> directive activates
+       it. </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_throttle.html">mod_throttle</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>add-on</b> </TD>
+  <TD> Allows to limit the download transfer speed to a fixed amount for all
+       requests to the specified server, vhost or directory.</TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_libphp.html">mod_libphp</A></B> <SMALL>(useless)</SMALL> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>add-on</b> </TD>
+  <TD> guessworking internal-PHP-execution module </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="../README.mod_worms">mod_worms</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>add-on</b> </TD>
+  <TD> Module that warns you about attacks targeting to scripting bugs
+       regularily found in IIS (no problem with nanoweb usually),<br>
+       but please refer to the <A HREF="../README.mod_worms">README</A> on
+       mod_worms. </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_fb2.html">mod_fb2</a></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>add-on</b> </TD>
+  <TD> Alternative filebrowser module (lists directory contents, when no
+       "index.html" is there). This one is more icon centric than the
+       recommended <a href="mod_fb.html">mod_fb</a>. </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="mod_msff.html">mod_msff</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <B>add-on</B> </TD>
+  <TD> Microsoft®-Free Fridays is a campaign against IE's »Smart-Tags®«.
+  </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B><A HREF="../README.mod_unzip">mod_unzip</A></B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <B>add-on</B> </TD>
+  <TD> Allows serving files from inside ZIP archives (while still allowing
+       the .zip to get downloaded as usual).
+  </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B>mod_gunzip</B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <A HREF="http://nanoweb.si.kz/downloads/near/">separate</A> </TD>
+  <TD> Decompresses gzip encoded files on the fly if a client without support
+       for transfer encodings requests such a pre-compressed file. This module
+       so does the opposite of mod_gzip. It is believed that this method is
+       faster than using mod_gzip because most browsers support gzip nowadays,
+       and even if one didn't, decompression is much faster than compression.
+  </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B>mod_mysql_scheme</B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <A HREF="http://nanoweb.si.kz/downloads/near/">separate</A> </TD>
+  <TD> This PHP extension module introduces a mysql:// access fopen handler.
+       It is intended to be used with <a href="mod_lnk.html">mod_lnk</a> to
+       allow access to "files" contained in a column of a MySQL database
+       table.
+  </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <B>mod_mp3</B> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <A HREF="http://nanoweb.si.kz/downloads/near/">separate</A> </TD>
+  <TD> Makes your mp3 collection available through a www interface.
+  </TD>
+</TR>
+</TABLE>
+
+
+<BR><BR><HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

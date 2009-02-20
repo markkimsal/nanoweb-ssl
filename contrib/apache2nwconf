@@ -1,0 +1,123 @@
+#!/usr/local/bin/php -q
+<?php ($prev_pwd = getenv("PWD")) and chdir($prev_pwd);
+
+#-- options
+$CONVERT_GENERAL_SETTINGS = 0;		# not recommended - edit the
+					# nanoweb.conf for fine tuning!
+
+#-- conversion tables
+$c_1 = array(
+	"documentroot" => "DocumentRoot",
+	"servername" => "ServerName",
+	"directoryindex" => "DirectoryIndex",
+	"alias" => "Alias",
+	"languagepriority" => "LanguagePriority",
+	"servertype" => "ServerMode",
+  //	"timeout" => "RequestTimeout",
+  //	"maxservers" => "MaxServers",
+  //	"maxkeepaliverequests" => "KeepAlive",
+	"serveradmin" => "ServerAdmin",
+	"user" => "User",
+	"group" => "Group",
+	"typesconfig" => "MimeTypes",
+	"defaulttype" => "DefaultContentType",
+	"addtype" => "AddType"
+);
+$c_2 = array(
+	"serveralias" => "ServerAlias",
+	"bindaddress" => "ListenInterface",
+	"port" => "ListenPort",
+);
+
+#-- help
+$fa = @$argv[1];
+if (($argc < 2) || eregi('^-+h|/[h?]', $fa)) {
+	echo<<<EOT
+
+usage:  apache2nwconf /etc/apache/httpd.conf > /etc/nanoweb/vhosts.conf
+        apache2nwconf -a > nw-vhosts.conf
+
+Convertes apache httpd virtual host configuration for use with the nanoweb
+http server. Change the program source to tweak some conversion parameters.
+
+
+EOT
+	;
+
+}
+else {
+
+	if (eregi('^-+a', $fa)) {
+		$fa = "/etc/apache/httpd.conf";
+	}
+	if (!($ac = file($fa))) {
+		die("Could not read »$fa«\n");
+	}
+
+	$sect = "global";
+	$conf = array();
+	$conf["global"]["ServerName"][0]="localhost";
+
+	foreach ($ac as $line) {
+
+		$line = trim($line); if (empty($line) || ($line[0] == "#")) continue;
+
+		if ($line[0] == "<") {
+			if ($line[1] == "/") {
+				$sect = "global";
+			}
+			elseif (preg_match('/^<VirtualHost\s+([^>\s]+)/', $line, $uu)) {
+				$sect = $uu[1];
+			}
+		}
+		else {
+			list($directive, $value) = preg_split('/\s+/', $line, 2);
+
+			$directive = strtolower($directive);
+
+			if ($directive == "servername") {
+				if ($sect == "global") continue;
+#<off># echo "#'[$sect]'=>'[$value]'\n";
+				$conf[$value] = $conf[$sect];
+				unset($conf[$sect]);
+				$sect = $value;
+			}
+			if ($newname = @$c_1[$directive]) {
+				$conf[$sect][$newname][] = $value;
+			}
+			elseif ($newname = @$c_2[$directive]) {
+				foreach (preg_split('/\s+/', $value) as $v) {
+					$conf[$sect][$newname][] = $v;
+				}
+			}
+		}
+
+	}
+
+	#-- print $conf array in nanoweb.conf style
+	echo "# autoconverted from $fa by apache2nwconf\n# UTC(" . time() .")\n";
+	if ($CONVERT_GENERAL_SETTINGS && (@$conf["global"])) {
+		echo "\n[/global]\n# general settings imported from Apache:\n# Note that this can be dangerous!\n";
+		foreach ($conf["global"] as $dir => $a) {
+			foreach ($a as $value) {
+				echo str_pad($dir, 16) . " = $value\n";
+			}
+		}
+		echo "\n";
+	}
+	if (isset($conf["global"])) unset($conf["global"]);
+	echo "\n# VirtualHost sections\n";
+	foreach ($conf as $sect => $directives) {
+		echo "\n[$sect]\n";
+		foreach ($directives as $dir => $a) {
+			foreach ($a as $value) {
+				echo str_pad($dir, 16) . " = $value\n";
+			}
+		}
+		echo "[/$sect]\n";
+	}
+	echo "\n";
+
+}
+
+?>

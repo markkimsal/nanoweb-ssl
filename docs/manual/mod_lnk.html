@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>mod_lnk</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H2 ALIGN="CENTER">.lnk files</H2>
+
+A .lnk file can be used to redirect to another location whithin the
+filesystem or to point nanoweb to some more virtual proto:// file source.
+
+<br>
+<br>
+
+If you create such a .lnk file it should just contain a line with the
+destination path or URI:
+<pre class="samp">/path/to/other/directory/&nbsp;&nbsp;&nbsp;</pre>
+or
+<pre class="samp">ftp://ftp2.example.com/export/www/</pre>
+
+If a request <b>http://www.example.com/a.lnk/this/file.txt</b> for a .lnk
+file with a trailing path_info is detected mod_lnk will redirect Nanoweb
+to the given path or file.
+
+<br>
+<br>
+
+Of course this is not really impressive and could be done much more easily
+using syminks or the <A HREF="core.html#alias">Alias</A> directive, but as
+it comes to "virtual" file sources this module may help you. As seen above
+you can redirect to URLs as well. The ftp:// and http:// are already known 
+to PHP and can be used here. Other extension modules (like mod_mysql_scheme)
+may introduce more strange protocol sources for use with mod_lnk.
+
+<br>
+<br>
+
+mod_lnk parses Windows' visual shortcut files as well to come around the
+lack of symlinks under Win32 systems. It currently seems to work for most
+.lnk files, but you should prefer the one-line .lnk file format as described
+above.
+
+<br>
+<br>
+
+To enable mod_lnk and .lnk files you must enable it using the
+<A HREF="core.html#parseext">ParseExt</A> directive in <tt>nanoweb.conf</tt>:
+<PRE class="samp">
+ ParseExt = lnk LNK
+</PRE>
+<br>
+
+Note that requests to files redirected with .lnk files are currently handed
+over to nanowebs static_response() and thus cannot be .php scripts for
+example.
+
+<BR>
+<BR><HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

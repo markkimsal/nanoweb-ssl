@@ -1,0 +1,163 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>mod_multiviews</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H1 ALIGN="CENTER">mod_multiviews</H1>
+
+The HTTP/1.1 specifies some methods to deliver different variants of files
+based upon headers the client identifies its or its users preferences /
+capabilities. This is called content-negotiation and can be accomplished
+even if the files on the server are "static".
+
+<br>
+<br>
+
+This module now supports server-driven negotiation, and additonially allows
+the client to choose the "best" variant.
+<br>
+The selection depends on an average »quality« which is calculated with
+the qualitiy values
+of the mime type (file format), language (english, french, ...), encoding
+(compression) and features (javascript, tables, etc.) of each file.
+
+<br>
+<br>
+
+To enable the content negotiation features of nanoweb you only need to
+construct different variants of a file and give them suitable file name
+extensions. For example:
+<TABLE BORDER="0" CALLPADDING="2" CELLSPACING="3" WIDTH="80%">
+<COLGROUP WIDTH="80%"><COL WIDTH="25%"><COL WIDTH="75%"></COLGROUP>
+<TR> <TD BGCOLOR="#EEEEFF" WIDTH="25%" VALIGN="TOP"> example.en.html </TD>
+     <TD> original HTML version of the document, in english </TD> </TR>
+<TR> <TD BGCOLOR="#EEEEFF" WIDTH="25%" VALIGN="TOP"> example.js.html.gz </TD>
+     <TD> compressed HTML file (using javascript) </TD> </TR>
+<TR> <TD BGCOLOR="#EEEEFF" WIDTH="25%" VALIGN="TOP"> example.pdf </TD>
+     <TD> a pdf version of the original file </TD> </TR>
+<TR> <TD BGCOLOR="#EEEEFF" WIDTH="25%" VALIGN="TOP"> example.fr.swf </TD>
+     <TD> shockwave flash variant, in french </TD> </TR>
+</TABLE>
+<br>
+
+As all the variants of the document now have very different file extensions
+you cannot refer to them any longer using &lt;A HREF="example.html"&gt;, you
+must instead use just the basename of the file, so nanoweb and/or the client
+select the right one for you (it is still possible to reference one of the
+variants, but you probably don't want to do that).
+
+<br>
+
+In the above example most people would receive 'example.en.html'; many
+recent browsers however will trigger the compressed variant (with
+javascript), and the other two are rather bad examples here.
+
+<br>
+<br>
+
+The alogorith in mod_multiviews of course differs from the one in apache,
+but it seems to give good results; and you still could tweak it yourself
+(the source is most always available).
+<br>
+This module for example tries to multiply the different quality factors
+where possible, but if you specify more than one file type (mime) the
+according values are summed.
+Much of the algorithm depends on internal downgrading quality factors, but
+there are additionally some configuration options which also have a big
+impact on the results:
+
+
+<br>
+<BR>
+<HR><!--##################################################################-->
+<H3><A NAME="fallbackpriority">FallBackPriority directive</A></H3>
+<B>Syntax:</B> FallBackPriority = smallest | largest | newest | oldest | stupid <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<P>
+If the mime qualities of all available file variants equal, then
+mod_multiviews can at least select the smallest, largest, newest or the
+oldest file out of them.
+</P>
+
+
+<BR>
+<HR><!--##################################################################-->
+<H3><A NAME="languagepriority">LanguagePriority directive</A></H3>
+<B>Syntax:</B> LanguagePriority = en fr de <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<P>
+A browser requesting http://example.com/ will be delivered 'index.html.en'
+in favour of 'index.html.de' (if the users browser has not been configured
+to request with another language preference)<br>
+<br>
+Of course this only works if no 'index.html' exists in the docroot, which
+nanoweb otherwise would have preselected. A file called 'index.html.fr.gz'
+may get send in favour of all other variants, because of the higher priority
+of compressed content.
+</P>
+
+
+<BR>
+<HR><!--##################################################################-->
+<H3><A NAME="multiviews">MultiViews directive</A></H3>
+<B>Syntax:</B> MultiViews = 1 <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<P>
+This directive enables / disables mod_multiviews, so you can use the
+negotiation features only in directories you actually need them.
+</P>
+
+
+<BR>
+<HR><!--##################################################################-->
+<H3><A NAME="otherpriority">OtherPriority directive</A></H3>
+<B>Syntax:</B> OtherPriority = php; qs=0.28, text/html; qs=0.27, text/* <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<P>
+Is a new directive which sets priorities which come into use, when the client
+doesn't send an Accept: header As you can see, you may intermix file
+extensions (as "php" - without dot!) and mime-types known to nanoweb;
+<br>
+where you don't specify a priority value with qs= (0.0 - 1.0) a lesser
+(divided by 1.7) value as the previous one will be chosen.<br>
+<br>
+Some micro-priorities (PNGs in favour of GIFs) are built-in but can be
+overridden this way.<br>
+<br>
+Multiple OtherPriority-lines may be given in the config.
+</p>
+
+
+<BR>
+<HR><!--##################################################################-->
+<H3><A NAME="reflectrewriting">ReflectRewriting directive</A></H3>
+<B>Syntax:</B> ReflectRewriting = 1 <BR>
+<B>Context:</B> Server Config, Virtual Hosts, .nwaccess <BR>
+<P>
+If this directive isn't set, the requested URI will show up in any error
+message that may occur, if set to 1 the rewritten filename will be
+shown instead.
+<br>
+<small>
+<b>Note</b>: This directive also affects <A HREF="mod_rewrite.html">mod_rewrite</A>.
+</small>
+</P>
+
+
+<BR><HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

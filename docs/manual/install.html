@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>installing nanoweb</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H1 ALIGN="CENTER">Installing nanoweb</H1>
+
+Installation of the nanoweb web server should be fairly easy, as the
+commandline tool <b>install-sh</b> will do the work for most of you.
+<br>
+For Windows you may wish to use the <b>install.bat</b> (which should be
+customized to your needs before running it). Please have a look into the
+<A HREF="../README.windows">README about Windows installation</a> also.
+
+
+<H4>Compiling PHP</H4>
+
+Nanoweb requires the interpreter of the PHP scripting language to be
+present on your system. You can get the source code from
+<A HREF="http://www.php.net/">www.php.net</A>, but it is often much better
+to use a precompiled package (for Windows especially!) if there is one in
+your distributions CD set. However the precompiled ones often miss the
+<b>pcntl</b> extensions which gives mcuh more speed on UNIX systems, so
+you're encouraged to compile PHP yourself and to adopt it to your needs:
+
+<br>
+<br>
+
+To compile it for »CGI« or »CLI« support (the latter one is often better
+suited for standalone scripts like nanoweb)
+all you need to do is to execute the <b>configure</b> program from the
+unpacked source tarball this way:
+
+<br>
+<br>
+
+<KBD>./configure --with-<b>cgi</b> --enable-<b>cli</b> --enable-sockets --enable-pcntl</KBD>
+
+<br>
+<br>
+
+You may want to add other very common configure options like
+<tt>--with-zlib</tt> to use mod_gzip, and <tt>--with-mysql</tt> to have
+MySQL-support compiled in (but see ./configure --help for a complete list).
+
+<br>
+<br>
+
+<KBD>make</KBD> will start the build process, the binary should afterwards
+be installed using <KBD>make install</KBD>.
+
+<br>
+<br>
+
+If compilation with the above instructions fails, then you should have a look
+into the README from the PHP tarball, which starts with a »quick install
+guide«.
+
+
+<H4>Install nanoweb</H4>
+Run <KBD>./install-sh</KBD> and follow instructions ...
+<br>
+Starting from nanoweb 2.0 the install-sh will appear with a nice text or
+graphical user interface if you installed one of the "dialog" utilites
+(namely cdialog, Xdialog, whiptail or the one of the linux kernel tarball),
+so the installation or update should be much easier.
+
+<br>
+<br>
+Type 'nanoctl start' to start the server and connect to
+<A HREF="http://localhost/">http://localhost/</A> to see if it works.
+
+<br>
+
+<H4>install-sh commandline options</H4>
+<ul>
+<li> <kbd>install-sh <b>-f</b></kbd> does a quick <b>--force</b>d installation into the default
+directories. </li>
+<li> <kbd>install-sh <b>-v</b></kbd> is more <b>--verbose</b> </li>
+</ul>
+
+<br>
+
+<H4>Installing under user-account</H4>
+If you're not root you'll need to take special care for installtion
+and configuration (you can not run it on TCP port 80 as ordinary user).
+The best way to install it is then doing it by hand. You could just copy
+everything into one one directory under your home directory, this however
+requires to configure the directory names correctly inside the configuration
+files.
+
+<br>
+
+
+<BR><BR><HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

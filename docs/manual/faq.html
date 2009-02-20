@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>known bugs and common problems (OAQ)</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H1 ALIGN="CENTER">Common Problems
+<BR><SMALL>(Occasionally Asked Questions)</SMALL></H1>
+
+Bugs in Nanoweb are often resolved only minutes (!!) after they get
+<A HREF="http://forums.t0x.net/viewforum.php?f=1">reported</A>. There are
+however not only bugs in Nanoweb, most problems result from misconfiguration
+or bugs of the PHP scripting language interpreter.
+
+<br>
+
+<TABLE BORDER="0" CALLPADDING="2" CELLSPACING="3">
+<COLGROUP><COL WIDTH="35%"><COL WIDTH="65%"></COLGROUP>
+
+<TR>
+  <TH BGCOLOR="#FFEEEE" WIDTH="35%" VALIGN="TOP">
+	problem
+  </TH>
+  <TH BGCOLOR="#EEEEFF" WIDTH="65%" VALIGN="TOP">
+	why and where?
+  </TH>
+</TR>
+
+<TR>
+  <TD BGCOLOR="#FFEEEE" WIDTH="35%" VALIGN="TOP">
+	"Security Alert! The PHP CGI cannot be accessed directly."
+  </TD>
+  <TD BGCOLOR="#EEEEFF" WIDTH="65%" VALIGN="TOP">
+	Your PHP interpreter was probably compiled using
+        --enable-force-cgi-redirect. This option is recommended for
+	the Apache webserver for security reasons. 
+	Nanoweb installations are however less vulnerable to such attacks
+	and therefor you should disable this paranoia setting in the
+	php.ini with:<br>
+	<KBD>cgi.force_redirect=0</KBD><br>
+	or better in the nanoweb.conf using:<br>
+	<KBD>AddServerVar = REDIRECT_STATUS 200</KBD>
+  </TD>
+</TR>
+
+<TR>
+  <TD BGCOLOR="#FFEEEE" WIDTH="35%" VALIGN="TOP">
+	Nanoweb is that slow under Windows!! (Only one person can
+	connect at a time)
+  </TD>
+  <TD BGCOLOR="#EEEEFF" WIDTH="65%" VALIGN="TOP">
+	This is because nanoweb must run in the <A HREF="core.html#singleprocessmode">SingleProcessMode</A>
+	because current PHP.exe versions do not provide a wrapper to the
+	POSIX fork() system call (which exists as a variant at least for NT).
+	If you know how to do, you could compile PHP yourself using the
+	Cygwin GCC to get a fully working version.<br>
+	Another solution is to run Nanoweb in inetd mode using a binary
+	ineternet superserver. Such a inetd.exe can be retrieved at Cygwin,
+	some Shareware and Commercial implementations are also available and
+	newer NT versions reportedly supply some sort of inetd. The next
+	release of the Winstaller will probably contain a preconfigured one.
+  </TD>
+</TR>
+
+<TR>
+  <TD BGCOLOR="#FFEEEE" WIDTH="35%" VALIGN="TOP">
+	PATH_INFO is empty / not passed to my scripts if the referenced file
+	exists
+  </TD>
+  <TD BGCOLOR="#EEEEFF" WIDTH="65%" VALIGN="TOP">
+	This is a PHP bug introduced with 4.3.0. Someone "enhanced" the
+	CGI-version of the PHP interpreter to "correct" this CGI environment
+	var. Stupidly Nanoweb handles and sets the PATH_INFO correctly (if
+	it wasn't disabled with <A HREF="core.html#cgifilterpathinfo">CGIFilterPathInfo</A>
+	or <A HREF="core.html#allowathinfo">AllowPathInfo</A>
+        which were necessary for older PHP versions with much more heavy
+	PATH_INFO related bugs). Btw, Nanoweb is not vulnerable to the
+	attack that misleaded the PHP authors to damage the CGI version that way.
+	<br>
+	To prevent PHP from garbaging the CGI environment variables, you must add the
+	directive <B><KBD>cgi.fix_pathinfo=0</KBD></B> to your
+	<TT>php.ini</TT>.
+  </TD>
+</TR>
+
+<TR>
+  <TD BGCOLOR="#FFEEEE" WIDTH="35%" VALIGN="TOP">
+	nanoweb.php does not respond to commandline parameters
+  </TD>
+  <TD BGCOLOR="#EEEEFF" WIDTH="65%" VALIGN="TOP">
+	See your php.ini and activate "register_argc_argv" as this is
+	defaultly disabled (because commonly not used in PHP webscripts).
+  </TD>
+</TR>
+
+<TR>
+  <TD BGCOLOR="#FFEEEE" WIDTH="35%" VALIGN="TOP">
+	"FATAL: function 'socket_create' not available, aborting"
+  </TD>
+  <TD BGCOLOR="#EEEEFF" WIDTH="65%" VALIGN="TOP">
+	Your PHP interpreter does not support all the socket_* functions,
+	which are necessary for nanoweb to operate as server daemon.
+	If you use a distributed (precompiled in a win or linux install
+	package) PHP your lucky: just activate the extension module in the
+	php.ini ("extension=php_sockets.dll). Otherwise you must recompile
+	your interpreter using the --enable-sockets switch to the configure
+	script.
+  </TD>
+</TR>
+
+<TR>
+  <TD BGCOLOR="#FFEEEE" WIDTH="35%" VALIGN="TOP">
+	Output of .php (.cgi) scripts are empty pages
+  </TD>
+  <TD BGCOLOR="#EEEEFF" WIDTH="65%" VALIGN="TOP">
+	This usually happens if the CGI interpreter cannot be found, and
+	thus the script won't be "executed" correctly. Check the
+	<A HREF="core.html#parseext">ParseExt</A> directive in your config
+	files, and change the path name of your script interpreter.
+  </TD>
+</TR>
+
+</TABLE>
+
+
+<BR><BR><HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

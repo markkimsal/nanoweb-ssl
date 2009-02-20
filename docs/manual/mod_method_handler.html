@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>mod_method_handler</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H2 ALIGN="CENTER">Extension Protocol and User Request Methods Support</H2>
+
+With the <a href="core.html#methodhandler">MethodHandler directive</a> you
+can dedicate a CGI script to handle non-HTTP request methods (or these that
+are not implemented in the Nanoweb core).
+<br>
+<PRE CLASS="samp">
+MethodHandler = FASTFETCH /cgi-bin/handle_FASTFETCH_request.pl
+MethodHandler = UPDATE /cgi-bin/UPDATE_method.exe
+</PRE>
+<br>
+<br>
+
+The CGI scripts see the requested URL in the $PATH_INFO environment variable
+and the actual content of the HTTP request appears in &lt;stdin&gt; if there was
+any, so these handlers work much the same like the handlers of
+mod_misc_filters.
+<br>
+<br>
+
+Note: User defined request methods cannot be utilized with standard
+browsers, not even with &lt;FORM&nbsp;METHOD="mymethod"...&gt;, so you'll
+need dedicated http clients to make use of your extension.
+<br>
+<br>
+
+<br>
+bugreports are welcome: mario&#x40;erphesfurt&middot;de
+
+<BR>
+<BR><HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

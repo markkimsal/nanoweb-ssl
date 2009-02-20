@@ -1,0 +1,251 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>mod_pfilters</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H1 ALIGN="CENTER">mod_pfilters</H1>
+
+The pfilters module allows you to pass the contents of delivered pages
+(static files as well as CGI output) through any of the internal filters or
+through any external filter program available on your system.
+<br>
+<br>
+All the filters get available when the appropriate module is loaded (core
+filters within mod_pfilters, "gzip" filter is part of mod_gzip, and some
+extension filters are located in mod_html_pfilters). However except mod_gzip
+these filters are not active until you put a <A HREF="core.html#filter">Filter
+directive</A> referencing them into the configuration files:<br>
+<PRE CLASS="samp"> FilterEnable = 1
+ Filter =        */*   null  -- you don't want to use this one!
+ Filter =        */*   unchunk
+ Filter =  text/html   pipe  /usr/bin/tidy -q -latin1
+ Filter = text/xhtml   pipe  /usr/bin/tidy -xml -q
+ Filter =  text/html   wap
+ Filter =    image/*   wbmp 100x60
+#Filter =        */*   gzip  -- this is added automagically by mod_gzip
+</PRE>
+
+Note: every filter is assigned to a mime-type, and it will only be
+executed if the current content matches this. This way you could bind
+»tidy« to html files and for example »watermark« to image files.
+
+<br>
+<br>
+
+Besides mime-types you can also use file extensions to make a filter rule.
+Finally both can be combined:
+<PRE CLASS="samp"> Filter = .html        null
+ Filter = .exe         pipe /usr/local/f-prot/f-prot -ai -
+ Filter = .txt|.pdf    null
+ Filter = pdf|image/*  null</PRE>
+
+<br>
+
+These are the currently available filters:
+
+<br>
+<br>
+
+<TABLE BORDER="0" CALLPADDING="2" CELLSPACING="3" WIDTH="80%">
+<COLGROUP WIDTH="80%"><COL WIDTH="15%"><COL WIDTH="10%"><COL WIDTH="85%"></COLGROUP>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <b>unchunk</b> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> core </TD>
+  <TD> Content from CGIs is often chunked, that means it is is splitted
+       into many parts and thus cannot be passed to filters (like 'pipe')
+       which require to work on the whole file. So you always should enable
+       the unchunk filter which tries to resemble all chunks up to a given
+       size (128K without argument). For example <tt><nobr>Filter = */* unchunk
+       300</nobr></tt> would try to recombine chunks up to 300 kbytes.
+  </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <b>pipe</b> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> core </TD>
+  <TD> The pipe filter is the most powerful of all the filters, as it is
+       used to pass the current content through an external filter program,
+       that is given as argument to this filter (you need to specify the
+       full path name here, as it is prior checked for existence).
+       <br>
+       Filter programs are very common utilities in a UNIX-like environment,
+       but you probably want to use html-aware or xml-capable filters only.
+       <br><small>
+       BTW, the »pipe« filter is the one, the pfilters
+       infrastructure was implemented for.</small></TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <b>null</b> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> core </TD>
+  <TD> does absolutely nothing<br>(you could use <tt>/bin/cat</tt> to do equally nothing) </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <b>static</b> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> core </TD>
+  <TD> The server core now converts statically generated content into an
+       internal parser object itself, so you really don't need to take care
+       about this one! </TD>
+</TR>
+
+<TR><TD COLSPAN="3">&nbsp;</TD></TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <b>gzip</b> <br><small>(automagically)</small> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> mod_gzip </TD>
+  <TD> Currently delivered content will be compressed on the fly, if you
+       load <A HREF="mod_gzip.html">mod_gzip</A> into the server. This
+       filter is activated automagically for all files, but you can
+       however assign it in a <A HREF="core.html#filter">Filter</A>= directive
+       like all the others (you however should take care, that it is the last
+       one).
+  </TD>
+</TR>
+
+<TR><TD COLSPAN="3">&nbsp;</TD></TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <b>shrink</b> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> html_filters </TD>
+  <TD> This filter tries to remove all newlines from your html page, so
+       it'll get to just one line. Beside the smaller size (also helps gzip)
+       your page gets unreadable without appropriate tools and this makes
+       it a small weapon against code sniffing.<br>
+       <b>Warning</b>: this conversion does not harm your CSS areas (per
+       specification of the w3c), but ElsewhatScript gets unusable if it
+       contains comments; additonally this filter refuses to work if the
+       file contains &lt;PRE&gt; tags. </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <b>downcase</b> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> html_filters </TD>
+  <TD> Converts all tags and their attributes (where missing quotation marks
+       are added also) to lowercase which additonally helps compressing the
+       file. This filter is rather slow.
+  </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <b>wap</b> <br><small>(experimental)</small></TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> html_filters </TD>
+  <TD> tries to convert your html to wml code; but this rule is of course
+       only applied if the client actually requests wml.<br>
+       The HTML should be valid, else the WML won't be too, so it is highly
+       recommended to use a more sophistcated external conversion utility
+       instead of this very slow internal one.
+       <pre class="samp"># best way to use the »wap« filter:
+Filter = text/html pipe /usr/bin/tidy -q
+Filter = text/html wap
+Filter = application/vnd.wap.wml pipe /usr/bin/tidy -xml -q</PRE> </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <b>garbage</b> <br><small>(senseless)</small></TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> html_filters </TD>
+  <TD> this filter corrupts all your html files. </TD>
+</TR>
+
+<TR><TD COLSPAN="3">&nbsp;</TD></TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <b>convert</b> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> img_filters </TD>
+  <TD> There exists a demo filter package for images; and the convert filter
+       enables you to change the image type from png to jpeg and vice versa
+       by specifying the target format after the filter name. Some other
+       file formats may be supported (for input at last), but note that
+       .gifs are rather rarely allowed and thus cannot be used with
+       the img_filters module. </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <b>copyright</b> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> img_filters </TD>
+  <TD> You can use this filter to add a text snippet to served images;
+       just add some text after the filter name, e.g.:
+       <PRE CLASS="samp">Filter = image/jpeg copyright (c) 2002 whoever </PRE> </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <b>wbmp</b> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> img_filters </TD>
+  <TD> The wbmp format is to be used for cellular phones` browsers, you
+       probably want to enable this filter for images where you enabled
+       the »wap« filter for hypertext files. </TD>
+</TR>
+
+<TR><TD COLSPAN="3">&nbsp;</TD></TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <b>error</b> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> misc_filters </TD>
+  <TD> this filter enables you to prevent certain files from being
+       delivered, it doesn't output a real http error response but you may
+       give an response code as argument to this filter </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <b>addservervar</b> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> misc_filters </TD>
+  <TD> you can setup server/environment variables with this filter for
+       some selected files / mime types (for CGI scripts for example) </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <b>addheader</b> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> misc_filters </TD>
+  <TD> Allows you to output an additonal arbitrary HTTP response header
+       together with selected files, or files of a specified mime type. </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <b>nocache</b> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> misc_filters </TD>
+  <TD> This filter applied to any file prevents it from getting cached
+       by proxies, it does so by just adding the according HTTP response
+       headers. </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" WIDTH="15%" VALIGN="TOP"> <b>handler</b> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> misc_filters </TD>
+  <TD> This filter corresponds to the apache »AddHandler« directive and
+       allows you to get specified files processed by the CGI script
+       given as argument to this filter.<br>
+       <PRE CLASS="samp">Filter = .myhtm|.txt /cgi-bin/needs-frame.php</PRE>
+       In this example files with the extension .myhtm or .txt would invoke
+       the given php script with PATH_INFO set with the filename of the
+       originally requested .myhtm or .txt file. So this script (handler)
+       must take care to produce some output out of the file (build some
+       html table around loaded plain text file, or such things). </TD>
+</TR>
+</TABLE>
+
+<br>
+<br>
+
+Note that you can <b>disable all filters at once</b> with the
+<A HREF="core.html#filterenable">FilterEnable directive</A> on a per-directory
+basis.
+
+<br>
+<br>
+
+The name »pfilters« comes from the fact that it wraps a filter around the
+nanoweb internal »parser« objects which represent the requested files.
+
+<br>
+<br>
+
+The module mod_gzip now uses the pfilters infrastructe as well, so there is
+no need to take care if the Filter rules are mentioned before mod_gzip, as
+this is ensured internally (most filters don't work on already compressed
+content).
+
+<br>
+<br>
+
+<BR>
+<BR><HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

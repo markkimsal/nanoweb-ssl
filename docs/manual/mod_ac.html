@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>mod_ac</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H1 ALIGN="CENTER">Access Control module</H1>
+
+The access control module mod_ac is loaded per default and allows you to
+restrict retrieval of web pages from your server to specified hosts or to
+disallow this only for some.
+<br>
+<br>
+
+The directive <a href="core.html#acpolicy">ACPolicy</a> gives the default
+for all hosts. If it is set to <b>allow</b> everybody can access pages of
+your server. This is the default bahaviour for public www servers, but for
+intranet systems where you only want local hosts to get access you could use
+<b>deny</b> as default and list all your local servers in one or more
+<a href="core.html#acallowip">ACAllowIP</a> or 
+<a href="core.html#acallowhost">ACAllowHost</a> directives.
+<br>
+Likewise you could use <a href="core.html#acdenyIP">ACDenyIP</a> and
+<a href="core.html#acdenyhost">ACDenyHost</a> in the former case.
+<br>
+<br>
+
+If one of the requesting hosts isn't granted access it will receive an error
+page which you can customize using
+<a href="core.html#acblockerror">ACBlockError</a> and
+<a href="core.html#acblockmessage">ACBlockMessage</a>.
+
+
+<BR>
+<BR><HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

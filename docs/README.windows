@@ -1,0 +1,20 @@
+Installing Nanoweb on Windows
+=============================
+
+From version 1.5.0, nanoweb can work in single process mode.
+
+This was necessary for running nanoweb in Windows, because PHP for win32, as 
+the win32 API, does not support process forking.
+
+This means that nanoweb performance will always be better in unix than Windows.
+
+However, this is perfectly suitable for a development platform.
+
+The provided INSTALL.BAT will install nanoweb in "c:\nanoweb\" and assumes that
+your PHP win32 installation resides in c:\php\
+
+If this is not your case, you will have to edit INSTALL.BAT
+
+Once installation is done, INSTALL.BAT will create a file called NANOSTART.BAT
+in the installation directory, run this one to start the server.
+

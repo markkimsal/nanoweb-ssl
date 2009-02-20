@@ -1,0 +1,44 @@
+Nanoweb Credits
+===============
+
+Vincent Negrier <six@aegis-corp.org>
+
+- author and main developer
+
+
+Mario Salzer <mario@erphesfurt.de>
+
+- author and maintainer of the nanoweb manual
+- official provider of Good-Ideas(tm)
+- approved poor-english to german translator
+- install-sh v2
+- nanoconfig
+- mod_rewrite
+- mod_multiviews
+- mod_pfilters
+- mod_html_filters
+- mod_img_filters
+- mod_libphp
+- mod_method_put
+- a whole lot of other modules
+
+
+myrdin <myrdin@broceliande.no-ip.com>
+
+- htpasswd.php util
+- mod_proxy
+- mod_mispell
+- mod_access_rbl
+
+
+Phanatic <linux@psoftwares.hu>
+
+- author and maintainer of the nanoweb debian packages
+  see http://linux.psoftwares.hu/nanoweb/
+- mod_auth_pgsql
+
+
+splif <splif@bwoup.com>
+
+- file browser icons and some neat ideas
+

@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>mod_asis</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H2 ALIGN="CENTER">mod_asis</H2>
+
+This module allows you to use the .asis 'file format', which is a file
+carrying some http response headers before its actual content:
+<PRE CLASS="samp">Content-Type: text/html
+Last-Modified: unknown
+
+&lt;HTML&gt;&lt;HEAD&gt;&lt;TITLE&gt;example&lt;/TITLE&gt;&lt;/HEAD&gt;
+&lt;BODY BGCOLOR="#ffffff"&gt;...
+</PRE>
+<br>
+<br>
+
+Currently mod_asis is an extension of mod_static and requires to be
+activated with the <a href="core.html#parseext">ParseExt directive</a> in
+the nanoweb main configuration file:
+<PRE CLASS="code">
+ParseExt = asis asis
+</PRE>
+<small>
+The first argument gives the file extension which the .asis files need to
+have, while the second lowercase 'asis' defines the parser class of mod_asis
+to be used.
+</small>
+<br>
+<br>
+
+This works very well for text/html files, but for files containing binary
+content you should consider using <a href="mod_meta.html">mod_meta</a>
+and a companion *.meta file carrying the headers instead.
+<br>
+<br>
+
+
+<BR>
+<BR><HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

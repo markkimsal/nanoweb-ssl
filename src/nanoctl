@@ -1,0 +1,193 @@
+#!/bin/sh
+#
+# Nanoweb start/stop script - by Vincent Negrier <six@aegis-corp.org>
+#
+
+SERV='/usr/sbin/nanoweb.php'
+CONF='/etc/nanoweb/nanoweb.conf'
+
+SRVBN=$(basename $SERV)
+PIDFILE=`grep -i pidfile $CONF |cut -d= -f2 |cut -c2-`
+SRVPORT=`grep -i listenport $CONF |head -1 |cut -d= -f2 |cut -c2-`
+
+BROWSER='lynx'
+
+is_running () {
+
+	if [ -f "$PIDFILE" ]; then 
+	
+		return 0; 
+		
+	else 
+	
+		return 1; 
+		
+	fi
+
+}
+
+nw_start () {
+
+	echo -n "Starting nanoweb http server: "
+
+	if is_running; then
+
+		echo "already running, use restart option instead";
+
+	else
+
+		$SERV --config=$CONF --start-daemon --quiet
+
+		if [ $? == 0 ]; then
+			
+			echo "$SRVBN"
+
+		fi
+
+	fi
+
+}
+
+nw_stop () {
+
+	echo -n "Stopping nanoweb http server: "
+
+	if is_running; then
+	
+		kill `cat $PIDFILE` >/dev/null 2>/dev/null
+		sleep 1
+		rm -f $PIDFILE
+		echo "$SRVBN"
+
+	else
+
+		echo "not running";
+
+	fi
+
+}
+
+nw_reload () {
+
+	echo -n "Reloading nanoweb http server: "
+	
+	if is_running; then
+	
+		kill -HUP `cat $PIDFILE` >/dev/null 2>/dev/null
+		echo "$SRVBN";
+
+	else
+
+		echo "not running, use start option instead";
+	
+	fi
+
+}
+
+nw_configtest () {
+
+	$SERV --config=$CONF --config-test
+
+}
+
+nw_status () {
+
+	if is_running; then
+
+		$BROWSER -dump http://localhost:$SRVPORT/server-status?$QSTRING
+
+	else
+
+		echo "Server is not running"
+
+	fi
+
+}
+
+nw_blockadm () {
+
+	if is_running; then
+
+		$BROWSER -dump http://localhost:$SRVPORT/blockadm?$QSTRING
+
+	else
+
+		echo "Server is not running"
+
+	fi
+
+}
+
+case "$1" in
+
+	start)
+	nw_start;
+	;;
+
+	stop)
+	nw_stop;
+	;;
+
+	reload)
+	nw_reload;
+	;;
+
+	restart)
+	nw_stop;
+	sleep 1
+	nw_start;
+	;;
+
+	configtest)
+	nw_configtest;
+	;;
+	
+	status)
+	QSTRING="$2"
+	nw_status;
+	;;
+
+	block)
+	QSTRING="act=block&addr=$2&dur=$3"
+	nw_blockadm;
+	;;
+
+	unblock)
+	QSTRING="act=unblock&addr=$2&dur=$3"
+	nw_blockadm;
+	;;
+
+	*)
+	echo "Usage: nanoctl [ options ]"
+	echo ""
+	echo "available options"
+	echo ""
+	echo "start      : start the server"
+	echo "stop       : stop the server"
+	echo "restart    : stop and start the server"
+	echo "reload     : reload server configuration"
+	echo "configtest : test configuration and exit"
+	echo ""
+	echo "status options (available only if mod_status is loaded into the server)"
+	echo ""
+	echo "status                 : show server status summary"
+	echo "status who             : show active server processes status"
+	echo "status detailed        : show detailed server status"
+	echo "status vstats          : show vhosts quick stats"
+	echo "status xml             : output xml document"
+	echo "status wddx            : output wddx encoded packet"
+	echo "status php-serialize   : output php serialize()d string"
+	echo ""
+	echo "detailed, vstats, xml, wddx, php-serialize can be mixed using the - separator"
+	echo ""
+	echo "address blocking options (available only if mod_blockadm is loaded)"
+	echo ""
+	echo "block   <addr> [<duration>|PERM]  : block <addr> for <duration> seconds"
+	echo "unblock <addr>                    : unblock <addr>"
+	echo ""
+	echo "notes : <addr> must be supplied as a numeric IP address"
+	echo "        list of blocked addresses is available with 'nanoctl status detailed'"
+	echo ""
+	;;
+
+esac

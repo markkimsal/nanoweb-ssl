@@ -1,0 +1,932 @@
+#!/bin/sh
+#
+# Nanoweb installation script - by Mario Salzer <mario@erphesfurt.de>
+# based on nw 1.x install bash code by Vincent Negrier <six@aegis-corp.org>
+# script is now PHP based, as we rely on it anyhow;
+# we'll only guess PHP location in the sh part of it
+
+echo -n "searching php binary... "
+for PHP_BIN in	\
+	`which php`	\
+	`which php-cgi`	\
+	`which php-cli`	\
+	/usr/local/bin/php	\
+	/usr/local/bin/php*c[lg]i*	\
+	/usr/local/bin/php*[5432]*	\
+	/usr/bin/php	\
+	/usr/bin/php*c[lg]i*	\
+	/usr/bin/php*[5432]*	
+do
+	if [ -x $PHP_BIN ]
+	then
+		echo "[1;32m"$PHP_BIN"[0m"
+		break;
+	fi
+done
+
+
+if [ -z "$PHP_BIN" ]
+then
+
+	echo "[31mNOT FOUND[0m"
+	echo
+	echo "You need a working php4.x binary to install and run the Nanoweb HTTP Server."
+	echo "Please see [1;34mhttp://www.php.net/[0m and the supplied INSTALL on how to get it."
+	echo
+	exit 12
+
+else
+
+	export PHP_BIN
+
+	tail --lines=+101 $0 >/tmp/nanoweb.install.php.tmp
+	$PHP_BIN -C -q /tmp/nanoweb.install.php.tmp $1 $2 $3 $4 $5 $6 $7 $8 $9
+
+	exit 0
+
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ---------------------------------------------------------- line100 --- sh --
+<?php
+
+# -- Default installation directories.
+$setup = array(
+	"BIN" => "/usr/sbin",
+	"LIB" => "/usr/lib/nanoweb",
+	"CONF" => "/etc/nanoweb",
+	"LOG" => "/var/log/nanoweb",
+	"WWWROOT" => "/var/www/localhost",
+	"DOC" => "/usr/share/doc/nanoweb",
+	"NWGROUP" => "www-data",
+	"NWUSER" => "www-data",
+	"INETD" => "1",
+	"INIT" => "1",
+	"PHP" => "/usr/local/bin/php",
+	"MANDIR" => "/usr/share/man",
+	"SSLDIR" => "/etc/ssl/certs",
+	"DONE" => ''
+);
+
+
+# -- Menu messages
+
+$titles = array(
+	"BIN" => "»binaries« directory",
+	"LIB" => "modules directory",
+	"CONF" => "conf directory",
+	"LOG" => "log directory",
+	"WWWROOT" => "www directory",
+	"DOC" => "documentation path",
+	"NWGROUP" => "default group",
+	"NWUSER" => "default user",
+	"INETD" => "inetd, SSL support",
+	"INIT" => "start at boot time",
+	"PHP" => "PHP binary",
+	"DONE" => "START INSTALLATION"
+);
+
+$help = array(
+	"BIN" => "This is where nanoweb.php, nanoctl and all the other tools will reside:",
+	"LIB" => "In the lib directory the modules/ and the icons/ will be located in, as well as the default docroot:",
+	"CONF" => "All Nanoweb configuration files should reside in /etc/nanoweb/, changing this setting is strongly discouraged!",
+	"LOG" => "Nanoweb can produce some log files while running. These are the access.log and server.log at least.",
+	"WWWROOT" => "The default root of all files that shall become accessible through the http/www service. If you do not have virtual host directories below »/var/www«, then you could remove \"/localhost\".",
+	"DOC" => "Some documentation files are distributed together with Nanoweb. These will be available through http, too.",
+	"NWGROUP" => "You can define the group id under which Nanoweb runs per default.",
+	"NWUSER" => "You can define the user id under which Nanoweb runs per default.",
+	"INETD" => "Nanoweb can run in »inetd mode«, which means that it gets activated by the internet superserver first when a request for the http service arrives. This option only adds some lines to /etc/inetd.conf that you must uncomment to enable this behaviour. You also need »inetd mode« if you wish to use SSL.",
+	"INIT" => "If configured for »standalone mode« Nanoweb can be started on bootup. Probably everybody wants this behaviour.",
+	"PHP" => "If you have got multiple versions of the PHP binary installed, select the one Nanoweb should be run with.",
+	"DONE" => "starts installation"
+);
+
+
+# -- Initializations
+
+error_reporting(255);
+unlink("/tmp/nanoweb.install.php.tmp");
+init_defines();
+initial_config_values(); // fetches values from previous nanoweb.conf - smart update
+
+# --------------------------------------------------------- forced install --
+
+$cmd_args=parse_cmdline();
+
+if (!isset($cmd_args["force"])) {
+
+	prepare_interactive_mode();
+
+	dialog_readme();
+
+	$sel = false;
+
+} else {
+
+	$sel = "DONE";
+
+}
+
+# ------------------------------------------------------------- main menu --
+
+while ($sel != "DONE") {
+	$sel = dialog_select(
+		"Installation options",
+		"You can change some installation parameters to suit your needs. This install-sh will then try to adjust the distributed configuration files accordingly, but this may not always work.",
+		$titles
+	);
+	switch ($sel) {
+		case "": $sel = "DONE";
+		case "DONE":
+			break;
+		case "INETD":
+		case "INIT":
+			dialog_yesno($sel, $setup[$sel], $titles[$sel], $help[$sel]);
+			# $setup[$sel] = ($setup[$sel] + 1) % 2;
+			break;
+		default:
+			dialog_edit($sel, $setup[$sel], $titles[$sel], $help[$sel]);
+			if ($sel=="CONF") use_existing_config();
+			break;
+	}
+}
+
+# ------------------------------------------------------------- proceed --
+
+echo bold("
+
+Installation
+¯¯¯¯¯¯¯¯¯¯¯¯
+");
+
+$PREV_UMASK = umask(0022);
+create_user_group();
+install_bin();
+install_mod();
+install_conf();
+create_logdir();
+create_wwwroot();
+install_defaultroot();
+install_vhosts();
+install_icons();
+install_nanoconfig();
+install_manual();
+install_manpages();
+add_inetd_lines();
+add_bootup_scripts();
+umask($PREV_UMASK);
+patch_binaries();
+check_phpini();
+print_postreadme();
+exit;
+
+# --------------------------------------------------------------- dialog --
+
+function prepare_interactive_mode() {
+
+	global $DIALOG, $DIALOG_ADV_ARGS, $STDIN;
+
+	$dialog_bins = array(
+		"/usr/bin/Xdialog" => "--wrap --ignore --stderr",
+		"/usr/bin/gdialog" => "",
+		"/usr/bin/kdialog" => "--not-yet-invented --ignore",
+	);
+	if (!getenv("DISPLAY")) {
+		$dialog_bins = array();
+	}
+	$dialog_bins = array_merge($dialog_bins, array(
+		"/usr/bin/dialog" => "--stderr",
+		"/usr/bin/cdialog" => "",
+		"/usr/bin/whiptail" => "",
+		trim(`ls /usr/src/*/scripts/lxdialog/lxdialog | head -n 1`) => ""
+	));
+
+	foreach ($dialog_bins as $DIALOG => $DIALOG_ADV_ARGS) {
+		if ($DIALOG && is_executable($DIALOG)) break;
+		else $DIALOG = false;
+	}
+
+	if (! $DIALOG) {
+		if (! ($STDIN = fopen("php://stdin", "r"))) {
+			die("Couldn't find a dialog binary, and can't use console input method either!\nAbort.\n");
+		}
+	}
+}
+
+function dialog_real($args, $adv="") {
+	global $DIALOG, $DIALOG_ADV_ARGS, $DIALOG_EXIT;
+	$keytmp = "/tmp/nanoweb.install.keystroke.tmp." . getmypid(); 
+	$adv_args = "";
+	if ($DIALOG_ADV_ARGS) {
+		$adv_args = $DIALOG_ADV_ARGS . " " . $adv;
+	}
+	$dialog_command = "$DIALOG --backtitle 'Nanoweb Installation' $adv_args $args";
+	system("$dialog_command >/dev/stdin 2>$keytmp", $DIALOG_EXIT);
+	$ret = trim(@implode("", @file($keytmp)));
+	@unlink($keytmp);
+	return($ret);
+}
+
+function dialog_select($title, $text, $these) {
+	global $DIALOG, $DIALOG_ADV_ARGS, $STDIN, $setup;
+	if ($DIALOG) {
+		$adv = "--ok-label 'Change' --cancel-label 'Start Installation'";
+		$d = "--title '$title' --menu '$text' 20 70 11";
+		if (strpos($DIALOG, "lxdialog")) $d .= " A_FUNNY_BUT_USELESS_COMMANDLINE_ARGUMENT";
+		$n = 1;
+		foreach ($these as $which => $line) {
+			if (($which != "DONE") || empty($DIALOG_ADV_ARGS)) {
+				$v = strlen($v = $setup[$which]) > 0 ? "  [$v]" : "";
+				$d .= " '$n' '" . str_pad($line, 20, " ") . $v . "'";
+				$n++;
+			}
+		}
+		$c = dialog_real($d, $adv);
+	}
+	else {
+		echo "\n\n" . $title . "\n" . str_repeat("¯", strlen($title)) . "\n" . $text . "\n";
+		$n = 1;
+		foreach ($these as $which => $line) {
+			$v = strlen($v = $setup[$which]) > 0 ? "  [$v]" : "";
+			echo "[" . $n++ . "]  " . str_pad($line, 20, " ") . $v . "\n";
+		}
+		$c = "#";
+		while(($c<"0") || ($c>"99")){
+			echo "install-sh> ";
+			$c = trim(fgets($STDIN));
+		}
+	}
+	$keys = array_keys($these);
+	if ($c) {
+		return($keys[($c-1)]);
+	}
+}
+
+function dialog_edit($name, &$var, $title="Change", $help="") {
+	global $DIALOG, $STDIN;
+	if ($DIALOG) {
+		$c = dialog_real("--title '$title' --inputbox '\n$help\n' 13 60 '$var'");
+	}
+	else {
+		echo "\n\n" . $title . "\n" . str_repeat("¯", strlen($title)) . "\n" . $help ."\n";
+		echo "$name [" . $var . "] = ";
+		$c = trim(fgets($STDIN));
+	}
+	if ($c) {
+		$var = $c;
+	}
+}
+
+function dialog_yesno($name, &$var, $title="Change", $help="") {
+	global $DIALOG, $STDIN, $DIALOG_EXIT;
+	if ($DIALOG) {
+		dialog_real("--title '$title' --yesno '$help' 15 60");
+		$c = $DIALOG_EXIT;
+		if (($c==0)||($c==1)) {
+			$var = 1 - $c;   //0=Yes, 1=No
+		}
+	}
+	else {
+		echo "\n\n" . $title . "\n" . str_repeat("¯", strlen($title)) . "\n" . $help ."\n";
+		$var = ($var + 1) % 2;
+	}
+}
+
+function dialog_readme() {
+	global $DIALOG, $DIALOG_ADV_ARGS;
+	if ($DIALOG && $DIALOG_ADV_ARGS && file_exists("README")) {
+		dialog_real("--title 'Welcome to Nanoweb - the aEGiS PHP webserver' --no-cancel --textbox 'README' 18 72");
+	}
+}
+
+function bold($string) {
+	return("[1;34m" . $string . "[0m");
+}
+
+# --------------------------------------------------------------- setup --
+
+
+function initial_config_values() {
+
+	global $setup;
+
+	if ($binary = getenv("PHP_BIN")) {
+		$setup["PHP"] = $binary;
+	}
+
+	if ($uu = dirname(`which nanoweb.php`)) {
+		$setup["BIN"] = $uu;
+	}
+
+	use_existing_config();
+
+}
+
+
+function use_existing_config() {
+
+	global $setup;
+
+	if (file_exists($conffile = ($setup["CONF"] . "/nanoweb.conf"))) {
+		$c = implode("", file($conffile)) . "\n\n";
+		$c .= implode("", file($setup["CONF"] . "/modules.conf"));
+		if (preg_match('#\n\s*Log\s*=\s*([^\s]+)/[^/]+\s+#i', $c, $uu)) {
+			$setup["LOG"] = $uu[1];
+		}
+		if (preg_match('#\n\s*DocumentRoot\s*=\s*([^\s]+)\s+#i', $c, $uu)) {
+			$setup["WWWROOT"] = $uu[1];
+		}
+		if (preg_match('#\n\s*ModulesDir\s*=\s*([^\s]+)/modules/?\s+#i', $c, $uu)) {
+			$setup["LIB"] = $uu[1];
+		}
+		if (preg_match('#\n\s*Group\s*=\s*([^\s]+)\s+#i', $c, $uu)) {
+			$setup["NWGROUP"] = $uu[1];
+		}
+		if (preg_match('#\n\s*User\s*=\s*([^\s]+)\s+#i', $c, $uu)) {
+			$setup["NWUSER"] = $uu[1];
+		}
+	}
+}
+
+
+function parse_cmdline() {
+
+	$ret=array();
+	
+	foreach($_SERVER["argv"] as $arg) switch (strtolower($arg)) {
+
+		case "-f":
+		case "--force":
+		$ret["force"]=true;
+		break;
+
+		case "-v":
+		case "--verbose":
+		$ret["verbose"]=true;
+		break;
+	
+	}
+
+	return($ret);
+
+}
+
+
+function init_defines() {
+
+	define('HAVE_PCNTL', is_callable("pcntl_fork"));
+
+}
+
+
+function make_symlink($source, $dest) {
+
+	if (!is_link($dest)) {
+		$ret=`ln -v -s $source $dest`;
+		if (isset($GLOBALS["cmd_args"]["verbose"])) echo $ret;
+	}
+
+}
+
+
+function install_files($source, $dest, $mode="644", $add_opt="-D") {
+
+	$ret=`install -v $add_opt -m$mode $source $dest`;
+	if (isset($GLOBALS["cmd_args"]["verbose"])) echo $ret;
+
+}
+
+
+function install_mkdir($dest) {
+
+	execute("mkdir -v -p " . $dest);
+
+}
+
+
+function execute($cmd) {
+
+	$ret=`$cmd`;
+	if (isset($GLOBALS["cmd_args"]["verbose"])) echo $ret;
+
+}
+
+
+# --------------------------------------------------------------- install --
+
+
+function create_user_group() {
+
+	extract($GLOBALS["setup"]);
+
+	if (eregi('uid=', `id $NWUSER 2>/dev/null`)) {
+		return(false);
+	}
+
+	echo bold("Creating group $NWGROUP\n");
+	execute("groupadd -g 33 $NWGROUP");
+	execute("groupadd $NWGROUP");
+
+	echo bold("Creating user $NWUSER\n");
+	execute("useradd -d $WWWROOT -u 33 -g $NWGROUP $NWUSER");
+	execute("useradd -d $WWWROOT -g $NWGROUP $NWUSER");
+
+}
+
+
+function install_bin() {
+
+	extract($GLOBALS["setup"]);
+
+	echo bold("Installing program files in $BIN\n");
+
+	install_files("src/nanoweb.php", "$BIN/nanoweb.php", "755");
+	install_files("src/nanoctl", "$BIN/nanoctl", "755");
+	if ($INETD) install_files("src/in.nanoweb", "$BIN/in.nanoweb", "755");
+	install_files("src/htpasswd.php", "$BIN/htpasswd.php", "755");
+	
+}
+
+
+function install_mod() {
+
+	extract($GLOBALS["setup"]);
+
+	echo bold("Installing modules files in $LIB/modules\n");
+
+	install_mkdir("$LIB/modules");
+	execute("chmod 755 $LIB/modules");
+	install_files("modules/*", "$LIB/modules");
+
+}
+
+
+function install_conf() {
+
+	extract($GLOBALS["setup"]);
+
+	if (file_exists($CONF . "/nanoweb.conf")) {
+
+		echo bold("Updating configuration in $CONF\n");
+
+                update_config_files_new_version();
+
+		echo "You may want to check the manual to see if your configuration files need\nto be tweaked due to changed directive names. Usually changes are\nhowever not that extensive that anything will stop to work!\n";
+
+	} else {
+
+		echo bold("Installing configuration files in $CONF\n");
+
+		install_files("conf/nanoweb.conf", "$CONF/nanoweb.conf");
+		install_files("conf/modules.conf", "$CONF/modules.conf");
+		install_files("conf/vhosts.conf", "$CONF/vhosts.conf");
+		
+		if (file_exists("/etc/mime.types")) {
+		
+			make_symlink("/etc/mime.types", "$CONF/mime.types");
+
+		} else {
+
+			install_files("conf/mime.types", "$CONF/mime.types");
+
+		}
+
+		#-- update config files with install-sh settings
+		patch_configs();
+	}
+
+	#-- install theme files
+	$theme_files = array(
+		"default.theme",
+		"nanoweb.theme",
+		"fancy.theme",
+	);
+        foreach ($theme_files as $tf) {
+		if (!file_exists($tf)) {
+			install_files("conf/$tf", "$CONF/$tf");
+		}
+	}
+
+}
+
+
+
+function update_config_files_new_version() {
+   extract($GLOBALS["setup"]);
+
+   $trans = array(
+      /* 2.0.0 */
+      'LogToConsole' => "LogHitsToConsole",
+      /* 2.1.0 */
+      '^\s*AllowExtSymlinks\s*=?\s*[1*].*$' => "AllowSymlinkTo = /",
+      '^\s*FastCGI' => "FCGI",
+      '^\s*FBTemplate.+' => '',
+      /* 2.1.1 */
+      '^\s*TempDirectory\s*=' => 'TempDir =',
+   );
+   $add = array(
+      "nanoweb.conf" => array(
+         /* 1.9.1 */
+         'ServerSignature' => "ServerSignature = full \n",
+         /* 2.1.0 */
+         'ConfigDir' => "ConfigDir = $CONF \n",
+         'LoadTheme' => "LoadTheme = default.theme \n",
+         'ServerTheme' => "ServerTheme = default \n",
+         'DisableMimeMagic' => "DisableMimeMagic = 0 \n",
+	 /* 2.1.1 */
+         'LogDir' => "LogDir = /var/log/nanoweb/ \n",
+      ),
+      "modules.conf" => array(
+         /* 1.9.0 */
+         'ModulesDir' => "ModulesDir = $LIB/modules/ \n",
+      )
+   );
+
+   foreach ( array("nanoweb.conf", "modules.conf") as $cfn ) {
+
+      if ($lines = file($CONF . '/' . $cfn)) {
+
+         foreach ($lines as $i=>$l) {
+
+            foreach ($trans as $regex=>$dest)
+            if (preg_match("/$regex/i", $l)) {
+
+               echo "changing " . $cfn . " (" . $dest . ")\n";
+               $l = preg_replace("/$regex/i", $dest, $l);
+               $lines[$i] = "#<obsolete># " . $lines[$i] . $l;
+            }
+
+            foreach (@$add[$cfn] as $regex=>$new)
+            if (preg_match("/$regex/i", $l)) {
+               unset($add[$cfn][$regex]);
+            }
+         }
+
+         if ($add[$cfn]) {
+            $lines[] = "\n\n# added by install-sh:\n";
+            echo "adding newly introduced core directives to $cfn\n";
+            foreach ($add[$cfn] as $l) $lines[] = $l;
+         }
+
+         $fp = fopen($CONF . "/" . $cfn, "w");
+         fputs($fp, implode("", $lines));
+         fclose($fp);
+      }
+   }
+}
+
+
+function create_logdir() {
+
+	extract($GLOBALS["setup"]);
+
+	if (! file_exists($LOG)) {
+
+		echo bold("Creating log directory $LOG\n");
+
+		install_mkdir("$LOG");
+		execute("chown $NWUSER $LOG");
+		execute("chgrp $NWGROUP $LOG");
+	}
+}
+
+
+function create_wwwroot() {
+
+	extract($GLOBALS["setup"]);
+
+	if (! file_exists($WWWROOT)) {
+
+		echo bold("Creating WWW root directory\n");
+
+		install_mkdir($WWWROOT);
+		execute("chmod 755 $WWWROOT");
+	}
+}
+
+
+function install_defaultroot() {
+
+	extract($GLOBALS["setup"]);
+
+	$VARWWW = preg_replace("/\b(localhost|nanoweb)\b/", "", $WWWROOT);
+
+	echo bold("Copying default site files to $LIB/defaultroot\n");
+
+	install_mkdir("$LIB/defaultroot/");
+	install_files("www/default/*", "$LIB/defaultroot/");
+	install_files("ChangeLog", "$LIB/defaultroot/ChangeLog");
+	install_files("README", "$LIB/defaultroot/README");
+	make_symlink(".", "$LIB/defaultroot/nanoweb");
+
+	#-- 4 more helper symlinks
+	foreach (array($WWWROOT, $VARWWW) as $WWWROOT) {
+		if (!file_exists("$WWWROOT/index.html")) {
+			make_symlink("$LIB/defaultroot/index.html", "$WWWROOT/index.html");
+		}
+		make_symlink("$LIB/defaultroot", "$WWWROOT/nanoweb");
+	}
+
+}
+
+
+function install_manpages() {
+
+	extract($GLOBALS["setup"]);
+
+	echo bold("Copying man pages to $MANDIR\n");
+	
+	if (file_exists($MANDIR."/man1")) install_files("docs/man/man1/*.gz", "$MANDIR/man1/", "644", "");
+	if (file_exists($MANDIR."/man5")) install_files("docs/man/man5/*.gz", "$MANDIR/man5/", "644", "");
+	if (file_exists($MANDIR."/man8")) install_files("docs/man/man8/*.gz", "$MANDIR/man8/", "644", "");
+
+}
+
+
+function install_manual() {
+
+	extract($GLOBALS["setup"]);
+
+	echo bold("Copying manual files to $DOC\n");
+
+	install_mkdir("$DOC/html/");
+	install_files("docs/manual/*", "$DOC/html/");
+
+	install_files("docs/*.*", "$DOC/");
+	install_files("ChangeLog", "$DOC/ChangeLog");
+	install_files("README", "$DOC/README");
+	install_files("CREDITS", "$DOC/CREDITS");
+	install_files("INSTALL", "$DOC/INSTALL");
+	install_files("LICENSE", "$DOC/LICENSE");
+
+	make_symlink("$DOC/.", "$DOC/nanoweb");
+
+}
+
+
+function install_nanoconfig() {
+
+	extract($GLOBALS["setup"]);
+
+	echo bold("Copying nanoconfig files to $LIB/nanoconfig\n");
+
+	install_mkdir("$LIB/nanoconfig/");
+	install_files("www/nanoconfig/*", "$LIB/nanoconfig/");
+	install_files("www/nanoconfig/.nwaccess", "$LIB/nanoconfig/.nwaccess");
+	make_symlink("$LIB/nanoconfig", "$LIB/defaultroot/nanoconfig");
+
+}
+
+
+function install_icons() {
+
+	extract($GLOBALS["setup"]);
+
+	echo bold("Copying icon files to $LIB/icons\n");
+
+	install_mkdir("$LIB/icons/");
+
+	install_files("www/icons/*", "$LIB/icons");
+}
+
+
+function install_vhosts() {
+
+	extract($GLOBALS["setup"]);
+
+	install_files("www/vhosts/www.cgidemo.com/index.php", "$LIB/vhosts/www.cgidemo.com/index.php");
+	install_files("www/vhosts/www.cgidemo.com/poweredbynanoweb-black.gif", "$LIB/vhosts/www.cgidemo.com/poweredbynanoweb-black.gif");
+
+	#<bad># execute("chown -R $NWUSER $LIB/vhosts");
+	#<bad># execute("chgrp -R $NWGROUP $LIB/vhosts");
+}
+
+
+function create_nanoweb_pem() {
+
+	extract($GLOBALS["setup"]);
+	
+	if (!file_exists("$SSLDIR/nanoweb.pem")) {
+	
+		echo bold("Creating nanoweb SSL certificate\n");
+
+		install_mkdir("$SSLDIR");
+		system("openssl req -new -x509 -nodes -out $SSLDIR/nanoweb.pem -keyout $SSLDIR/nanoweb.pem -days 9999");
+		system("ln -s $SSLDIR/nanoweb.pem $SSLDIR/`openssl x509 -noout -hash < $SSLDIR/nanoweb.pem`.0");
+	
+	}
+
+}
+
+
+function add_inetd_lines () {
+
+	extract($GLOBALS["setup"]);
+
+	if (strpos(implode("",file('/etc/inetd.conf')), "nanoweb")!==false) {
+		return(false);
+	}
+
+	echo bold("Adding comments to /etc/inetd.conf\n");
+
+	if ($inetd_conf = fopen("/etc/inetd.conf", "a")) {
+		
+		fwrite($inetd_conf, "\n# nanoweb inetd support\n");
+		fwrite($inetd_conf, "#www	stream	tcp	nowait	root	$BIN/in.nanoweb nanoweb\n");
+		fwrite($inetd_conf, "#https	stream	tcp	nowait	root	$BIN/in.nanoweb nanoweb -ssl\n");
+
+		fclose($inetd_conf);
+	}
+	else {
+		echo "ERROR: could not apply changes to /etc/inetd.conf\n";
+	}
+
+	// This one is for SSL usage, but depends on inetd:
+	create_nanoweb_pem();
+}
+
+
+function add_bootup_scripts() {
+
+	extract($GLOBALS["setup"]);
+
+	if ($INIT && file_exists('/etc/rc2.d') && file_exists('/etc/init.d/rc')) {
+		echo bold("Registering for automatic start on bootup\n");
+		if (!file_exists('/etc/init.d/nanoweb')) {
+			make_symlink("$BIN/nanoctl",  "/etc/init.d/nanoweb");
+		}
+		foreach (array(2,3,4,5) as $RUNLEVEL) {
+			if (! (`ls /etc/rc{$RUNLEVEL}.d/S*nanoweb 2>/dev/null`)) {
+				make_symlink("/etc/init.d/nanoweb", "/etc/rc{$RUNLEVEL}.d/S99nanoweb");
+			}
+		}
+	}
+}
+
+
+function patch_configs() {
+
+	extract($GLOBALS["setup"]);
+
+	echo bold("Adjusting configuration files with your settings\n");
+
+	foreach (array("nanoweb.conf", "modules.conf", "vhosts.conf") as $cf) {
+
+		echo "patching $cf";
+
+		if ($conf = implode("", file($CONF . "/" . $cf))) {
+
+			$conf = preg_replace('# /usr/lib/nanoweb#m', " $LIB", $conf);
+			$conf = preg_replace('# /etc/nanoweb#m', " $CONF", $conf);
+			$conf = preg_replace('# /var/www/localhost#m', " $WWWROOT", $conf);
+
+			$conf = preg_replace('#(\nGroup\s+=\s*)www-data#m', "$1" . $NWGROUP, $conf);
+			$conf = preg_replace('#(\nUser\s+=\s*)www-data#m', "$1" . $NWUSER, $conf);
+			$conf = preg_replace('# /usr/(local/)?bin/php(-cgi)?#m', " $PHP", $conf);
+		
+			if ($f = fopen($CONF . "/" . $cf, "w")) {
+				fwrite($f, $conf);
+				fclose($f);
+			}
+			else {
+				echo " could not open for writing!!";
+			}
+
+		}
+		echo "\n";
+	}
+}
+
+
+function patch_binaries() {
+
+	extract($GLOBALS["setup"]);
+
+	foreach (array("/nanoweb.php", "/nanoctl", "/in.nanoweb", "/htpasswd.php") as $bf) {
+		if ($bin = @implode("", @file($BIN . $bf))) {
+
+			$bin = preg_replace('|^#!/usr/local/bin/php|', "#!" . $PHP, $bin);
+			$bin = preg_replace('|/usr/sbin/nanoweb.php|', $BIN . "/nanoweb.php", $bin);
+
+			if ($f = @fopen($BIN . $bf, "w")) {
+				fwrite($f, $bin);
+				fclose($f);
+			}
+		}
+	}
+}
+
+
+function check_phpini() {
+
+	$good_values = array(
+		"short_open_tag" => "1",
+		"cgi.force_redirect" => "0",
+		"cgi.fix_pathinfo" => "0",
+		"cgi.rfc2616_headers" => "1",
+		"register_argc_argv" => "1"
+	);
+
+	foreach ($good_values as $setting => $recommended) {
+
+		$value = strtolower(get_cfg_var($setting));
+		if ($value=="on") $value="1";
+		if ($value=="off") $value="0";
+
+		if ($value !== $recommended) {
+
+			echo "[1;31mphp.ini warning:[0m we recommend to set [1;32m" . $setting . " = " . $recommended . "[0m\n";
+
+		}
+		
+	}
+
+}
+
+
+function print_postreadme() {
+
+#	echo bold("\nDone.\n");
+	echo "\n";
+	echo "*******************************************************************************\n";
+	echo "* Things you should do now :                                                  *\n";
+	echo "*******************************************************************************\n";
+	echo "*                                                                             *\n";
+	echo "* FOR A NEW INSTALL :                                                         *\n";
+	echo "*                                                                             *\n";
+	echo "* - Read INSTALL if not already done                                          *\n";
+	echo "* - Edit configuration file [1;30m/etc/nanoweb/nanoweb.conf[0m                         *\n";
+	echo "* - Type '[1;32mnanoctl start[0m' to start the server                                  *\n";
+	echo "* - Browse to [1;34mhttp://localhost/[0m                                               *\n";
+	echo "*                                                                             *\n";
+	echo "* FOR AN UPGRADE :                                                            *\n";
+	echo "*                                                                             *\n";
+	echo "* - Read the ChangeLog                                                        *\n";
+	echo "* - Type 'nanoctl restart' to restart the server                              *\n";
+
+	if (!HAVE_PCNTL) {
+	
+		echo "*                                                                             *\n";
+		echo "* WARNING : Your PHP binary does not have process control support. Nanoweb    *\n";
+		echo "* makes heavy use of it and server performance will be greatly degraded       *\n";
+		echo "* without it. If the server seems slow, consider rebuilding your PHP binary   *\n";
+		echo "* using the \"".bold("--enable-pcntl")."\" configure directive.                             *\n";
+
+	}
+
+	echo "*                                                                             *\n";
+	echo "*******************************************************************************\n\n";
+
+}
+
+?>

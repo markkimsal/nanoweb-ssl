@@ -1,0 +1,42 @@
+nanoctl, the nanoweb control center
+===================================
+
+nanoctl is a small shell script bundled with nanoweb that allows you to control
+your server easily with some command line options.
+
+it was designed to be easily installed for use by the common linux bootup 
+scripts (sysV init rcNdirs). All you need to do is to create a symlink from 
+nanoctl into the init-directory: 
+
+ln -s /usr/sbin/nanoctl /etc/rc2.d/S80nanoweb
+
+this will bring up nanoweb automatically when your computer starts up into 
+runlevel 2. 
+
+usage is 'nanoctl [ option ]'
+
+available options
+
+start      : start the server
+stop       : stop the server
+restart    : stop and start the server
+reload     : reload server configuration
+configtest : test configuration and exit
+
+status options
+
+status                 : show server status summary
+status who             : show active server processes status
+status detailed        : show detailed server status
+status vstats          : show vhosts quick stats
+status xml             : output xml document
+status wddx            : output wddx encoded packet
+status php-serialize   : output php serialize()d string
+
+detailed, vstats, xml, wddx, php-serialize can be mixed using the - separator
+
+NOTE: status options are available only if mod_status is loaded into the
+server. This can be done by adding the following line 
+"LoadModule = /usr/lib/nanoweb/modules/mod_status.php" 
+to your modules.conf file.
+

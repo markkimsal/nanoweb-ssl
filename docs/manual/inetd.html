@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>ServerMode inetd</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H1 ALIGN="CENTER">ServerMode inetd</H1>
+
+Usually nanoweb runs in so called
+<A HREF="core.html#servermode">ServerMode »standalone«</A> (this is the case
+if it is started via nanoctl or when the nanoweb.php is invoked by you).
+<BR>
+However many internet services (or the programs providing them) don't need
+to be kept in memory all the time and may get started at first when a
+connection gets established for this service. This is done on UNIX systems
+using the »internet superserver« <b>inetd</b> (or xinetd respectively). If
+you desire to use nanoweb in inetd mode, you need to change the
+<A HREF="core.html#servermode">ServerMode directive</A> accordingly in
+<tt>nanoweb.conf</tt>&nbsp;.
+
+<BR>
+<BR>
+Then you have to tell your inetd to invoke the distributed inetd-wrapper of
+nanoweb whenever the www/http service on your machine gets requested. Just
+insert these two lines into your systems <tt><var>/etc/inetd.conf</var></tt> config
+file:
+<pre class="code">www    stream tcp nowait root  /usr/sbin/in.nanoweb in.nanoweb
+https  stream tcp nowait root  /usr/sbin/in.nanoweb in.nanoweb -ssl
+</pre>
+<BR>
+
+This is probably already done by the install-sh, you just may need to remove
+the <b>#</b> in front (which made these lines comments).
+
+<BR>
+<BR>
+You can force inetd to rearead its configuration file by:
+<BR>
+root@www:~# <KBD>killall -HUP inetd</KBD>
+<BR>
+<SMALL>(isn't such a bad command like it sounds)</SMALL>
+<BR>
+
+<H3>Requirements</H3>
+The nanoweb inetd-wrapper currently requires the »<tt>getpeername</tt>« app
+from the <tt>tcputils</tt> package. You can download the source at
+<A HREF="ftp://ftp.lysator.liu.se/pub/unix/tcputils">ftp://ftp.lysator.liu.se/pub/unix/tcputils</A>
+or if you are using Debian with <tt>apt-get install tcputils</tt>.
+
+<BR>
+<BR>
+
+But, see also the <A HREF="../README.inetd">README</A> for most up to
+date informations on this issue.
+
+<BR>
+<BR>
+<HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

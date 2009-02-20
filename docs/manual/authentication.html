@@ -1,0 +1,136 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>HTTP Authentication in NANOWEB</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H1 ALIGN="CENTER">HTTP Authentication</H1>
+
+The authentication feature is part of the hypertext transport protocol
+(HTTP), and allows to restrict access to specified directories or complete
+areas with login names and passwords.
+<br>
+<SMALL>NANOWEB</SMALL> allows this very flexible, again due to its modular
+structure. Currently there exist 9 extensions modules for HTTP
+authentication:
+
+<TABLE BORDER="0" CALLPADDING="2" CELLSPACING="3">
+<COLGROUP><COL WIDTH="20%"><COL WIDTH="80%"></COLGROUP>
+<TR>
+  <TD BGCOLOR="#EEEEFF" HEIGHT="40" WIDTH="20%" VALIGN="TOP"> <A HREF="mod_auth_simple.html">mod_auth_simple</A> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>SIMPLE</b> </TD>
+  <TD> User names and passwords are kept in one of the configuration files. </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" HEIGHT="40" WIDTH="20%" VALIGN="TOP"> <A HREF="mod_auth_htpasswd.html">mod_auth_htpasswd</A> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>HTPASSWD</b> </TD>
+  <TD> Authentication files from the apache webserver can be used with this module. </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" HEIGHT="40" WIDTH="20%" VALIGN="TOP"> <A HREF="mod_auth_nwauth.html">mod_auth_nwauth</A> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>NWAUTH</b> </TD>
+  <TD> Nanoweb authentication files are much like the apache ones. </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" HEIGHT="40" WIDTH="20%" VALIGN="TOP"> <A HREF="mod_auth_mysql.html">mod_auth_mysql</A> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>MYSQL</b> </TD>
+  <TD> This module expects login/password pairs to be listed in a MySQL database. </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" HEIGHT="40" WIDTH="20%" VALIGN="TOP"> <A HREF="mod_auth_pgsql.html">mod_auth_pgsql</A> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>PGSQL</b> </TD>
+  <TD> PostgreSQL database authentication. </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" HEIGHT="40" WIDTH="20%" VALIGN="TOP"> <A HREF="mod_auth_ldap.html">mod_auth_ldap</A> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>LDAP</b> </TD>
+  <TD> Authentication data from LDAP. </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" HEIGHT="40" WIDTH="20%" VALIGN="TOP"> <A HREF="mod_auth_anydb.html">mod_auth_anydb</A> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>ANYDB</b> </TD>
+  <TD> Any database supported by either PEAR::DB, ADOdb or PHP_dbx can be used for authentication. </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" HEIGHT="40" WIDTH="20%" VALIGN="TOP"> <A HREF="mod_auth_anonymous.html">mod_auth_anonymous</A> </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>ANONYMOUS</b> </TD>
+  <TD> Anonymous login (like with FTP). </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF" HEIGHT="40" WIDTH="20%" VALIGN="TOP"> mod_auth_subversion </TD>
+  <TD BGCOLOR="#FFEEEE" WIDTH="10%" VALIGN="TOP"> <b>SUBVERSION</b> </TD>
+  <TD> <A HREF="http://subversion.tigris.org/">Subversion</A> repository authentication. </TD>
+</TR>
+</TABLE>
+
+<br>
+
+In order to use them, you have of course to load them into the server (using
+the <A HREF="core.html#loadmodule">LoadModule</A> directive). You can load
+all authentication modules together, as authentication can be activated with
+one of them on a per-directory basis (in .nwaccess files), for example:
+
+<br>
+<br>
+
+<PRE CLASS="samp"><A HREF="core.html#authrealm">AuthRealm</A> = Info: Directory password required!
+<A HREF="core.html#authrequire">AuthRequire</A> = <KBD>SIMPLE</KBD>
+
+<A HREF="core.html#authsimpleuserpass">AuthSimpleUserPass</A> = ... </PRE>
+
+<br>
+<br>
+
+In this example config file the »SIMPLE« authentication scheme (from
+mod_auth_simple) is used. But for another directory you could use
+a apache password file with "<A HREF="core.html#authrequire">AuthRequire</A>=HTPASSWD".
+
+<br>
+<br>
+
+<PRE CLASS="samp"># two methods combined => logical OR
+<A HREF="core.html#AuthRequire">AuthRequire</A> = SIMPLE
+<A HREF="core.html#AuthRequire">AuthRequire</A> = MYSQL
+</PRE>
+
+<br>
+If you combine two <A HREF="core.html#authrequire">AuthRequire</A>
+directives in one configuration file (.nwaccess) like in the above example,
+the user will be granted access if its login name and password are verified by
+one of the authentication modules (logical OR). This way you could specify
+system-wide authentication data for a few people only with mod_auth_simple and
+grant thousands of other users access via mod_auth_mysql where required.
+
+<br>
+<br>
+
+<PRE CLASS="samp"># Require auth only for some locations
+<A HREF="core.html#AuthRequire">AuthRequire</A> = SIMPLE
+<A HREF="core.html#AuthLocation">AuthLocation</A> = /admin/
+<A HREF="core.html#AuthLocation">AuthLocation</A> = /site/admin.php
+</PRE>
+
+<br>
+Using the <A HREF="core.html#authlocation">AuthLocation</A> in the global,
+virtualhost, or access file will restrict the need for authentication to the
+specified locations.
+
+<br>
+<br>
+
+<BR><HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

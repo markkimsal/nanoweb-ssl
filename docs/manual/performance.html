@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>Performance Hints</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H1 ALIGN="CENTER">Performance Hints</H1>
+
+On this page we'll collect some recommendations telling you how to configure
+nanoweb to get it to operate at <A HREF="http://nanoweb.si.kz/?p=perf">highest
+speed</A> possible.
+
+<UL>
+
+  <LI> disabling extensions you don't want to use is almost always a
+  very good idea
+  </LI>
+
+<BR>
+
+  <LI> <A HREF="core.html#hostnamelookups">HostnameLookups</A> lead to some
+  network traffic and delay time, so you probably want to disable this if
+  you need more speed. Another good solution to skip this overhead for the
+  server is to let the logger processes resolve the hostnames after the page
+  already has been delivered; see
+  <A HREF="core.html#hostnamelookupsby">HostnameLookupsBy</A> for this / or
+  you could completely skip this step and let some log file analyzing tool do
+  these DNS lookups.
+  </LI>
+
+<BR>
+
+  <LI> the <A HREF="mod_libphp.html">libphp</A> module <b>is not faster</b>
+  than mod_cgi in general, it currently only seems to give you many
+  disadvantages if used. It may be a bit more speedful than using the php
+  cgi interpreter if your server load is _often_ very high.
+  </LI>
+
+<BR>
+
+  <LI>using <a href="mod_rewrite.html">mod_rewrite</a> generally slows down
+  the server as it needs to re-read the .nwaccess/.htaccess files for every
+  subdirectory files are requested from, and additionally the regular
+  expressions are a real treat to server speed
+  </LI>
+
+<BR>
+
+  <LI>the content negotiation method of
+  <a href="mod_multiviews.html">mod_multiviews</a> only comes into use if the
+  requested file doesn't exists on the server, so the file search and
+  regular expression matching shouldn't occur all the time and
+  therefore doesn't slows down the serving process.
+  <br>
+  So most of the time it shouldn't be a performance problem using multiviews,
+  when it is used only to select the primary html document.
+  <br>
+  However not specifying the
+  filename extions in your &lt;IMG&gt;-tags and let the server select the
+  appropriate one is probably a bad idea unless you don't serve different
+  language variants of a picture (containing some rendered text of course!),
+  multiviews cannot select the best variant out of GIFs and PNGs for example,
+  because most browsers just request image/* (of any type) without telling
+  wether they support any of the formats (-&gt; thats why you should favour
+  PNGs in general ;-).
+  </LI>
+
+<BR>
+
+  <LI>mod_mysqllog should work on the same speed level as standard file or
+  syslog logging, using the database one probably won't lead to more speed.
+  </LI>
+
+</UL>
+
+<br>
+<BR><HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

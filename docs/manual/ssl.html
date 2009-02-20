@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>SSL with nanoweb HOWTO</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H1 ALIGN="CENTER">SSL with nanoweb HOWTO</H1>
+
+First, nanoweb has no official support for HTTP over Secure Sockets Layer (also
+known as HTTPS).
+<BR>
+<BR>
+
+There is however a mean to make it work, with some help from the popular 
+"stunnel" application.
+<BR>
+<BR>
+
+Starting from version 1.8.0, nanoweb supports running as an inetd service, and 
+this is necessary for wrapping nanoweb with stunnel.
+<BR>
+<BR>
+
+
+<H3>Prerequisites</H3>
+<UL>
+  <LI>you first need to ensure that nanoweb works correctly in plain
+      <A HREF="inetd.html">inetd ServerMode</A></LI>
+  <LI>stunnel (<A HREF="http://www.stunnel.org/">www.stunnel.org</A>)</LI>
+  <LI>openssl (<A HREF="http://www.openssl.org/">www.openssl.org</A>)</LI>
+</UL>
+
+
+<H3>Installation</H3>
+
+<OL>
+
+  <LI> If you already have setup nanoweb in inetd mode, you may want
+       to backup your non-SSL config files as you probably want to host
+       different virtual hosts for http and https.
+       </LI>
+
+  <LI> Generate a certificate for nanoweb:<BR>
+       <PRE>root@www:~# <KBD>cd /etc/ssl/certs</KBD>
+root@www:/etc/ssl/certs# <KBD>openssl req -new -x509 -nodes -out nanoweb.pem -keyout nanoweb.pem -days 9999</KBD>
+root@www:/etc/ssl/certs# <KBD>ln -s nanoweb.pem `openssl x509 -noout -hash &lt; nanoweb.pem`.0</KBD></PRE>
+       </LI>
+
+  <LI> Copy the wrapper script <tt>/usr/sbin/in.nanoweb</tt> to
+       <tt>in.nanoweb-ssl</tt>; comment the line for normal operation and
+       uncomment the ones for SSL (stunnel).
+       <br>
+       You want these <b>two</b> files to keep nanoweb operating as plain
+       http server on port 80, but also over SSL via stunnel.
+       </LI>
+
+  <LI> uncomment the https line in your <tt>/etc/inetd.conf</tt> (this line
+       was already written to there by the nanoweb install-sh)
+<PRE class="samp">
+# nanoweb inetd support
+www   stream tcp nowait root /usr/sbin/in.nanoweb nanoweb
+https stream tcp nowait root /usr/sbin/in.nanoweb nanoweb -ssl
+</PRE>
+       </LI>
+
+</OL>
+
+
+<H3>Testing</H3>
+
+Once all this is done, open your favorite SSL enabled web browser, and try to
+open "https://localhost". If it works, you should see the default web page,
+and your browser should tell you some things about the cert not being signed
+by a trusted authority (this is not a bug, just send your CSR for signing to a
+trusted CA if you want).
+<BR>
+<BR>
+If it does not, stunnel log files are quite informative :)
+
+<BR>
+<HR>
+<BR>
+
+See also the <A HREF="../README.ssl">text versions</A> of this HOWTO about SSL
+support for nanoweb.
+
+<BR>
+<BR>
+<HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

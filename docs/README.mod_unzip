@@ -1,0 +1,14 @@
+mod_unzip
+=========
+
+This extension module enables Nanoweb to read and serve files from
+inside .zip archives. To use it your PHP needs to be compiled with
+the zziplib extension (http://zzlib.sourceforge.net/).
+
+If it is loaded files inside the archive can be referenced easily
+using a regular pathinfo after the .zip filename:
+http://www.example.com/archive.zip/index.html
+
+Note that many other extensions like Multiviews won't work together
+with this module, so for example .php scripts from inside archive
+files won't be executed.

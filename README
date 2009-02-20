@@ -1,0 +1,77 @@
+
+the aEGiS PHP nano web server
+=============================
+
+Copyright (C) 2002-2005 Vincent Negrier aka. sIX <six@aegis-corp.org>
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2, or (at your option)
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+
+What ??! 
+
+Nanoweb is an HTTP server written in PHP, designed to be small, secure, 
+and extensible.
+
+The main features are :
+
+- HTTP/1.1 compliance
+- Powerful and easy configuration
+- Modular architecture
+- FastCGI, CGI and Server side includes support
+- Name and port based virtual hosts
+- Access control lists
+- htpasswd, MySQL, PostgreSQL and LDAP authentication support
+- Themes for server generated content
+- Apache compatible log format, MySQL logging
+- Directory browsing
+- inetd support and SSL via external helpers
+- Denial of Service protection
+- Proxy Server extension
+- Filters and gzip support
+- RBL support (mail-abuse.org)
+- Extension Protocols (request methods) support
+- ... and a lot more
+
+
+Why ? 
+
+Why did I do it ? I found the idea of using a language mostly aimed at web 
+scripting to write a web server was quite funny. That's all, really ...
+
+Why should you use it ?
+
+It's light, fast and robust.
+Also being written in PHP makes it very easily extensible with custom modules,
+and secure because - running inside the Zend scripting engine - it's immune
+to a number of common security threats (format strings, buffer overflows, ...)
+
+
+How ? 
+
+Read INSTALL, and follow the simple installation steps.
+
+Interesting readings after install is done :
+
+- User Manual (http://localhost/manual or http://nanoweb.si.kz/manual)
+- The 'docs' directory contains some brief infos about individual parts of the
+  server, modules, and some howtos.
+- The 'ChangeLog' file contains the list of all added features and this could
+  be useful.
+- Default configuration files are well commented and reading them should help
+  you getting started too.
+
+For any other concerns about nanoweb, please consult the general or support
+forums at <http://forums.t0x.net/?c=2> or mail the author.
+

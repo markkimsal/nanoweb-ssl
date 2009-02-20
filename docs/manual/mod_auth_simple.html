@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>mod_auth_simple</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H1 ALIGN="CENTER">mod_auth_simple</H1>
+
+With the simple authentication module you can restrict access to your
+documents with logs/password pairs that you specify within one of the config
+files (main config, vhosts.conf or .nwaccess files).
+
+<br>
+<br>
+
+<SMALL>one of your your .nwaccess files may look as follows:</SMALL><BR><br>
+
+<PRE CLASS="samp">AuthRealm = realm name (will be shown as info text in most browsers)
+
+# activate the simple auth mechanism
+AuthRequire = <b>SIMPLE</b>
+
+# these directives give the user names and passwords
+AuthSimpleUserPass = login1 password1
+AuthSimpleUserPass = user2 password2
+...
+AuthSimpleUserPass = userNNN passwordNNN
+</PRE>
+
+
+<br>
+<BR><HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

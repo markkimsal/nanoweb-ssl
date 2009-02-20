@@ -1,0 +1,50 @@
+# If you plan to use mod_worms, you must copy this file 'README.mod_worms' to
+# '/usr/bin/wpop' or any other directory in the default path, and chmod +x it.
+# You may also have to compile samba if you don't already have smbclient and 
+# nmblookup, and edit the four paths at the top of the file.
+
+# CUT HERE ! CUT HERE ! CUT HERE ! CUT HERE ! CUT HERE ! CUT HERE ! CUT HERE !
+
+#
+# wpop
+# Version 2.0
+# by Vincent Negrier <six@aegis-corp.org>
+#
+# Sends a winpopup message to the specified IP address
+# Usage: echo "blah" |wpop 10.0.0.1
+#
+
+# Requires smbclient and nmblookup from samba <www.samba.org>
+
+SMBCLIENT='/usr/bin/smbclient'
+NMBLOOKUP='/usr/bin/nmblookup'
+
+# Where to send the very interesting output of smbclient
+OUTPUT_TO='/dev/null'
+
+# Check if paths are OK
+
+if [ ! -x "$SMBCLIENT" ]; then
+
+        echo "can not find $SMBCLIENT"
+        exit
+
+fi
+
+if [ ! -x "$NMBLOOKUP" ]; then
+
+        echo "can not find $NMBLOOKUP"
+        exit
+
+fi
+
+if [ "$1" != "" ]; then
+
+        $SMBCLIENT -M `$NMBLOOKUP -U $1 -A $1 |grep "<00>" |grep -v "<GROUP>" |grep -v "~" |cut -c2- |cut -d" " -f1` -I $1 >$OUTPUT_TO 2>$OUTPUT_TO
+
+else
+
+        echo "usage: wpop <IP_ADDRESS> [<input file]"
+
+fi
+

@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>.nwaccess - per-directory configuration files</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H1 ALIGN="CENTER">.nwaccess - per-directory configuration files</H1>
+
+Most of the <A HREF="core.html">configuration directives</A> that are
+understood in the main server configuration file
+(<a href="file://localhost/etc/nanoweb/nanoweb.conf">/etc/nanoweb/nanoweb.conf</a>)
+are also allowed to be used in the per-directory config files. The format of
+that files is the same as in the main server config file.
+<br>
+<br>
+These files can be placed in every directory below the docroot and must have
+the filename set by the <A HREF="core.html#accessfile">AccessFile directive</A>
+(in main server config file); per default the name of these files is
+<b><a href="../README.accessfiles">.nwaccess</a></b>. In apache these files are called
+.htaccess, but as however only a few directives are fully equal to that of apache,
+you most likely want to have these different names for them; see <a
+HREF="apachecompat.html">apache compatibility issues</a> if you would like to merge them.
+<br>
+<br>
+
+example of a <KBD>.nwaccess</KBD> file:
+<PRE class="SAMP"># .nwaccess
+# comments start with the hash sign
+
+FBSortOrder = date desc
+# will let the directory listing be ordered by modiftime, last first
+
+ErrorDocument = 403 errorpage.html
+# output customized error page
+
+RewriteRule ^(*.tgz)$  /cgi-bin/log_download.php/$1  [nocase]
+# binary files go through a .php script
+</PRE>
+
+<BR>
+<BR>
+
+If you give a directive in the .nwaccess file it will most likely override
+the one specified in the main server config file. This behaviour can
+be tweaked by setting <a href="core.html#accesspolicy">AccessPolicy</a> to
+<b>block</b>, <b>override</b> or <b>merge</b>. This default behaviour
+can then differ for some directives if you change it using
+<a href="core.html#accessblock">AccessBlock</a>,
+<a href="core.html#accessoverride">AccessOverride</a> or
+<a href="core.html#accessmerge">AccessMerge</a>.
+
+<BR>
+<BR>
+
+Note that starting of nanoweb 1.8.1 you may omit the equal sign for
+assigning values to the directives. This is true for the main config file
+(<tt>nanoweb.conf</tt>), too.
+
+<BR>
+<BR>
+<HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

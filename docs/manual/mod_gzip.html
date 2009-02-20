@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>mod_gzip</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H1 ALIGN="CENTER">mod_gzip</H1>
+
+The HyperTextTransferProtocol defines methods to transmit files in encoded formats from
+server to client. These encodings focus on compression
+(the only one used nowadays is GNU's gzip) to speed up transmissions over the
+internet.
+<BR>
+This module handles transparent compression (activated when a browser states
+it supports it) without requiring you to change anything to your files.
+<br>
+Note that this procedure gives a little overhead on the server side as well
+as for the client, but especially decompression is amazingly fast and the
+many times faster download of html files via today still used modems
+should encourage you to activate this module.
+<br>
+<br>
+
+As this module is now internally implemented as filter, there are different
+ways to activate it:
+
+<br>
+<br>
+
+<PRE CLASS="samp"># standard method (tries to compress every file)
+<A HREF="core.html#gzipenable">GzipEnable</A> = 1
+
+# or activated with a Filter rule (here for all files)
+<A HREF="core.html#filter">Filter</A> = */* gzip
+
+# or (only tries to compress text files)
+<A HREF="core.html#filter">Filter</A> = text/* gzip
+</PRE>
+
+<br>
+<br>
+
+To activate it for 'text/*' files only is probably a good idea, as most
+other file types rarely can be compressed that well.
+<br>
+There are also some general options for this module you may wish to tweak:
+
+<br>
+<br>
+
+<PRE CLASS="samp"># compression level (1 - 9)
+<A HREF="core.html#gziplevel">GzipLevel</A> = 5
+
+# send uncompressed if size didn't reduce significantly
+<A HREF="core.html#gzipmaxratio">GzipMaxRatio</A> = 90
+</PRE>
+
+<br>
+<br>
+
+Note that mod_gzip currently doesn't compress output of CGI scripts
+(which often comes in chunks), so you may want to apply the "unchunk"
+<A HREF="core.html#filter">Filter</A> before "gzip".
+
+<br>
+
+For <b>PHP scripts</b> you should activate "zlib output compression" in the
+php.ini or activate the "ob_gzhandler" in every script. This is safer and
+also some nanoseconds faster than using nanowebs mod_gzip.
+
+<br>
+<BR><HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

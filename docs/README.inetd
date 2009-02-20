@@ -1,0 +1,17 @@
+Nanoweb and inetd HOWTO
+=======================
+
+Starting with version 1.8.0, nanoweb can be run from the inetd superserver.
+This file describes how to setup nanoweb in inetd mode.
+
+
+Setup
+=====
+
+1/ Get the "getpeername" app from the tcputils package. You can download the 
+source at ftp://ftp.lysator.liu.se/pub/unix/tcputils or if you are using Debian
+apt-get install tcputils.
+
+2/ Add the following line to your /etc/inetd.conf (or equivalent) :
+"www stream tcp nowait root /usr/sbin/in.nanoweb nanoweb"
+

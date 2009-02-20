@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>mod_status</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H1 ALIGN="CENTER">mod_status</H1>
+
+The status module enables you to view your servers current load.
+
+<br>
+<br>
+
+There are different pages you can view:
+
+<TABLE BORDER="0" CALLPADDING="2" CELLSPACING="3">
+<COLGROUP><COL WIDTH="20%"><COL WIDTH="80%"></COLGROUP>
+<TR>
+  <TD BGCOLOR="#EEEEFF"> general status page </TD>
+  <TD> <A HREF="http://localhost/server-status">http://localhost<B>/server-status</B></A> </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF"> more verbose general info </TD>
+  <TD> <A HREF="http://localhost/server-status?detailed">/server-status?detailed</A> </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF"> statistics for the virtual hosts </TD>
+  <TD> <A HREF="http://localhost/server-status?vstats">/server-status?vstats</A> </TD>
+</TR>
+<TR>
+  <TD BGCOLOR="#EEEEFF"> active servers` last served requests </TD>
+  <TD> <A HREF="http://localhost/server-status?who">/server-status?who</A> </TD>
+</TR>
+</TABLE>
+
+<BR>
+You can merge vhosts statistics and detailed modules information into one status page
+by retrieving <A HREF="http://localhost/server-status?detailed&amp;vstats">/server-status?detailed&amp;vstats</A>.
+
+
+<br>
+<br>
+
+For security concerns you should restrict access to these statistical pages
+by using the
+<A NAME="core.html#statusallowhost">StatusAllowHost</A> directive (most
+often found in <A HREF="file:///etc/nanoweb/modules.conf">modules.conf</A>);
+keeping such informations secret is probably a good idea.
+
+<H3><A NAME="statusallowhost">StatusAllowHost directive</A></H3>
+<B>Syntax:</B> StatusAllowHost = 127.0.0.1 <BR>
+<B>Context:</B> Server Config (modules.conf) <BR>
+<P>
+This gives an IP of a host allowed to consult the server status through
+mod_status. Multiple lines with this directive may be specified; an
+incomplete IP address can be used to allow a range of host addresses to be
+granted access; as for example in:
+<PRE CLASS="samp">  # access allowed from common local ethernet address range:
+  StatusAllowHost = 192.168.
+  StatusAllowHost = 10.0.
+</PRE>
+</P>
+
+
+<br>
+<BR><HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

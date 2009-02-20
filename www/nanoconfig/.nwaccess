@@ -1,0 +1,7 @@
+ACPolicy       = deny
+ACAllowIP      = 127.0.0.1
+ACBlockMessage = Sorry, access is only allowed from trusted hosts
+
+# Uncomment the following to allow access from a local network
+#ACAllowIP      = 10.0.0.*
+#ACAllowIP      = 192.168.0.*

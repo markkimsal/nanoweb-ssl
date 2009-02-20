@@ -1,0 +1,29 @@
+README.mod_bsp
+==============
+
+What is mod_bsp ? It's a nanoweb module used to serve BSP content.
+
+But what is BSP ? BSP stands for Brainfuck Server Pages.
+
+But ... What the f*ck is Brainfuck ? 
+
+To quote this page <http://www.muppetlabs.com/~breadbox/bf/> : 
+
+"Brainfuck is the ungodly creation of Urban Müller, whose goal was apparently 
+to create a Turing-complete language for which he could write the smallest 
+compiler ever, for the Amiga OS 2.0. His compiler was 240 bytes in size. 
+(Though he improved upon this later -- he informed me at one point that he had
+managed to bring it under 200 bytes.)"
+
+If you want to see what it looks like, have a look at htdocs/default/bspdemo.bsp
+
+Quick facts about mod_bsp :
+
+- mod_bsp makes use of the PHP Brainfuck Interpreter v1.01 by Daniel Lorch.
+  visit the official site at : http://daniel.lorch.cc/projects/brainfuck/
+- The parameter given to ParseExt is the content type of the served pages.
+- If "BSPAllowSource = 1" is defined in config file, calling a bsp page with 
+  "?source" as query string will show the BF source code of the page.
+- The input fed to the BF programs is the content of the POST request
+- The output directly goes to the client browser
+

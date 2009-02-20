@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>mod_cgi</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H1 ALIGN="CENTER">mod_cgi</H1>
+
+This module allows nanoweb to execute the appropriate script interpreter for
+a filename extension, if you set it up coreectly by using the
+<A HREF="core.html#parseext">ParseExt directive</A>:
+<PRE CLASS="samp">
+   ParseExt = php CGI /usr/local/bin/php
+   ParseExt = cgi CGI /usr/bin/perl -w $FILENAME
+   ParseExt = pl  CGI /usr/bin/perl -w $FILENAME
+   ParseExt = py  CGI /usr/bin/python $FILENAME
+   ParseExt = sh  CGI /bin/sh -c $FILENAME
+   ParseExt = js  CGI /usr/bin/js $FILENAME
+   ParseExt = awk CGI /usr/bin/gawk -f $FILENAME /dev/null
+</PRE>
+(these are just some examples, but php and perl are the most commonly used
+ones)
+
+<br><br>
+<b>PHP</b>
+<PRE CLASS="code">&lt;html&gt;
+&lt;head&gt;&lt;title&gt;php example&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+  &lt;?php
+      echo "&lt;h2&gt;Welcome to my homepage!&lt;/h2&gt;";
+      include("counter.php");
+      echo "You are visitor no $counter_n &lt;br&gt;";
+      $f = fopen("counter.php");
+      fwrite($f, '&lt;?php $counter_n = ' . $counter_n++ . "; ?&gt;");
+      fclose($f);
+  ?&gt;
+  ...</PRE>
+
+<br><br>
+<b>Perl</b>
+<PRE CLASS="code">#!/usr/bin/perl -wTU
+require "cgilib.pl";
+ReadParse();
+
+echo "Content-Type: text/html\r\n\r\n";
+echo "&lt;html&gt;&lt;body&gt;";
+...</PRE>
+
+<br>
+
+<BR>
+<BR><HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

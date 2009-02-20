@@ -1,0 +1,199 @@
+ServerMode = cgi
+================
+
+This document describes how to use the Nanoweb HTTP Server as secondary
+engine below a running Apache. This procedure does not only sound strange,
+it is in fact not recommended; so if you've got the chance to run Nanoweb
+in standalone mode, you should do so.
+
+
+Why use it?
+-----------
+
+If you however have a evil provider who crippled the Apache configuration
+to make "your" server partially unusable, this operation mode of Nanoweb
+may help you to come around most of the problems.
+
+Another good reason to use this is that Nanoweb is much more easily
+extendible than Apache; and even if you'd know how to write Apache extensions
+you probably didn't get access to your providers /etc/apache/httpd.conf to
+activate them.
+
+
+Step By Step
+------------
+
+(1)  Setup a running Nanoweb on your homebox, tweak the configuration
+     files to your needs, and load all wanted extensions modules.
+
+(2)  Build a large nanoweb.php »binary« using the "mkhugenanoweb.php"
+     utility.
+     This step is not necessary, but recommended, because a large nanoweb
+     binary starts up much faster, and as we will run it in fact in
+     »inetd mode« later this is a good idea.
+
+(3)  Create a subfolder /nanoweb/ in the docroot on the machine running
+     the Apache server.
+     - Install your "large" nanoweb.php into there (or alternatively the
+     real nanoweb.php with all its modules and the configuration files).
+     - You may also wish to place a php-cgi binary to there.
+     - Copy the "cgi-nanoweb-wrapper.php" into this folder, too.
+
+(4)  Change the config vars inside "cgi-nanoweb-wrapper.php" to suit your
+     installation:
+     - $NANOWEB_BINARY=... - requires the absolute path of where you
+       installed your (large) nanoweb.php to.
+     - $FAST_INLINE_NANOWEB=1 - is now the recommended setting, but may not
+       always work reliable.
+     - $PHP_BINARY=... - is only required if you set $FAST_INLINE_NANOWEB=0,
+       because then another copy of the PHP interpreter must be used to run
+       the Nanoweb subserver.
+       Note that you also have to change the configuration settings inside
+       nanoweb-large.php (or config files) to allow .php scripts to be
+       executed via your uploaded PHP binary.
+
+(5)  Add these lines to Apache's .htaccess file (in the docroot), to
+     activate the Nanoweb subserver:
+
+	# if mod_rewrite is activated inside Apache, you are able to
+	# redirect any request through Nanoweb:
+	RewriteEngine  On
+	RewriteRule  .*   /nanoweb/cgi-nanoweb-wrapper.php  [L]
+
+	# you could also only let Nanoweb serve requests, where Apache
+	# failed (files not found, no access, etc.)
+	ErrorDocument  200  /nanoweb/cgi-nanoweb-wrapper.php
+	ErrorDocument  403  /nanoweb/cgi-nanoweb-wrapper.php
+	ErrorDocument  404  /nanoweb/cgi-nanoweb-wrapper.php
+	ErrorDocument  500  /nanoweb/cgi-nanoweb-wrapper.php
+	# You could enforce the "500 error" with some forbidden (but
+	# well known) directives inside the .htaccess.
+	# Use this trick if your evil provider disabled even mod_rewrite
+
+	# The ErrorDocument 404 is the most recommended setting, as this
+	# passes only the requests to Nanoweb where Apache failed to
+	# find the according file (mod_rewrite or Multiviews disabled)
+
+
+You should test then if requests are passed over to Nanoweb. This can be
+determined by looking at the HTTP response headers, a "X-Server: nanoweb"
+should appear there.
+
+
+
+If things don't work
+--------------------
+
+PHP scripts don't	Set the "_parseext" directive inside your large
+get executed		nanoweb.php or inside the server configuration
+			files.
+			You need to give the path to the php-cgi interpreter
+			(you probably need to upload one, as most apache
+			installations are using an internal libphp version).
+
+500 Infernal		This is a message from Apache. You wrote an
+Server Error		incorrect config directive in the .htaccess file,
+			and Apache does not understand it.
+			Use the ErrorDocument trick from above to pass the
+			request to Nanoweb.
+
+Waiting endlessly	You probably tried to run a Nanoweb below another
+for the page		Nanoweb, possible but very silly.
+
+POST requests		POST requests can easily be reconstructed in PHP
+are not working		version 4.3.0 or later (from php://input stream).
+			For previos versions the wrapper tries to set a
+			php.ini setting which allows to easily fetch the
+			whole POST request body from the PHP variable
+			$HTTP_RAW_POST_DATA, but the result of this trick
+			is unpredictable.
+			The last chance to rebuild the POST request is to
+			try to reconstruct it from the contents of $_POST -
+			very stupid approach and even more error prone.
+
+File uploads are	The problem is again, that POST requests need to
+not working		be reconstructed from the variables PHP makes from
+			the original request, and this is very effortful
+			for file uploads and thus guessworking.
+			If it is all that important you could switch to 4.3
+			or enable "always_populate_raw_post_data" in your
+			php.ini to help the wrapper to see the original POST
+			requests.
+
+Error 500 Request	The wrapper failed to rebuild the POST request.
+Body Unavailable	This should not happen, usually the wrapper rebuilds
+For Subserver		it (even if it's content's are wrong).
+			May be this was triggered by a PUT (HTTP/1.0) or
+			BREW request (HTCPCP/1.0).
+
+POST data disappears	If you called the wrapper via Apache's ErrorDocument
+			directive then the POST request data never reaches
+			the nanoweb-wrapper (at least for most Apache 1.3
+			versions).
+			No workaround, you should prefer the RewriteRule
+			method to execute the nanoweb wrapper.
+
+Error 500 Subserver	The $NANOWEB_BINARY could not be opened in FAST
+Misconfiguration	mode. You have to give the absolute path name of it.
+
+Error 500 File I/O	Check the $TMP_DIR variable.
+
+???			Go to the nanoweb support forum, or mail
+			mario17@web·de
+
+
+
+Security
+--------
+
+If you upload a PHP binary into the recommended /nanoweb/ you shouldn't
+forget to deny access to this directory in the .htaccess and/or .nwaccess
+configuration files. (Installing the PHP binary into /cgi-bin/ is harmful
+only if you call it "php.cgi")
+
+
+
+Random Notes
+------------
+
+You could of course write a nanoweb-wrapper in another CGI language,
+say /bin/bash or /usr/bin/awk, but you may only wish to do this if your
+evil providers server has no PHP support at all. Btw this wrapper is
+probably rather fast, as the nanoweb.php can be executed inside Apaches
+libphp as well.
+
+-
+
+There is a commented line inside the 'SLOW' part of the wrapper which is
+intended to pass the path of your own PHP configuration file (php.ini) to
+the interpreter - if you would like to use your own, because your providers
+one is as damaged like the webserver configuration is.
+
+-
+
+This wrapper could also be renamed to "nph-nanoweb-wrapper.cgi".
+The output of CGI scripts whose name starts with "nph-" is commonly passed
+directly to the client without further parsing by the server. This is a
+very old feature from the early days of the WWW but may still be supported
+by some Apache versions. Don't forget to add the "#!/where/is/my/php" line
+on top of the wrapper script if you'd like to use it that way!
+You can and should use FAST_INLINE_NANOWEB even if this wrapper is called
+as .cgi and not libphp script.
+
+PHP 4.3.0 is very broken (as are many other -dev versions); the CGI response
+headline "HTTP/1.1 CODE Response" is not passed from within .cgi scripts,
+and thus the whole HTTP answers of nph-scripts becomes incorrect. You need
+to edit the source code.
+Edit the file "/php-4.3.0/sapi/cgi/cgi_main.c", go to line #280:
+
+	if (SG(sapi_headers).http_response_code != 200) {
+
+Change the "!= 200" into ">= 100", this should fix it.
+You then need run "make" again to rebuild your php binary.
+
+-
+
+You may wish to disable $nww_apache_headers if, you see a "Status:" line
+appear in all the HTTP responses. This setting is necessary when Apache
+overwrites the "HTTP/1.1 CODE Response" header from Nanoweb.
+

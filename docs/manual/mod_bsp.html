@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>mod_bsp - Brainfuck Server Pages</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<CENTER>Brainfuck Server Pages</CENTER>
+<H1 ALIGN="CENTER">mod_bsp</H1>
+
+Don't forget to have a look at the <A HREF="../README.mod_bsp">README</A> for this module!
+
+<br>
+<br>
+
+mod_bsp is a nanoweb module used to serve BSP content - <b>BSP</b> stands for
+<b>Brainfuck Server Pages</b>.
+<br>
+<br>
+But ... What the f*ck is Brainfuck ?
+<br>
+<br>
+<BLOCKQUOTE CITE="http://www.muppetlabs.com/~breadbox/bf/"> 
+"Brainfuck is the ungodly creation of Urban M&uuml;ller, whose goal was apparently 
+to create a Turing-complete language for which he could write the smallest 
+compiler ever, for the Amiga OS 2.0. His compiler was 240 bytes in size. 
+(Though he improved upon this later -- he informed me at one point that he had
+managed to bring it under 200 bytes.)"
+<BR><SMALL><A HREF="http://www.muppetlabs.com/~breadbox/bf/">http://www.muppetlabs.com/~breadbox/bf/</A></SMALL></BLOCKQUOTE>
+
+<br>
+If you want to see what it looks like, have a look at
+<A HREF="../bspdemo.bsp">../bspdemo.bsp</A> in the docroot.
+
+<br>
+<h3>Quick facts about mod_bsp:</h3>
+<ul>
+ <li>mod_bsp makes use of the PHP Brainfuck Interpreter v1.01 by Daniel Lorch.
+     visit the official site at : http://daniel.lorch.cc/projects/brainfuck/
+     </li>
+ <li>The parameter given to <A HREF="core.html#parseext">ParseExt</A> is the
+     content type of the served pages.
+     </li>
+ <li>If "<A HREF="core.html#bspallowsource">BSPAllowSource = 1</A>" is
+     defined in config file, calling a bsp page with "<b>?source</b>" as
+     query string will show the BF source code of the page.
+     </li>
+ <li>The input fed to the BF programs is the content of the POST request
+     </li>
+ <li>The output directly goes to the client browser
+     </li>
+</ul>
+
+<br>
+If you're further interested in Brainfuck: there are
+<A HREF="http://www.google.com/search?q=Brainfuck">thousands of pages</A>
+covering this language.
+
+
+<BR>
+<BR>
+<HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

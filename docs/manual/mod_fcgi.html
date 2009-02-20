@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>mod_fcgi</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H1 ALIGN="CENTER">mod_fcgi</H1>
+
+FastCGI is a method to run all your favorite scripting languages much
+faster, as the according interpreters are alwas kept in memory and just wait
+for a script to be passed from the webserver.
+<br>
+With <A HREF="mod-cgi.html">mod_cgi</A> a copy of the script interpreter
+needs to be run whenever a CGI is to be processed, which may be a bit slower
+than neccessary.
+<br>
+Just register your script extensions with the
+<A HREF="core.html#parseext">ParseExt directive</A> as you did for mod_cgi,
+but now specify FCGI as the second argument and server name and port as
+args to mod_fcgi:
+<PRE CLASS="samp">
+   ParseExt = phpf FCGI localhost:9000
+</PRE>
+
+<BR>
+<BR><HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>mod_meta</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H2 ALIGN="CENTER">mod_meta</H2>
+
+The <a href="ftp://ftp.rfc-editor.org/in-notes/rfc2068.txt">HTTP/1.1
+specification</a> recommends, that parties involved in transfer of hypertext
+files should evaluate the <b>&lt;META&nbsp;HTTP-EQUIV&gt;</b> header tags of
+HTML pages as they would usual http transfer headers.
+<br>
+<PRE CLASS="samp">&lt;HTML&gt;
+ &lt;HEAD&gt;
+   &lt;META HTTP-EQUIV="Content-Type" CONTENT="text/html"&gt;
+   &lt;META HTTP-EQUIV="Refresh" CONTENT="5; URL=page2.html"&gt;
+   &lt;META HTTP-EQUIV="X-Note" CONTENT="Nanoweb rulez"&gt;
+...</PRE>
+<br>
+<br>
+
+mod_meta reads html files and makes these fields available in the actual
+http responses, as well as to other nanoweb modules which may want to see
+these additional http headers. All recent browsers understand these
+HTML-internal header fields, but proxys and webservers should be aware of
+them, too. However one can assume that proxys are regularily not, so this
+module is a good idea if you want to assure that the actual content is
+handled correctly by all involved http software.
+<br>
+<br>
+
+Besides this, mod_meta reads <b>companion .meta files</b> that may exist and
+also makes the http headers found therein available in the http response.
+One could do this with <a href="mod_asis.html">mod_asis</a> also, but for binary
+files this method is much easier to realize. The companion files require to
+have exactly the same name as the files to which the meta data should be
+added plus ".meta" at the end. If your file would have the name
+"example.html" the companion http headers file needed to have the name
+"example.html.meta". These files may only contain http header lines, no
+empty lines and especially no comments:
+<PRE CLASS="samp">Content-Type: text/html
+Content-Features: tables, javascript, css, color, graphic
+X-Note: Nanoweb rulez!
+</PRE>
+<br>
+<br>
+
+How this module reads the META tags from the HTML files can be defined with
+the <a href="core.html#metafetch">MetaFetch directive</a>. The value
+'<b>fast</b>' is the default and makes mod_meta use very fast string
+artithmetics to grep the content of the tags out of the html head. This
+however only works if these headers are in the form seen above (case
+doesn't matter of course).
+<br>
+If you want more reliability than you could use '<b>regex</b>' instead,
+which also makes standard META tags (author, description, ...) available to
+other modules.
+A value of '<b>no</b>' makes mod_meta not evaluate the html files, so only the
+.meta files are appended to the http response headers (the headers don't get
+available for use by other nanoweb extension modules currently).
+<br>
+You can effectively disable mod_meta with MetaFetch=<b>0</b>, this is useful if you
+want it to activate for some directories and files only.
+
+<br>
+<br>
+<br>
+bugreports are welcome: mario&#x40;erphesfurt&middot;de
+
+
+<BR>
+<BR><HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

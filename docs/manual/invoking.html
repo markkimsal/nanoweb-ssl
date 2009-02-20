@@ -1,0 +1,180 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>Starting and Stopping nanoweb</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+
+
+
+<H4>Tools</H4>
+
+there are of course different ways and tools to start up our bring down
+nanoweb depending on the operating system your computer runs:
+<br>
+· <b>nanoctl</b> for <A HREF="#nanoctl">Linux/MacOS/UNIX</A>
+<br>
+· <b>nanostart.bat</b> for <A HREF="#windows">Windows</A>
+<br>
+· invoking <A HREF="#nanowebphp">nanoweb.php</A> directly
+
+
+<A NAME="nanoctl">&nbsp;</A>
+<H3>Starting nanoweb server</H3>
+
+You should use <b>nanoctl</b> for starting, stopping or restarting the
+nanoweb server; as it handles the pid files and gives the default
+configuration file to the server.
+<pre>
+
+   <KBD>nanoctl start</KBD>
+
+</pre>
+will bring up the server
+
+
+
+<br>
+<H4>starting of nanoweb at boottime</H4>
+
+The nanoctl util was designed to be easily installed for use by the common
+linux bootup scripts (sysV init rcNdirs). All you need to do is to create a
+symlink from nanoctl into the init-directory:
+<pre>
+
+   <KBD>ln -s /usr/sbin/nanoctl /etc/rc2.d/S80nanoweb</KBD>
+
+</pre>
+this will bring up nanoweb automatically when your computer starts up into
+runlevel 2.
+
+<br>
+<br>
+
+Please refer also to the <A HREF="../README.nanoctl">README</A> of this utility.
+
+
+
+<br>
+<H4>Starting nanoweb without nanoctl</H4>
+
+Its highly recommended to use nanoctl for starting or terminating the server,
+you may however just run <b>nanoweb.php</b> as any other ordinary program,
+which is useful for debugging (set <A HREF="core.html#logtoconsole">LogToConsole</A> accordingly).
+<pre>
+
+   <KBD>php nanoweb.php <i>/etc/nanoweb/nanoweb.conf</i> &</KBD>
+</pre>
+<SMALL>Giving the name of the php binary on the prompt is not required in
+most cases. The first argument must be the path to the server config
+file.</SMALL><BR>
+
+<BR>
+Starting nanoweb this way is useful if you'd like to give it additonal
+configuration options overriding the ones found in the default config files.
+<BR>
+Please use <KBD>nanoweb.php --help</KBD> to see how this can be done.
+
+
+
+<br>
+<H3>Stopping</H3>
+
+You can use nanoctl again to stop nanoweb:
+<br>
+<KBD>nanoctl stop</KBD>
+<br>
+<br>
+
+Or without nanoctl:
+<br>
+<KBD>kill -TERM `cat /var/run/nanoweb.pid`</KBD>
+<br>
+
+
+
+<br>
+<H3>Restarting</H3>
+
+There is also of course a nanoctl option to restart nanoweb:
+<br>
+<KBD>nanoctl restart</KBD>
+<br>
+<br>
+
+Without nanoweb:
+<br>
+<KBD>kill -HUP `cat /var/run/nanoweb.pid`</KBD>
+<br>
+
+<br>
+<br>
+Please see also the <A HREF="../README.nanoctl">nanoctl README</A>.
+<br>
+
+
+
+
+<A NAME="windows">&nbsp;</A>
+<BR>
+<H3>Starting nanoweb under Windows</H3>
+
+If you installed nanoweb to the default directories, there will be a
+<B>C:\NANOWEB\NANOSTART.BAT</b> which can be used to start the server.
+You may want to make a Windows visual connection from this batch file onto
+your Desktop.
+
+
+<A NAME="nanoctl">&nbsp;</A>
+<H3>nanoweb.php</H3>
+
+You can of course invoke the server script directly by entering it's name
+on the commandline (optionally preceeded by the name of the PHP interpreter):
+<br>
+<PRE CLASS="samp">localhost~# <KEYB>nanoweb.php</KEYB>
+C:\> <KEYB>PHP.exe C:\nanoweb\nanoweb.php</KEYB>
+</PRE>
+<br>
+
+This form of invocatition allows you to give additional command line
+options. Just enter to <KEYB>nanoweb.php --help</HELP> to get following:
+<br>
+<TABLE BORDER="0">
+<TR>  <TD WIDTH="25%" BGCOLOR="#DDDDFF" VALIGN="TOP">--help</TD>
+      <TD> gives help on commandline options </TD>  </TR>
+<TR>  <TD WIDTH="25%" BGCOLOR="#DDDDFF" VALIGN="TOP">--version</TD>
+      <TD> shows nanoweb version </TD>  </TR>
+<TR>  <TD WIDTH="25%" BGCOLOR="#DDDDFF" VALIGN="TOP">--config=<TT>/path2/nanoweb.conf</TT></TD>
+      <TD> defines where the nanoweb configuration file is located </TD>  </TR>
+<TR>  <TD WIDTH="25%" BGCOLOR="#DDDDFF" VALIGN="TOP">--set-option="directive=value"</TD>
+      <TD> overrides configuration directive from the main server configuration file </TD>  </TR>
+<TR>  <TD WIDTH="25%" BGCOLOR="#DDDDFF" VALIGN="TOP">--add-option="directive=value"</TD>
+      <TD> adds additional configuration directive from the main server configuration file, where a directive may be given multiple times </TD>  </TR>
+<TR>  <TD WIDTH="25%" BGCOLOR="#DDDDFF" VALIGN="TOP">--start-daemon</TD>
+      <TD> brings up nanoweb in standalone mode </TD>  </TR>
+<TR>  <TD WIDTH="25%" BGCOLOR="#DDDDFF" VALIGN="TOP">--inetd</TD>
+      <TD> runs nanoweb in inetd mode (one request from stdin) </TD>  </TR>
+<TR>  <TD WIDTH="25%" BGCOLOR="#DDDDFF" VALIGN="TOP">--quiet</TD>
+      <TD> no output to stdout during run (for inetd mode) </TD>  </TR>
+<TR>  <TD WIDTH="25%" BGCOLOR="#DDDDFF" VALIGN="TOP">--verbose</TD>
+      <TD> more noise on startup, try this one if you can't get nanoweb to startup correctly </TD>  </TR>
+<TR>  <TD WIDTH="25%" BGCOLOR="#DDDDFF" VALIGN="TOP">--debug</TD>
+      <TD> like verbose </TD>  </TR>
+</TABLE>
+
+<BR><BR><HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>

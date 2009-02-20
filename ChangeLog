@@ -1,0 +1,640 @@
+2.2.9 - 2008/06/10
+
+- Fixed socket_select() call semantics for PHP >= 5.2.6 compatibility
+- Fixed a small bug in mod_nospam which could lead to undetected spam
+- Fixed parameters passed to tail in install-sh
+
+
+2.2.8 - 2006/08/10
+
+- Added options in nanoctl for managing the internal address block list
+- Added helper module mod_blockadm for the new nanoctl options (block/unblock)
+- Added mod_nospam, a generic GET and POST content scanner based on regex
+- Fixed a very annoying bug with mod_cgi and env variables on win32
+- Fixed response for requests having an "Expect: 100-continue" header
+- Fixed detection of duplicate request headers and appropriate error message
+- Fixed a small bug with duplicate error pages in single process mode 
+
+
+2.2.7 - 2005/05/10
+
+- Added restarting of logger processes when receiving SIGHUP (nanoctl reload)
+- Fixed automatic directory redirection to handle query strings correctly
+- Fixed "FATAL: socket bind failed" when restarting with open connections
+- Fixed FastCGI packet encoding bug in mod_fcgi (Martin Schmid)
+- Fixed erroneous debug logging when using the AuthLocation directive
+- Fixed reloading not re-resolving symbolic links in DocumentRoot directives
+- Fixed default windows config files to set "KeepAlive = 0"
+- Optimization of FastCGI packet encoding and decoding in mod_fcgi
+
+
+2.2.6 - 2005/01/09
+
+- Added detection of phpbb exploits and other HTTP pest by mod_worms
+- Fixed OS detection so that Cygwin is no longer treated as unix
+- Fixed access files not being read in allowed subdirectories for symlinks
+- Fixed bug when using multiple LoadTheme and/or ServerTheme in the same scope
+
+
+2.2.5 - 2004/10/16
+
+- Added forward dns lookup on resolved hostnames to validate the responses
+- Added mod_access_referer (see RefererCheck and RefererAllow directives)
+- Added display of server processes uptimes in "nanoctl status who"
+- Added warning message when not using "KeepAlive=0" in single process mode
+- Fixed a small bug in the handling of null parser object responses
+- Fixed the "Max execution time exceeded" problem in single process mode
+
+
+2.2.4 - 2004/08/15
+
+- Added sorting of directories in mod_fb using the chosen file order
+- Fixed the access_query() function on merged properties (PHP5 compat)
+- Fixed reopen of standard input in daemon initialization code
+
+
+2.2.3 - 2004/05/14
+
+- Added "AuthLocation" directive to restrict authentication to given path(s)
+- Added mod_auth_subversion for authentication against svn repositories (Jimbo)
+- Fixed REMOTE_USER server var that was not set on authenticated requests
+- Fixed core parser reading loop (may have caused truncation with mod_fcgi)
+- Fixed a variable access bug in modules_init()
+- Fixed OS detection so that "Darwin" is no longer treated as Win*
+
+
+2.2.2 - 2003/11/10
+
+- Added checking of requested URL against known device names on win32
+- Added checks and adequate responses for bad request protocols and headers
+- Added reporting of process memory usage (when available) to mod_status
+- Changed all "<?" occurences in nanoweb core and modules to "<?php" for
+  compatibility with "short_open_tag = Off" in php config
+
+
+2.2.1 - 2003/07/25
+
+- Added spamtrap-friendly addresses generation in mod_emailprotect
+- Fixed two small bugs in the xml output of mod_status (nanoctl status *-xml)
+- Minor optimizations of the initialization code
+
+
+2.2.0 - 2003/06/09
+
+- Added e-mail address protection filter module mod_emailprotect (Mario)
+- Added authentication module for PEAR::DB, ADOdb and dbx_() supported RDBMS
+- Added support for NCSA Common Log Format and CLF-with-vhost in mod_stdlog
+- Added ftp-like anonymous authentication module mod_auth_anonymous (Mario)
+- Added support for HTTP "Expect: 100-continue" request header
+- Added output of an "Allow" response header for 405 errors (forbidden method)
+- Added blocking of incoming connections by IP addresses (see "BlockIPAddr")
+- Added "StaticDisablePartial" directive to disallow serving partial content
+- Added support for dynamic IP blocking to mod_worms, mod_dosevasive, mod_ac
+- Added download bandwidth limiting module mod_throttle (Mario)
+- Added support for the "LoadTheme" directive in access files
+- Added child process spawn timestamp in master scoreboard
+- Added setting of socket send and receive buffers according to SCK_*_SIZE
+- Added a "blocking" server log level for IP addresses blocking services
+- Added an optional shutdown() callback method for modules
+- Fixed loggers watcher, any logger dying unexpectedly is now auto-respawned
+- Cleaning and optimization of the IPC functions (now use SOCK_DGRAM pairs)
+- Changed "LoadTheme" so that it also sets the current theme to the loaded one
+
+
+2.1.3 - 2003/04/28
+
+- Fixed server vars cleaning in mod_cgi when running in single process mode
+- Fixed a small addslashes() related bug in contrib/mkhugenanoweb.php
+- Fixed the "Content-Length" header for HEAD requests on filtered resources
+- Fixed handling of connections dropped before initial socket setup
+- Fixed the multiline output of server log events with different levels
+- Fixed logging of request with double quotes in uri, user agent, or referer
+- Fixed propagation of configuration to virtual hosts sections for directives
+  located after the vhost declaration
+
+
+2.1.2 - 2003/04/02
+
+- Added to nanoctl a "configtest" option to check for configuration errors
+- Added "FBDateFormat" conf/access directive to mod_fb
+- Fixed "405 Method Not Allowed" when POSTing to a script in a CGIScriptDir
+- Fixed a small bug with the access files loader when running on Win32
+- Fixed and cleaned some ugly code in the user directories handler
+- Fixed advise/redirect URL in mod_mispell if inside an aliased or user dir
+- Fixed keep alive responses when running in single process mode
+- Fixed handling of reqs for different vhosts in the same keep alive session
+- Fixed the internal stats counter numbers in single process mode
+- Fixed a small display bug in nanoctl when nanoweb starts with warnings
+- Fixed the SCRIPT_NAME server variable when path info is used
+- Killed keep-alive auto disable in single process mode, if you really want it
+  disabled then set "KeepAlive = 0" in nanoweb.conf
+- Minor cosmetic changes in the output of mod_status
+- Distribution: Added "nanoweb.theme" server theme and changed the default
+  installed website to use the same design
+
+
+2.1.1 - 2003/03/10
+
+- Added warning in mod_cgi if the temporary directory is not writable
+- Added "TempDir" conf directive (alias for "TempDirectory" now deprecated)
+- Added "LogDir" conf directive and multiple logfiles per vhost to mod_stdlog
+- Fixed a small timing issue in detection of stalled network transfers
+- Fixed handling of REDIRECT_URL server variable (missing "/" character)
+- Fixed the double setting of server variables in mod_cgi
+- Fixed server generated error pages when no resource is requested
+
+
+2.1.0 - 2003/03/03
+
+- Added server themes for generated content (error pages, dir listing, ...)
+- Added multiple languages support in theme engine (provided en-us, fr and de)
+- Added "MaxRequestBodyLength" and "MaxRequestURILength" config directives
+- Added HTTP TRACE support with mod_method_TRACE
+- Added handling of REDIRECT_* server vars for parsed content
+- Added support for absolute directory indexes
+- Added "ConfigDir" global conf directive (impacts "Include" and "LoadTheme")
+- Added support for unlimited server processes (MaxServers = 0)
+- Added transparent ZIP archive decompression with mod_unzip (Mario)
+- Added mod_lnk for custom link files support (Mario)
+- Added MD5 message digest support module mod_digest
+- Added mod_msff (Microsoft-Free Fridays, Mario)
+- Added "CGINoHeader" and "FCGINoHeader" in mod_cgi and mod_fcgi to filter
+  returned headers before sending them to the client
+- Added support for proc_* functions (PHP >= 4.3) in mod_cgi
+- Added sorting of the directory list by query string argument in mod_fb
+- Replaced the global "AllowExtSymlinks" boolean directive with the finer 
+  grained "AllowSymlinkTo" which works globally and per virtual host
+- Dropped support for "FBTemplateHeader" and "FBTemplateFooter" directives in 
+  mod_fb, in favor of server themes support
+- Renamed "FastCGIFilterPathInfo" directive to "FCGIFilterPathInfo"
+- Fixed the undefined SOCKET_EAGAIN constant problem on win32
+- Fixed some ugly file permissions code in mod_cgi
+- Fixed handling of tab (\t) characters in config and access files
+- Changes and optimizations to mod_static and the parser modules API
+- Cleaning and optimizations to the outside-docroot exemptions handling
+- Install script now checks existing config and updates deprecated directives
+- Distribution: Lots of updates to the manual (Mario), added new contrib util
+  apache2nwconf - an apache to nanoweb configuration files converter (Mario),
+  added "default" and "fancy" server themes, added new set of file browser
+  icons (thanks to Splif), updated mime.types file
+
+
+2.0.2 - 2003/01/27
+
+- Added checking of php.ini directives in install-sh (Mario)
+- Fixed PHP 4.2.x compatibility (redefine SOCKET_EAGAIN constant if needed)
+
+
+2.0.1 - 2003/01/20
+
+- Added authentication against PostgreSQL db (mod_auth_pgsql by Szilveszter)
+- Added fallback to mime magic if available (PHP built w. --enable-mime-magic)
+- Added "DisableMimeMagic" conf/access directive to disable the above feature
+- Added warning message when the server can't find or read an error document
+- Fixed server exit on 'nanoctl reload' with invalid configuration
+- Fixed cleaning of additional error messages buffer in single process mode
+- Fixed the ErrorDocument and ErrorHeader bug with "AccessPolicy = merge"
+- Fixed 404 error bug when requesting a filename with a non-encoded "+" char
+- Fixed a small security issue with mod_mispell (directory listing)
+- Distribution: updated README.nanoctl with new 2.0 features, added contrib
+  directory with Mario's CGI wrapper and huge src builder mkhugenanoweb.php
+
+
+2.0.0 - 2003/01/06
+
+- NOTE: 2.0 does *NOT* break compatibility with 1.x and you can keep your
+  configuration and access files as is, same for 90% of 1.x modules.
+- Added support for multiple listen ports, see "ListenPort" conf directive
+- Added Access(Policy/Override/Merge/Block) conf directives for control
+  of allowed directives in access files
+- Added optional port number to virtual hosts and "ServerAlias" definitions
+- Added "MaxServers" directive to limit the maximum number of child processes
+- Added access control support with mod_ac
+- Added support for LDAP directory based authentication with mod_auth_ldap
+- Added mod_dosevasive which tries to stop DoS attacks by limiting the maximum
+  number of requests allowed for a resource by a client in a given time
+- Added support for PUT uploads with mod_method_PUT (Mario)
+- Added generic CGI method handler support with mod_method_handler (Mario)
+- Added meta http-equiv HTML parsing module mod_meta (Mario)
+- Added mod_asis for serving raw cgi-like static content (Mario)
+- Added "--start-daemon" and "--quiet" command line arguments
+- Added error reporting when 'nanoctl start' cannot start the server
+- Added new module type "url2" with output streaming capability
+- Added support for request methods modules, this allows to create handlers 
+  for HTTP req methods other than the standard GET, POST, HEAD and OPTIONS
+- Added output streaming support to FastCGI module
+- Added "AddType" conf directive for adding mime/ext associations
+- Added "sig_token" module property to append a token to the server signature,
+  also added an option to the "ServerSignature" directive to disable this.
+- Added support for multiple server logs, see "ServerLog" conf directive
+- Added log level filtering to server logs (see also "ServerLog" directive)
+- Added "[/whatever]" conf syntax to return to the global scope
+- Added negative caching to access files loader
+- Added caching to some file and directory info operations
+- Added caching of used group and user ids at startup
+- Added XML, WDDX and php-serialized output support to mod_status
+- Added batch processing of ipc in master process code
+- Added support for modules and scripts own HTTP response codes / errors
+- Added "ForceHandler" conf/access directive to force a parser on all content
+- Added absolute path to configuration file on DOS drives (Mario)
+- Added --debug and --verbose options to show php warnings (Mario)
+- Fixed POST bug on win32 with the DIRECTORY_SEPARATOR constant (Mario)
+- Fixed missing check for $posix_av before first usage in nanoweb_init (Mario)
+- Fixed server log access rights issues when master was writing first
+- Fixed empty entry bug in the master process scoreboard handler
+- Fixed a timeout issue with dropped connections in single process mode
+- Fixed a small bug and cleaned signal handling code
+- Fixed end-of-stream detection on some parser modules (fastcgi and ssi)
+- Fixed the symlinks handling for more than one level of subdirectories
+- Fixed access files handler trying to open ureadable files
+- Fixed the "SCRIPT_NAME" server variable when using aliased directories
+- Fixed in mod_cgi : added workaround for a PHP putenv() bug on win32
+- Fixed handling of the "." directory in URL parser with "IgnoreDotFiles=1"
+- Fixed icons not displaying when browsing a "CGIScriptsDir" defined dir
+- Fixed error 500 in mod_cgi when a file was not found in a CGIScriptDir
+- Fixed access files handler issues with aliases and user directories
+- Renamed "LogToConsole" directive to "LogHitsToConsole"
+- Some small fixes, additions and cosmetic changes to mod_status
+- Optimizations to the access files loader and request headers decoding
+- Optimizations to mod_proxy (myrdin) and mod_multiviews (Mario)
+- Changes in distribution: Rewrite in PHP with tons of enhancements of the
+  installation script (Mario), total rearrangement of the directory tree to be
+  more compliant with standards, more additions and updates to the 
+  manual (Mario), added man pages (Mario & Szilveszter)
+
+
+1.9.1 - 2002/11/12
+
+- Added "ServerSignature" and "ServerFakeSignature" conf/access directives
+- Added file name extensions to the "Filter" directive (Mario)
+- Added pfilters module mod_misc_filters.php (Mario)
+- Added redirect support and conf/access directives to mod_load_limit
+- Fixed partial content requests handling in mod_static
+- Fixed access files support for the "ParseExt" directive
+- Fixed a small URL decoding bug with malformed requests
+- Fixed a bug that prevented execution of scripts in CGI directories
+- Fixed the modules loader to only fall back to ModulesDir
+- Fixed DNS lookups bug with logger processes and "HostnameLookupsBy = server"
+- Fixed small bugs in mod_fb and added access files support to "FileBrowser"
+- Fixed error reporting level in nanoconfig
+- install-sh now checks for /etc/mime.types and creates a symlink if it exists
+  and also supports a '-f' option for non-interactive mode
+
+
+1.9.0 - 2002/10/28
+
+- Added buffering for big static files that don't fit in memory limit
+- Added mod_proxy, a caching and filtering proxy module for nanoweb (myrdin)
+- Added option to allow logger processes to do the reverse dns queries instead
+  of servers (increase server performance). See "HostnameLookupsBy" in conf
+- Added modular output filters with mod_pfilters (Mario)
+- Added pfilters support to mod_gzip (Mario)
+- Added mod_html_filters module for pfilters (Mario)
+- Added flexibility to the config (parser knows "name=value" and "name value")
+- Added nanoconfig, a user friendly, www based configuration editor (Mario)
+- Added the "AddServerVar" configuration/access directive, see config file
+- Added support for an optional modules init method
+- Added "CGIScriptsDir" and "CGIScriptNoExec" directives to mod_cgi
+- Added security notices output (OUTSIDE_DOCROOT and DOT_FILE) to server log
+- Added "-q" option for php-cgi support with stunnel in in.nanoweb
+- Added use of readlink() to determine filename when requesting a symlink
+- Added "ErrorHeader" conf/access directive, see config file
+- Added mod_img_filters, a pictures conversion module for pfilters (Mario)
+- Added ticks declare for PHP 4.3.x pcntl extension compatibility
+- Added "ModulesDir" conf directive, see modules.conf
+- Added server vars support to "ParseExt" directive (this breaks compatibility
+  if you were using ParseExt [parser] $FILENAME, use $SCRIPT_FILENAME instead)
+- Added authentication module mod_auth_simple (simple user / pass auth)
+- Added "DefaultHandler" directive, see config file
+- Added apache compatible authentication module mod_auth_htpasswd
+- Added MySQL authentication module mod_auth_mysql
+- Added mod_libphp, an experimental inline PHP support module (Mario)
+- Added setting of php ini vars by mod_cgi (see CGIPHPOption directive)
+- Added htpasswd.php, a nanoweb/apache password file manager (myrdin)
+- Added mod_gzip option "GzipLevel" to set compression level (Mario)
+- Moved the old authentication code to mod_auth_nwauth
+- Cleaned and optimized the resource loader and response handler code
+- Some small optimizations to the master process code
+- Moved all static content serving related code to mod_static
+- Rewrote the authentication layer to make it modular and cleaner, added 
+  "AuthRequire", "AuthRealm" and "AuthMessage" conf/access directives
+- mod_rewrite patch from peter@zilium.de to speed up internal regexs
+- Fixed the configuration reloading code (used by 'nanoctl reload')
+- Fixed 404 error on "GET /dir/../" if IgnoreDotFiles was set
+- Fixed OS detection routine to use the standard PHP_OS constant
+- Fixed mod_fb to link a more correct url for parent directory (was "../")
+- Fixed a small security issue with the "AllowExtSymlinks" directive
+- Fixed the access cache that was never invalidated in single process mode
+- Fixed small bugs with mod_fb and url_to_absolute()
+- Fixed a bug where sometimes a logger didn't see a hit
+- Fixed temporary POST files created by mod_cgi now have mode set to 600
+- Fixed 'nanoctl status' to work if nanoweb is not running on port 80
+- Fixed access files handler bugs when running on windows
+- Changes in distribution: added mime.types file
+
+
+1.8.3 - 2002/10/09
+
+- Fixed the configuration loading code (in some cases default values were used)
+- Fixed small bug in logged content length when using chunked transfer encoding
+- Fixed mod_cgi and inetd handler for binary-safe operation on Win32
+- Dropped support for PHP 4.1.x sockets extension (PHP >= 4.2.0 needed now)
+
+
+1.8.2 - 2002/09/25
+
+- Added user/group creation in install-sh
+- Fixed a serious security issue with the "AllowExtSymlinks" conf directive
+- Fixed bug when defining a ServerAlias as the actual server name
+- Fixed things so that nanoweb is a little less memory hungry
+- Fixed the DEFAULT_LISTEN_PORT typo (now really set to 80)
+- Fixed small reload bug in access files handler
+- Fixed access files not working in aliased directories
+- Fixed installation WWW dir rights on some secure linux distributions
+- Fixed DEFAULT_CONF_FILE to match the default install path
+- Keep-alive support is now automatically disabled in single process mode
+- Changes in distribution : added windows default conf files, install.bat, and
+  README.windows, more manual updates (Mario)
+
+
+1.8.1 - 2002/09/11
+
+- Added mod_load_limit for server load average based access limit
+- Added "Alias" conf/access directive for directory aliasing
+- Added 'status detailed' and 'status vstats' to nanoctl and mod_status
+- Added consumed bandwidth info to mod_status
+- Added icons support to file browser module
+- Added "-ssl" option to in.nanoweb inetd wrapper for easier SSL setup
+- Added templates support to file browser (see FBTemplateHeader/Footer)
+- Fixed error document handling for parsed content
+- Fixed and cleaned cache helpers code
+- Fixed the internal hit counter missing some requests
+- Fixed POST to a non existing resource now returns 404 instead of 405
+- Fixed path info handler to search for files only
+- Fixed configuration parser for some "ParseExt" and "ErrorDocument" cases
+- Fixed access files are now reloaded if URL is rewritten before decoding
+- Some changes and speed improvements to mod_multiviews (Mario)
+- Changed "DefaultContentType", "DirectoryIndex", "ErrorDocument", and 
+  "AddHeader" to also work in access files
+- Changes in distribution : added file browser icons (Splif), many updates to
+  the manual (Mario)
+
+
+1.8.0 - 2002/09/02
+
+- Added support for inetd mode (see README.inetd and README.ssl)
+- Added access files support (per directory conf overrides)
+- Added mod_rewrite and mod_multiviews by Mario Salzer (see docs)
+- Added mod_access_rbl by myrdin (see modules.conf)
+- Added "FBSortOrder" conf directive for directory browser sorting
+- Added "AllowExtSymlinks" directive, see config file
+- Added help, version, config, set-option and add-option command line arguments
+- Added some features and optimizations to configuration parser
+- Added "DefaultContentType" configuration directive
+- Added sending of "405 Method not allowed" on POST to static content
+- Added handling of pipelined HTTP requests (Mozilla does this)
+- Added description files support to dir browser (see "FBDescFile" in config)
+- Added "IgnoreDotFiles" directive, see config file
+- Added some HTTP server vars, fixed some others
+- Added PATH INFO support (allows you to use http://xx.com/dir/script/arg1/arg2
+  URLs), see "AllowPathInfo" and "PathInfoTryExt" in config file, and 
+  "CGIFilterPathInfo" in modules config files
+- Added "GZipEnable" directive, and support for access files to mod_gzip
+- Improved FastCGI support (mod_fcgi is no longer experimental)
+- Fixed the "WARN: master not responding" messages when running on win32
+- Fixed keep-alive header compatibility hazard
+- Fixed the "unable to bind to socket" error on restart by setting SO_REUSEADDR
+- Fixed a small bug in conf parser if the first line was an "Include" statement
+- Fixed mod_cgi eating CPU in infinite loop if the called CGI app was returning
+  without sending any output (could happen with broken apps or conf errors)
+- Cleaned and optimized the master process code
+- Moved generation of http server vars from mod_cgi and mod_fcgi to server
+- Moved files and directory browsing from server core to mod_fb.php
+- Renamed mod_ssi to mod_include (server side includes)
+- Changes in distribution : added html manual (many thanks to Mario :) ),
+  added CREDITS file, added docs directory and made install-sh interactive.
+
+
+1.7.3 - 2002/08/07
+
+- Added support for HTTP resume (Accept-Ranges, Content-Range, Range, If-Range)
+- Added wildcard vhosts to allow [*.domain.com] or "ServerAlias = *.domain.com"
+- Added module for Brainfuck Server Pages support (see README.mod_bsp)
+- Added "URI" header for redirection of old HTTP/1.0 and 0.9 clients
+- Fixed mod_cgi to work with some broken CGI implementations
+- Fixed url_to_absolute to include port number if not 80 (thanks to Olli J.)
+- Changed start date/time in mod_status to GMT
+- Changed the default content type to "text/plain"
+
+
+1.7.2 - 2002/08/01
+
+- Added support for "ETag" and "If-*-Match" cache helper HTTP headers
+- Added thousands separator for files size in file browser
+- Fixed cache headers for "304 Not Modified" responses
+- Fixed HEAD now reports the size of the requested document
+- Fixed inital socket creation and binding to match changes in PHP sockets
+- Changed all critical loops using "while(list()=each())" to "foreach()" for 
+  performance reasons
+
+
+1.7.1 - 2002/07/21
+
+- Nanoweb now generates absolute URLs for self-refering links
+- Fixed a case where master process didn't see a child was dead
+- mod_mispell now searches recursively and can advise more than one valid URLs
+  (by myrdin). It also sends absolute URL redirections.
+- Nanoweb now checks at launch if all document roots exist, and aborts if not
+
+
+1.7.0 - 2002/07/14
+
+- Added logger process : logging can now be done by dedicated processes to 
+  speed up servers and solve some access rights problems if User or Group 
+  directives are used. See Logger* in config file.
+- Added mod_mispell.php based on a patch by myrdin, to allow redirect or
+  user advice on wrongly typed URLs, see Mispell* in modules config file.
+- Added "ServerAlias" directive to virtual hosts configuration
+- Added mod_worms.php for detecting and (kind of) defeating infected IIS 
+  servers. See README.mod_worms and Worms* directives in modules config file
+- Added configurable allowed hosts in mod_status (see StatusAllowHost in conf)
+- Added internal communication between master and children
+- Added "who" option to nanoctl to show active server processes status. This
+  option only works with mod_status loaded in the server.
+- Added loaded modules list, total and average hits to mod_status
+- Fixed request decoding for large POST (file uploads should always work now)
+- Fixed cache helper (If-Modified-Since request header handler)
+- Fixed resource path in the default error document
+- Fixed file browser welcome file display HTML code
+- Moved gzip support to mod_gzip.php (see modules config file)
+- Cleaned and added some internal and modules related features
+- Renamed configuration directive "ConsoleLog" to "LogToConsole"
+
+
+1.6.1 - 2002/07/07
+
+- Fixed a bug in file browser when using user directories
+- Fixed the connexion count reported by mod_status in single process mode
+- Fixed sockets code to work with PHP < 4.2.0
+
+
+1.6.0 - 2002/07/06
+
+- Added install script
+- Added mod_status.php used by "nanoctl status" command
+- Added possibilty for modules to register URLs
+- Added user directory support (for http://xxx.com/~user/blah urls, thanks to
+  myrdin ;) see UserDir in config file
+- Added "Include" capability to configuration parser
+- Added "ServerLog" directive to config file
+- Added auto-redir for directories ("/path/to/dir" = 302 to "/path/to/dir/")
+- Added configuration directive (AddHeader = Name: Value) to add HTTP headers
+- Changed "DefineExtXXX = YYY" configuration directive to "ParseExt = XXX YYY",
+  and "ErrorDocumentXXX = YYY" to "ErrorDocument = XXX YYY"
+- Fixed RequestTimeout (didn't work in 1.5.0, timeout was always 2 seconds)
+- Fixed small bug when receiving bogus empty requests
+- Fixed, cleaned and added options (reload, restart, status) to nanoctl
+- nanoweb.php has passed the 1000 lines of code cap ... Don't know if there is
+  a profound meaning to this, I think i can still call it 'small' :)
+
+
+1.5.0 - 2002/06/21
+
+- Rewrote and cleaned sockets code (it's faster and use less CPU when idle)
+- Rewrote part of the configuration parsing code to make it more flexible
+- Fixed a case when sometimes connection was not closed properly
+- Added pid file support (see PidFile in config file)
+- Added nanoctl script for starting and stopping the server
+- Changed the "Date" http header to use GMT instead of local time zone
+- Fixed small signal handling bug
+- Nanoweb can now work in single process mode. This can be set by the
+  SingleProcessMode configuration directive (see config file), and 
+  automatically activated if running without the pcntl PHP extension.
+  It's also needed to run Nanoweb on Win32 (experimental).
+
+
+1.4.3 - 2002/06/10
+
+- Added setting of PHP error reporting level
+- Fixed max=## value in the "Keep-Alive" HTTP header
+- Fixed small bug with the last request of a keep-alive session when chunked 
+  transfer encoding was used
+- Fixed "Last-Modified" header to make it rfc822 compliant
+
+
+1.4.2 - 2002/06/06
+
+- Rewrote code to use PHP 4.2.x sockets extension
+- gzip encoding is now turned off if gzencode() is not available
+
+
+1.4.1 - 2002/04/18
+
+- Added support for multiple directory indexes
+- Added FBShowDotFiles and FBWelcomeFile browser directives (see config file)
+- Cleaned the configuration loading code
+- Fixed small CGI bug (related to PATH_INFO env var)
+
+
+1.4.0 - 2002/03/28
+
+- Moved SSI and CGI processing to mod_ssi.php and mod_cgi.php
+- Added support for CGI output streaming
+- Added directory browsing (see config file)
+- Added FastCGI support (mod_fcgi.php - experimental)
+- Added support for chunked transfer encoding
+- Cleaned auth and cache helper code
+- Changed behavior of auth file (now protects whole site if placed in
+  document root)
+- Fixed small bug with authentication headers (CRLF in realm name)
+- Fixed error document for 401 Unauthorized (was not displayed because of
+  lack of authorization)
+
+
+1.3.2 - 2002/03/15
+
+- Introduced modular architecture
+- Added MySQL logging module mod_mysqllog.php
+- Moved standard logging to module mod_stdlog.php
+- Fixed a CGI bug that prevented some versions of PHP to work with Nanoweb
+- Fixed a small bug with network reads
+
+
+1.3.1 - 2002/03/11
+
+- Nanoweb now handles if-modified-since request headers
+- Added some CGI features (env & now accepts "HTTP/x.x xxx" response header)
+- Fixed handling of lost connection while sending data
+- Fixed a bug with relative DocumentRoot paths
+- Fixed syntax error in log in case of http auth
+- Fixed wrong bytes count in log (no longer include headers)
+- Fixed small bug in signal handling if childs were running
+
+
+1.3.0 - 2002/03/05
+
+- Added CGI support (nanoweb can now serve php dynamic pages)
+- Added support for keep-alive connections
+- Added Basic HTTP authentication
+- Rewrote all network I/O to make them streamed
+- Nanoweb now reloads config file on kill -HUP
+- Added support for error documents
+- User and Group configuration directives now work per virtual host
+- Rewrote URL parsing, improved security and "../" are now allowed in path
+- Added HostnameLookups configuration directive
+- Finally implemented HEAD method the Right-Way(tm)
+- Fixed directory index not working in subdirectories
+- Added ServerName and ServerAdmin configuration directives
+- Added RequestTimeout configuration directive
+- Nanoweb now checks at launch if all necessary php extensions are available
+- Added support for OPTIONS http method
+- Added ChildLifeTime configuration directive
+- Some minor bugfixes and enhancements
+
+
+1.2.1 - 2002/03/01
+
+- Quickly fixed a nasty URL security hazard
+
+
+1.2.0 - 2002/02/28
+
+- Nanoweb now forks a new process for each http request (pcntl php extension 
+  needed)
+- Various code rewrite and optimizations
+- Added more friendly http error messages
+- Added User and Group configuration directives
+- Fixed vhosts config when running on default port
+- Changed php4 binary location to "/usr/local/bin/php" to match the default 
+  php install instead of the debian package
+- Nanoweb now tries to exit cleanly when killed
+- Added configuration option to disable gzip encoding support
+- Fixed mandatory trailing backslash for documentroot configuration option
+
+
+1.1.0 - 2002/02/18
+
+- Added configuration file (nanoweb.conf)
+- Added complete MIME support
+- Added name virtual hosts support
+- Added per-vhost Apache compatible loging
+- Added gzip content encoding
+- Added limited support for server side includes (virtual, file, and exec)
+
+
+1.0.3 - 2002/02/17
+
+- Added support for HEAD http method
+- Added "Connection: close" header
+- Added handling of default index
+- Added support for tgz in MIME types
+
+
+1.0.2 - 2002/02/16
+
+- Initial release
+
+
+1.0.0 - 2001/07/??
+
+- First working version

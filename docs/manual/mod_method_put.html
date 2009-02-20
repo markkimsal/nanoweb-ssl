@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>mod_method_PUT</TITLE>
+<LINK REL="STYLESHEET" HREF="manual.css">
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#00003F" ALINK="#FF0000">
+<DIV CLASS="body">
+
+<DIV ALIGN="CENTER">
+ <A HREF="http://nanoweb.si.kz/"><IMG BORDER="0" SRC="/icons/nanoweb.png" ALT="[NANOWEB DOCUMENTATION]"></A>
+ <H3><SMALL>NANOWEB</SMALL>, the aEGiS PHP web server</H3>
+</DIV>
+
+<H2 ALIGN="CENTER">PUT request method</H2>
+
+The PUT request method as defined in 
+<a href="ftp://ftp.rfc-editor.org/in-notes/rfc2068.txt">RFC2068</a>
+(HTTP/1.1) allows clients to upload files to the server much like with FTP.
+This is normally not desired, so it is encapsulated into an extension module
+for Nanoweb.
+<br>
+<br>
+The PUT file upload feature should only be enabled for some dedicated
+directories using the <a href="core.html#writeaccess">WriteAccess directive</a>
+in one of the .nwaccess files. Additionally to this, files can only be overwritten if
+they were made "world-writable" using <tt>chmod o+rw example.file</tt>. You
+could also make a whole directory writeable or <tt>chown</tt> the writeable
+files to the user or group id Nanoweb runs with.
+<br>
+<br>
+
+<b>Important</b>: For your security you really should make only single files writeable
+or disable executing of CGI scripts in a dedicated directory, or else anybody may
+execute arbitrary script code on your server and thus easily spy sensitive data.
+See the <a href="core.html#forcehandler">ForceHandler</a> directive on how
+to prevent uploaded files from being parsed as cgi scripts.
+<br>
+Also very important is to keep the setting "IgnoreDotFiles=1", or else
+anybody would be able to remove your .nwaccess file.
+<br>
+<br>
+
+<br>
+bugreports are welcome: mario&#x40;erphesfurt&middot;de
+
+<BR>
+<BR><HR NOSHADE COLOR="#063239">
+ <H3 ALIGN="CENTER"> <SMALL>NANOWEB</SMALL>, the aEGiS PHP web server </H3>
+<DIV CLASS="navline"><A HREF="index.html">Index</A> &nbsp; <A HREF="modules.html">Modules</A> &nbsp; <A HREF="core.html">Configuration</A> &nbsp; <A HREF="../">READMEs</A> &nbsp; <A HREF="faq.html">FAQ</A> &nbsp; <A HREF="http://forums.t0x.net/viewforum.php?f=1">Support Forum</A></DIV>
+
+</DIV>
+</BODY>
+</HTML>
