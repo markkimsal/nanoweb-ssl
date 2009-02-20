@@ -1,4 +1,2162 @@
-<code><span style="color: #000000">
-<span style="color: #0000CC">&lt;?php<br /><br /></span><span style="color: #FF9900">/**<br />&nbsp;*<br />&nbsp;*&nbsp;nanoserv&nbsp;-&nbsp;a&nbsp;sockets&nbsp;daemon&nbsp;toolkit&nbsp;for&nbsp;PHP&nbsp;5.1+<br />&nbsp;*&nbsp;<br />&nbsp;*&nbsp;Copyright&nbsp;(C)&nbsp;2004-2009&nbsp;Vincent&nbsp;Negrier&nbsp;aka.&nbsp;sIX&nbsp;&lt;six&nbsp;at&nbsp;aegis-corp.org&gt;<br />&nbsp;*&nbsp;<br />&nbsp;*&nbsp;This&nbsp;library&nbsp;is&nbsp;free&nbsp;software;&nbsp;you&nbsp;can&nbsp;redistribute&nbsp;it&nbsp;and/or<br />&nbsp;*&nbsp;modify&nbsp;it&nbsp;under&nbsp;the&nbsp;terms&nbsp;of&nbsp;the&nbsp;GNU&nbsp;Lesser&nbsp;General&nbsp;Public<br />&nbsp;*&nbsp;License&nbsp;as&nbsp;published&nbsp;by&nbsp;the&nbsp;Free&nbsp;Software&nbsp;Foundation;&nbsp;either<br />&nbsp;*&nbsp;version&nbsp;2.1&nbsp;of&nbsp;the&nbsp;License,&nbsp;or&nbsp;(at&nbsp;your&nbsp;option)&nbsp;any&nbsp;later&nbsp;version.<br />&nbsp;*&nbsp;<br />&nbsp;*&nbsp;This&nbsp;library&nbsp;is&nbsp;distributed&nbsp;in&nbsp;the&nbsp;hope&nbsp;that&nbsp;it&nbsp;will&nbsp;be&nbsp;useful,<br />&nbsp;*&nbsp;but&nbsp;WITHOUT&nbsp;ANY&nbsp;WARRANTY;&nbsp;without&nbsp;even&nbsp;the&nbsp;implied&nbsp;warranty&nbsp;of<br />&nbsp;*&nbsp;MERCHANTABILITY&nbsp;or&nbsp;FITNESS&nbsp;FOR&nbsp;A&nbsp;PARTICULAR&nbsp;PURPOSE.&nbsp;&nbsp;See&nbsp;the&nbsp;GNU<br />&nbsp;*&nbsp;Lesser&nbsp;General&nbsp;Public&nbsp;License&nbsp;for&nbsp;more&nbsp;details.<br />&nbsp;*&nbsp;<br />&nbsp;*&nbsp;You&nbsp;should&nbsp;have&nbsp;received&nbsp;a&nbsp;copy&nbsp;of&nbsp;the&nbsp;GNU&nbsp;Lesser&nbsp;General&nbsp;Public<br />&nbsp;*&nbsp;License&nbsp;along&nbsp;with&nbsp;this&nbsp;library;&nbsp;if&nbsp;not,&nbsp;write&nbsp;to&nbsp;the&nbsp;Free&nbsp;Software<br />&nbsp;*&nbsp;Foundation,&nbsp;Inc.,&nbsp;59&nbsp;Temple&nbsp;Place,&nbsp;Suite&nbsp;330,&nbsp;Boston,&nbsp;MA&nbsp;&nbsp;02111-1307&nbsp;&nbsp;USA&nbsp;<br />&nbsp;*<br />&nbsp;*&nbsp;@package&nbsp;nanoserv<br />&nbsp;*&nbsp;@subpackage&nbsp;Core<br />&nbsp;*/<br /><br />/**<br />&nbsp;*&nbsp;nanoserv&nbsp;current&nbsp;version&nbsp;number<br />&nbsp;*&nbsp;@var&nbsp;string<br />&nbsp;*/<br /></span><span style="color: #0000CC">define</span><span style="color: #006600">(</span><span style="color: #CC0000">"NS_VERSION"</span><span style="color: #006600">,&nbsp;</span><span style="color: #CC0000">"2.0.0-dev"</span><span style="color: #006600">);<br /><br /></span><span style="color: #FF9900">/**<br />&nbsp;*&nbsp;Base&nbsp;exception&nbsp;class<br />&nbsp;*<br />&nbsp;*&nbsp;@package&nbsp;nanoserv<br />&nbsp;*&nbsp;@subpackage&nbsp;Core<br />&nbsp;*&nbsp;@since&nbsp;2.0<br />&nbsp;*/<br /></span><span style="color: #006600">class&nbsp;</span><span style="color: #0000CC">NS_Exception&nbsp;</span><span style="color: #006600">extends&nbsp;</span><span style="color: #0000CC">Exception&nbsp;</span><span style="color: #006600">{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;</span><span style="color: #0000CC">$addr</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000CC">__construct</span><span style="color: #006600">(</span><span style="color: #0000CC">$errmsg</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$errno</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$addr</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">parent</span><span style="color: #006600">::</span><span style="color: #0000CC">__construct</span><span style="color: #006600">(</span><span style="color: #0000CC">$errmsg</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$errno</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">addr&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$addr</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />}<br /><br /></span><span style="color: #FF9900">/**<br />&nbsp;*&nbsp;Server&nbsp;exception&nbsp;class<br />&nbsp;*<br />&nbsp;*&nbsp;@package&nbsp;nanoserv<br />&nbsp;*&nbsp;@subpackage&nbsp;Core<br />&nbsp;*&nbsp;@since&nbsp;2.0<br />&nbsp;*/<br /></span><span style="color: #006600">class&nbsp;</span><span style="color: #0000CC">NS_Server_Exception&nbsp;</span><span style="color: #006600">extends&nbsp;</span><span style="color: #0000CC">NS_Exception&nbsp;</span><span style="color: #006600">{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;</span><span style="color: #0000CC">$listener</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000CC">__construct</span><span style="color: #006600">(</span><span style="color: #0000CC">$errmsg</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$errno</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$addr</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">NS_Listener&nbsp;$listener&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">NULL</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">parent</span><span style="color: #006600">::</span><span style="color: #0000CC">__construct</span><span style="color: #006600">(</span><span style="color: #0000CC">$errmsg</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$errno</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$addr</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">listener&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$listener</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />}<br /><br /></span><span style="color: #FF9900">/**<br />&nbsp;*&nbsp;Client&nbsp;exception&nbsp;class<br />&nbsp;*<br />&nbsp;*&nbsp;@package&nbsp;nanoserv<br />&nbsp;*&nbsp;@subpackage&nbsp;Core<br />&nbsp;*&nbsp;@since&nbsp;2.0<br />&nbsp;*/<br /></span><span style="color: #006600">class&nbsp;</span><span style="color: #0000CC">NS_Client_Exception&nbsp;</span><span style="color: #006600">extends&nbsp;</span><span style="color: #0000CC">NS_Exception&nbsp;</span><span style="color: #006600">{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;</span><span style="color: #0000CC">$handler</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000CC">__construct</span><span style="color: #006600">(</span><span style="color: #0000CC">$errmsg</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$errno</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$addr</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">NS_Handler&nbsp;$handler&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">NULL</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">parent</span><span style="color: #006600">::</span><span style="color: #0000CC">__construct</span><span style="color: #006600">(</span><span style="color: #0000CC">$errmsg</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$errno</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$addr</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">handler&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$handler</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />}<br /><br /></span><span style="color: #FF9900">/**<br />&nbsp;*&nbsp;Base&nbsp;socket&nbsp;class<br />&nbsp;*<br />&nbsp;*&nbsp;@package&nbsp;nanoserv<br />&nbsp;*&nbsp;@subpackage&nbsp;Core<br />&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;*/<br /></span><span style="color: #006600">class&nbsp;</span><span style="color: #0000CC">NS_Socket&nbsp;</span><span style="color: #006600">{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Maximum&nbsp;number&nbsp;of&nbsp;bytes&nbsp;read&nbsp;by&nbsp;Read()<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;int<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">const&nbsp;</span><span style="color: #0000CC">DEFAULT_READ_LENGTH&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">16384</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Internal&nbsp;Socket&nbsp;unique&nbsp;ID<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;int<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;</span><span style="color: #0000CC">$id</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Socket&nbsp;stream&nbsp;descriptor<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;resource<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;</span><span style="color: #0000CC">$fd</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Is&nbsp;the&nbsp;socket&nbsp;connected&nbsp;?<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;bool<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;</span><span style="color: #0000CC">$connected&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Is&nbsp;the&nbsp;socket&nbsp;waiting&nbsp;to&nbsp;be&nbsp;connected&nbsp;?<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;bool<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;</span><span style="color: #0000CC">$pending_connect&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Is&nbsp;the&nbsp;socket&nbsp;waiting&nbsp;for&nbsp;ssl/tls&nbsp;handshake&nbsp;?<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;bool<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;</span><span style="color: #0000CC">$pending_crypto&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Is&nbsp;the&nbsp;socket&nbsp;blocked&nbsp;?<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;bool<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;</span><span style="color: #0000CC">$blocked&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Stream&nbsp;context<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;resource<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">protected&nbsp;</span><span style="color: #0000CC">$context</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Crypto&nbsp;type<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;int<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;</span><span style="color: #0000CC">$crypto_type</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Attached&nbsp;handler<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;NS_Connection_Handler<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;</span><span style="color: #0000CC">$handler</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Static&nbsp;instance&nbsp;counter<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;int<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">private&nbsp;static&nbsp;</span><span style="color: #0000CC">$sck_cnt</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;NS_Socket&nbsp;contructor<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;resource&nbsp;$fd<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">__construct</span><span style="color: #006600">(</span><span style="color: #0000CC">$fd&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$crypto_type</span><span style="color: #006600">=</span><span style="color: #0000CC">false</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$fd&nbsp;</span><span style="color: #006600">===&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">)&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">context&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">stream_context_create</span><span style="color: #006600">();<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;else&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$fd</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">connected&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">true</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Set_Blocking</span><span style="color: #006600">(</span><span style="color: #0000CC">false</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Set_Timeout</span><span style="color: #006600">(</span><span style="color: #0000CC">0</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$crypto_type&nbsp;</span><span style="color: #006600">!==&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">)&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">crypto_type&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$crypto_type</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">id&nbsp;</span><span style="color: #006600">=&nbsp;++</span><span style="color: #0000CC">NS_Socket</span><span style="color: #006600">::</span><span style="color: #0000CC">$sck_cnt</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Get&nbsp;stream&nbsp;options<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;array<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Get_Options</span><span style="color: #006600">()&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">stream_context_get_options</span><span style="color: #006600">(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;else&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">stream_context_get_options</span><span style="color: #006600">(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">context</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Set&nbsp;a&nbsp;stream&nbsp;context&nbsp;option<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;string&nbsp;$wrapper<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;string&nbsp;$opt<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;mixed&nbsp;$val<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;bool<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Set_Option</span><span style="color: #006600">(</span><span style="color: #0000CC">$wrapper</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$opt</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$val</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">stream_context_set_option</span><span style="color: #006600">(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$wrapper</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$opt</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$val</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;else&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">stream_context_set_option</span><span style="color: #006600">(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">context</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$wrapper</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$opt</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$val</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Set&nbsp;timeout<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;int&nbsp;$timeout<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;bool<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">protected&nbsp;function&nbsp;</span><span style="color: #0000CC">Set_Timeout</span><span style="color: #006600">(</span><span style="color: #0000CC">$timeout</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">stream_set_timeout</span><span style="color: #006600">(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$timeout</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Sets&nbsp;wether&nbsp;the&nbsp;socket&nbsp;is&nbsp;blocking&nbsp;or&nbsp;not<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;bool&nbsp;$block<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;bool<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">protected&nbsp;function&nbsp;</span><span style="color: #0000CC">Set_Blocking</span><span style="color: #006600">(</span><span style="color: #0000CC">$block</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">stream_set_blocking</span><span style="color: #006600">(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$block</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Set&nbsp;the&nbsp;stream&nbsp;write&nbsp;buffer&nbsp;(PHP&nbsp;defaults&nbsp;to&nbsp;8192&nbsp;bytes)<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;int&nbsp;$buffer_size<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;int<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;2.0<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">protected&nbsp;function&nbsp;</span><span style="color: #0000CC">Set_Write_Buffer</span><span style="color: #006600">(</span><span style="color: #0000CC">$buffer_size</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">stream_set_write_buffer</span><span style="color: #006600">(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$buffer_size</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Enable&nbsp;or&nbsp;disable&nbsp;ssl/tls&nbsp;crypto&nbsp;on&nbsp;the&nbsp;socket<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;bool&nbsp;$enable<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;int&nbsp;$type&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;mixed<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Enable_Crypto</span><span style="color: #006600">(</span><span style="color: #0000CC">$enable</span><span style="color: #006600">=</span><span style="color: #0000CC">true</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$type</span><span style="color: #006600">=</span><span style="color: #0000CC">false</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$type&nbsp;</span><span style="color: #006600">!==&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">)&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">crypto_type&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$type</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">//&nbsp;Workaround&nbsp;for&nbsp;http://bugs.php.net/bug.php?id=45808<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Set_Blocking</span><span style="color: #006600">(</span><span style="color: #0000CC">true</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Set_Timeout</span><span style="color: #006600">(</span><span style="color: #0000CC">1</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$ret&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">stream_socket_enable_crypto</span><span style="color: #006600">(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$enable</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">crypto_type</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">//&nbsp;Workaround&nbsp;for&nbsp;http://bugs.php.net/bug.php?id=45808<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Set_Blocking</span><span style="color: #006600">(</span><span style="color: #0000CC">false</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Set_Timeout</span><span style="color: #006600">(</span><span style="color: #0000CC">0</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">pending_crypto&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$ret&nbsp;</span><span style="color: #006600">===&nbsp;</span><span style="color: #0000CC">0</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">$ret</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Setup&nbsp;crypto&nbsp;if&nbsp;needed<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;bool<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Setup</span><span style="color: #006600">()&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(isset(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">crypto_type</span><span style="color: #006600">))&nbsp;return&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Enable_Crypto</span><span style="color: #006600">();<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">true</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Get&nbsp;local&nbsp;socket&nbsp;name<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;string<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Get_Name</span><span style="color: #006600">()&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">stream_socket_get_name</span><span style="color: #006600">(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Get&nbsp;remote&nbsp;socket&nbsp;name<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;string<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Get_Peer_Name</span><span style="color: #006600">()&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">stream_socket_get_name</span><span style="color: #006600">(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">true</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Read&nbsp;data&nbsp;from&nbsp;the&nbsp;socket&nbsp;and&nbsp;return&nbsp;it<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;int&nbsp;$length&nbsp;maximum&nbsp;read&nbsp;length<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;string<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Read</span><span style="color: #006600">()&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">fread</span><span style="color: #006600">(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">DEFAULT_READ_LENGTH</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Read&nbsp;data&nbsp;from&nbsp;a&nbsp;non&nbsp;connected&nbsp;socket&nbsp;and&nbsp;return&nbsp;it<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;string&nbsp;&amp;$addr&nbsp;contains&nbsp;the&nbsp;message&nbsp;sender&nbsp;address&nbsp;upon&nbsp;return<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;int&nbsp;$length&nbsp;maximum&nbsp;read&nbsp;length<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;string<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9.61<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Read_From</span><span style="color: #006600">(&amp;</span><span style="color: #0000CC">$addr</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$length</span><span style="color: #006600">=</span><span style="color: #0000CC">16384</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">stream_socket_recvfrom</span><span style="color: #006600">(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$length</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">NULL</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$addr</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Write&nbsp;data&nbsp;to&nbsp;the&nbsp;socket<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;write&nbsp;returns&nbsp;the&nbsp;number&nbsp;of&nbsp;bytes&nbsp;written&nbsp;to&nbsp;the&nbsp;socket<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;string&nbsp;$data<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;int<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Write</span><span style="color: #006600">(</span><span style="color: #0000CC">$data</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$nb&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">fwrite</span><span style="color: #006600">(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$data</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$nb&nbsp;</span><span style="color: #006600">!=&nbsp;</span><span style="color: #0000CC">strlen</span><span style="color: #006600">(</span><span style="color: #0000CC">$data</span><span style="color: #006600">))&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">blocked&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">true</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">$nb</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Write&nbsp;data&nbsp;to&nbsp;a&nbsp;non&nbsp;connected&nbsp;socket<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;string&nbsp;$to&nbsp;in&nbsp;the&nbsp;form&nbsp;of&nbsp;"&lt;ip_address&gt;:&lt;port&gt;"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;string&nbsp;$data<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;int<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9.61<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Write_To</span><span style="color: #006600">(</span><span style="color: #0000CC">$to</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$data</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">stream_socket_sendto</span><span style="color: #006600">(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$data</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">NULL</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$to</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Query&nbsp;end&nbsp;of&nbsp;stream&nbsp;status<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;bool<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Eof</span><span style="color: #006600">()&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(!</span><span style="color: #0000CC">is_resource</span><span style="color: #006600">(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">))&nbsp;return&nbsp;</span><span style="color: #0000CC">true</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">stream_socket_recvfrom</span><span style="color: #006600">(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">1</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">STREAM_PEEK</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;(</span><span style="color: #0000CC">feof</span><span style="color: #006600">(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">));<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Close&nbsp;the&nbsp;socket<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Close</span><span style="color: #006600">()&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">connected</span><span style="color: #006600">)&nbsp;</span><span style="color: #0000CC">fclose</span><span style="color: #006600">(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">connected&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">pending_connect&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;NS_Socket&nbsp;destructor<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">__destruct</span><span style="color: #006600">()&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">Nanoserv</span><span style="color: #006600">::</span><span style="color: #0000CC">Free_Write_Buffers</span><span style="color: #006600">(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">id</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Close</span><span style="color: #006600">();<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />}<br /><br /></span><span style="color: #FF9900">/**<br />&nbsp;*&nbsp;Server&nbsp;socket&nbsp;class<br />&nbsp;*<br />&nbsp;*&nbsp;@package&nbsp;nanoserv<br />&nbsp;*&nbsp;@subpackage&nbsp;Core<br />&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;*/<br /></span><span style="color: #006600">class&nbsp;</span><span style="color: #0000CC">NS_Server_Socket&nbsp;</span><span style="color: #006600">extends&nbsp;</span><span style="color: #0000CC">NS_Socket&nbsp;</span><span style="color: #006600">{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Listen&nbsp;address&nbsp;(format&nbsp;is&nbsp;'proto://addr:port')<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;string<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;</span><span style="color: #0000CC">$address</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Real&nbsp;listen&nbsp;address&nbsp;(format&nbsp;is&nbsp;'proto://addr:port')<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;string<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">private&nbsp;</span><span style="color: #0000CC">$real_address</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;NS_Socket_Server&nbsp;constructor<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">__construct</span><span style="color: #006600">(</span><span style="color: #0000CC">$addr</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">parent</span><span style="color: #006600">::</span><span style="color: #0000CC">__construct</span><span style="color: #006600">();<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">address&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$addr</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$proto&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">strtolower</span><span style="color: #006600">(</span><span style="color: #0000CC">strtok</span><span style="color: #006600">(</span><span style="color: #0000CC">$addr</span><span style="color: #006600">,&nbsp;</span><span style="color: #CC0000">":"</span><span style="color: #006600">));<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$s&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">strtok</span><span style="color: #006600">(</span><span style="color: #CC0000">""</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$proto&nbsp;</span><span style="color: #006600">==&nbsp;</span><span style="color: #CC0000">"udp"</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">real_address&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$addr</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;else&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">real_address&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #CC0000">"tcp:"&nbsp;</span><span style="color: #006600">.&nbsp;</span><span style="color: #0000CC">$s</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$proto&nbsp;</span><span style="color: #006600">!=&nbsp;</span><span style="color: #CC0000">"tcp"</span><span style="color: #006600">)&nbsp;switch&nbsp;(</span><span style="color: #0000CC">$proto</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case&nbsp;</span><span style="color: #CC0000">"ssl"</span><span style="color: #006600">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">crypto_type&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">STREAM_CRYPTO_METHOD_SSLv23_SERVER</span><span style="color: #006600">;&nbsp;&nbsp;&nbsp;&nbsp;break;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case&nbsp;</span><span style="color: #CC0000">"tls"</span><span style="color: #006600">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">crypto_type&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">STREAM_CRYPTO_METHOD_TLS_SERVER</span><span style="color: #006600">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case&nbsp;</span><span style="color: #CC0000">"sslv2"</span><span style="color: #006600">:&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">crypto_type&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">STREAM_CRYPTO_METHOD_SSLv2_SERVER</span><span style="color: #006600">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case&nbsp;</span><span style="color: #CC0000">"sslv3"</span><span style="color: #006600">:&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">crypto_type&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">STREAM_CRYPTO_METHOD_SSLv3_SERVER</span><span style="color: #006600">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;default:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">defined</span><span style="color: #006600">(</span><span style="color: #0000CC">$cname&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #CC0000">"STREAM_CRYPTO_METHOD_"</span><span style="color: #006600">.</span><span style="color: #0000CC">strtoupper</span><span style="color: #006600">(</span><span style="color: #0000CC">$proto</span><span style="color: #006600">).</span><span style="color: #CC0000">"_SERVER"</span><span style="color: #006600">))&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">crypto_type&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">constant</span><span style="color: #006600">(</span><span style="color: #0000CC">$cname</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Start&nbsp;listening&nbsp;and&nbsp;accepting&nbsp;connetions<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;bool<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Listen</span><span style="color: #006600">(</span><span style="color: #0000CC">$bind_only</span><span style="color: #006600">=</span><span style="color: #0000CC">false</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$errno&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$errstr&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">stream_socket_server</span><span style="color: #006600">(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">real_address</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$errno</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$errstr</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">STREAM_SERVER_BIND&nbsp;</span><span style="color: #006600">|&nbsp;(</span><span style="color: #0000CC">$bind_only&nbsp;</span><span style="color: #006600">?&nbsp;</span><span style="color: #0000CC">0&nbsp;</span><span style="color: #006600">:&nbsp;</span><span style="color: #0000CC">STREAM_SERVER_LISTEN</span><span style="color: #006600">),&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">context</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd&nbsp;</span><span style="color: #006600">===&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;throw&nbsp;new&nbsp;</span><span style="color: #0000CC">NS_Server_Exception</span><span style="color: #006600">(</span><span style="color: #CC0000">"cannot&nbsp;listen&nbsp;to&nbsp;{$this-&gt;real_address}:&nbsp;{$errstr}"</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$errno</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">real_address</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Set_Blocking</span><span style="color: #006600">(</span><span style="color: #0000CC">false</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Set_Timeout</span><span style="color: #006600">(</span><span style="color: #0000CC">0</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">true</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Accept&nbsp;connection<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;resource<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Accept</span><span style="color: #006600">()&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;@</span><span style="color: #0000CC">stream_socket_accept</span><span style="color: #006600">(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">0</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />}<br /><br /><br /></span><span style="color: #FF9900">/**<br />&nbsp;*&nbsp;Client&nbsp;socket&nbsp;class<br />&nbsp;*<br />&nbsp;*&nbsp;@package&nbsp;nanoserv<br />&nbsp;*&nbsp;@subpackage&nbsp;Core<br />&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;*/<br /></span><span style="color: #006600">class&nbsp;</span><span style="color: #0000CC">NS_Client_Socket&nbsp;</span><span style="color: #006600">extends&nbsp;</span><span style="color: #0000CC">NS_Socket&nbsp;</span><span style="color: #006600">{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Connect&nbsp;timeout&nbsp;(seconds)<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;int<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">const&nbsp;</span><span style="color: #0000CC">CONNECT_TIMEOUT&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">10</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Peer&nbsp;address&nbsp;(format&nbsp;is&nbsp;'proto://addr:port')<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;string<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;</span><span style="color: #0000CC">$address</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Connect&nbsp;timeout&nbsp;(timestamp)<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;int<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;</span><span style="color: #0000CC">$connect_timeout</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;NS_Socket_Client&nbsp;constructor<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">__construct</span><span style="color: #006600">(</span><span style="color: #0000CC">$addr</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">parent</span><span style="color: #006600">::</span><span style="color: #0000CC">__construct</span><span style="color: #006600">();<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">address&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$addr</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$proto&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">strtolower</span><span style="color: #006600">(</span><span style="color: #0000CC">strtok</span><span style="color: #006600">(</span><span style="color: #0000CC">$addr</span><span style="color: #006600">,&nbsp;</span><span style="color: #CC0000">":"</span><span style="color: #006600">));<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$s&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">strtok</span><span style="color: #006600">(</span><span style="color: #CC0000">""</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$proto&nbsp;</span><span style="color: #006600">==&nbsp;</span><span style="color: #CC0000">"udp"</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">real_address&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$addr</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;else&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">real_address&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #CC0000">"tcp:"&nbsp;</span><span style="color: #006600">.&nbsp;</span><span style="color: #0000CC">$s</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$proto&nbsp;</span><span style="color: #006600">!=&nbsp;</span><span style="color: #CC0000">"tcp"</span><span style="color: #006600">)&nbsp;switch&nbsp;(</span><span style="color: #0000CC">$proto</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case&nbsp;</span><span style="color: #CC0000">"ssl"</span><span style="color: #006600">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">crypto_type&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">STREAM_CRYPTO_METHOD_SSLv23_CLIENT</span><span style="color: #006600">;&nbsp;&nbsp;&nbsp;&nbsp;break;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case&nbsp;</span><span style="color: #CC0000">"tls"</span><span style="color: #006600">:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">crypto_type&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">STREAM_CRYPTO_METHOD_TLS_CLIENT</span><span style="color: #006600">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case&nbsp;</span><span style="color: #CC0000">"sslv2"</span><span style="color: #006600">:&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">crypto_type&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">STREAM_CRYPTO_METHOD_SSLv2_CLIENT</span><span style="color: #006600">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case&nbsp;</span><span style="color: #CC0000">"sslv3"</span><span style="color: #006600">:&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">crypto_type&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">STREAM_CRYPTO_METHOD_SSLv3_CLIENT</span><span style="color: #006600">;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;default:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">defined</span><span style="color: #006600">(</span><span style="color: #0000CC">$cname&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #CC0000">"STREAM_CRYPTO_METHOD_"</span><span style="color: #006600">.</span><span style="color: #0000CC">strtoupper</span><span style="color: #006600">(</span><span style="color: #0000CC">$proto</span><span style="color: #006600">).</span><span style="color: #CC0000">"_CLIENT"</span><span style="color: #006600">))&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">crypto_type&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">constant</span><span style="color: #006600">(</span><span style="color: #0000CC">$cname</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Connect&nbsp;to&nbsp;the&nbsp;peer&nbsp;address<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;int&nbsp;$timeout&nbsp;connection&nbsp;timeout&nbsp;in&nbsp;seconds<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;bool<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Connect</span><span style="color: #006600">(</span><span style="color: #0000CC">$timeout</span><span style="color: #006600">=</span><span style="color: #0000CC">false</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$errno&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$errstr&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">stream_socket_client</span><span style="color: #006600">(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">real_address</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$errno</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$errstr</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">3</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">STREAM_CLIENT_ASYNC_CONNECT&nbsp;</span><span style="color: #006600">|&nbsp;</span><span style="color: #0000CC">STREAM_CLIENT_CONNECT</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">context</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd&nbsp;</span><span style="color: #006600">===&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;throw&nbsp;new&nbsp;</span><span style="color: #0000CC">NS_Client_Exception</span><span style="color: #006600">(</span><span style="color: #CC0000">"cannot&nbsp;connect&nbsp;to&nbsp;{$this-&gt;real_address}:&nbsp;{$errstr}"</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$errno</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">real_address</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$timeout&nbsp;</span><span style="color: #006600">===&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">)&nbsp;</span><span style="color: #0000CC">$timeout&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">CONNECT_TIMEOUT</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">connect_timeout&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">time</span><span style="color: #006600">()&nbsp;+&nbsp;</span><span style="color: #0000CC">$timeout</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">pending_connect&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">true</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">connected&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Set_Blocking</span><span style="color: #006600">(</span><span style="color: #0000CC">false</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Set_Timeout</span><span style="color: #006600">(</span><span style="color: #0000CC">0</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">true</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />}<br /><br /><br /></span><span style="color: #FF9900">/**<br />&nbsp;*&nbsp;IPC&nbsp;Socket&nbsp;class<br />&nbsp;*<br />&nbsp;*&nbsp;@package&nbsp;nanoserv<br />&nbsp;*&nbsp;@subpackage&nbsp;Core<br />&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;*/<br /></span><span style="color: #006600">class&nbsp;</span><span style="color: #0000CC">NS_IPC_Socket&nbsp;</span><span style="color: #006600">extends&nbsp;</span><span style="color: #0000CC">NS_Socket&nbsp;</span><span style="color: #006600">{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Maximum&nbsp;size&nbsp;of&nbsp;inter&nbsp;process&nbsp;communication&nbsp;packets<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;int<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">const&nbsp;</span><span style="color: #0000CC">IPC_MAX_PACKET_SIZE&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">1048576</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;pid&nbsp;number&nbsp;of&nbsp;the&nbsp;remote&nbsp;forked&nbsp;process<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;int<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;</span><span style="color: #0000CC">$pid</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;IPC&nbsp;Socket&nbsp;constructor<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;resource&nbsp;$fd<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;int&nbsp;$pid<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">__construct</span><span style="color: #006600">(</span><span style="color: #0000CC">$fd</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$pid</span><span style="color: #006600">=</span><span style="color: #0000CC">false</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">parent</span><span style="color: #006600">::</span><span style="color: #0000CC">__construct</span><span style="color: #006600">(</span><span style="color: #0000CC">$fd</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Set_Write_Buffer</span><span style="color: #006600">(</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">IPC_MAX_PACKET_SIZE</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">pid&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$pid</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Read&nbsp;data&nbsp;from&nbsp;IPC&nbsp;socket<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;string<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Read</span><span style="color: #006600">()&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">fread</span><span style="color: #006600">(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">IPC_MAX_PACKET_SIZE</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Creates&nbsp;a&nbsp;pair&nbsp;of&nbsp;connected,&nbsp;indistinguishable&nbsp;pipes<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Returns&nbsp;an&nbsp;array&nbsp;of&nbsp;two&nbsp;NS_Socket&nbsp;objects<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;int&nbsp;$domain<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;int&nbsp;$type<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;int&nbsp;$proto<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;array<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000CC">Pair</span><span style="color: #006600">(</span><span style="color: #0000CC">$domain</span><span style="color: #006600">=</span><span style="color: #0000CC">STREAM_PF_UNIX</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$type</span><span style="color: #006600">=</span><span style="color: #0000CC">STREAM_SOCK_DGRAM</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$proto</span><span style="color: #006600">=</span><span style="color: #0000CC">0</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;list(</span><span style="color: #0000CC">$s1</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$s2</span><span style="color: #006600">)&nbsp;=&nbsp;</span><span style="color: #0000CC">stream_socket_pair</span><span style="color: #006600">(</span><span style="color: #0000CC">$domain</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$type</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$proto</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;array(new&nbsp;</span><span style="color: #0000CC">NS_IPC_Socket</span><span style="color: #006600">(</span><span style="color: #0000CC">$s1</span><span style="color: #006600">),&nbsp;new&nbsp;</span><span style="color: #0000CC">NS_IPC_Socket</span><span style="color: #006600">(</span><span style="color: #0000CC">$s2</span><span style="color: #006600">));<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Ask&nbsp;the&nbsp;master&nbsp;process&nbsp;for&nbsp;object&nbsp;data<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;array&nbsp;$request<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;bool&nbsp;$need_response<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;mixed<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Ask_Master</span><span style="color: #006600">(</span><span style="color: #0000CC">$request</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$need_response</span><span style="color: #006600">=</span><span style="color: #0000CC">true</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Write</span><span style="color: #006600">(</span><span style="color: #0000CC">serialize</span><span style="color: #006600">(</span><span style="color: #0000CC">$request</span><span style="color: #006600">));<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(!</span><span style="color: #0000CC">$need_response</span><span style="color: #006600">)&nbsp;return;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$rfd&nbsp;</span><span style="color: #006600">=&nbsp;array(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$dfd&nbsp;</span><span style="color: #006600">=&nbsp;array();<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(@</span><span style="color: #0000CC">stream_select</span><span style="color: #006600">(</span><span style="color: #0000CC">$rfd</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$dfd</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$dfd</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">600</span><span style="color: #006600">))&nbsp;return&nbsp;</span><span style="color: #0000CC">unserialize</span><span style="color: #006600">(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Read</span><span style="color: #006600">());<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />}<br /><br /></span><span style="color: #FF9900">/**<br />&nbsp;*&nbsp;Timer&nbsp;class<br />&nbsp;*<br />&nbsp;*&nbsp;Do&nbsp;not&nbsp;instanciate&nbsp;NS_Timer&nbsp;but&nbsp;use&nbsp;the&nbsp;Nanoserv::New_Timer()&nbsp;method&nbsp;instead<br />&nbsp;*<br />&nbsp;*&nbsp;@package&nbsp;nanoserv<br />&nbsp;*&nbsp;@subpackage&nbsp;Core<br />&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;*/<br /></span><span style="color: #006600">class&nbsp;</span><span style="color: #0000CC">NS_Timer&nbsp;</span><span style="color: #006600">{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;System&nbsp;time<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;int<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;</span><span style="color: #0000CC">$time</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Timer&nbsp;callback<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;mixed<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;</span><span style="color: #0000CC">$callback</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Timer&nbsp;status<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;bool<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;</span><span style="color: #0000CC">$active&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">true</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;NS_Timer&nbsp;constructor<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;int&nbsp;$time<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;mixed&nbsp;$callback<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@see&nbsp;Nanoserv::New_Timer()<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">__construct</span><span style="color: #006600">(</span><span style="color: #0000CC">$time</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$callback</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">time&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$time</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">callback&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$callback</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Activate&nbsp;timer<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Timers&nbsp;are&nbsp;activated&nbsp;by&nbsp;default,&nbsp;and&nbsp;Activate&nbsp;should&nbsp;only&nbsp;be&nbsp;used&nbsp;after&nbsp;a&nbsp;call&nbsp;do&nbsp;Deactivate()<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@see&nbsp;NS_Timer::Deactivate()<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Activate</span><span style="color: #006600">()&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">active&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">true</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Deactivate&nbsp;timer<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Deactivate</span><span style="color: #006600">()&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">active&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />}<br /><br /><br /></span><span style="color: #FF9900">/**<br />&nbsp;*&nbsp;Write&nbsp;buffer&nbsp;class<br />&nbsp;*<br />&nbsp;*&nbsp;@package&nbsp;nanoserv<br />&nbsp;*&nbsp;@subpackage&nbsp;Core<br />&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;*/<br /></span><span style="color: #006600">class&nbsp;</span><span style="color: #0000CC">NS_Write_Buffer&nbsp;</span><span style="color: #006600">{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Attached&nbsp;socket<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;NS_Socket<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;</span><span style="color: #0000CC">$socket</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Buffered&nbsp;data<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;string<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">private&nbsp;</span><span style="color: #0000CC">$data</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Buffered&nbsp;data&nbsp;pointer<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;int<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">private&nbsp;</span><span style="color: #0000CC">$pointer&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">0</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Data&nbsp;length&nbsp;in&nbsp;bytes<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;int<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">private&nbsp;</span><span style="color: #0000CC">$length</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;End-of-write&nbsp;Callback<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;mixed<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">private&nbsp;</span><span style="color: #0000CC">$callback&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;NS_Write_Buffer&nbsp;constructor<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;NS_Socket&nbsp;$socket<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;string&nbsp;$data<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;mixed&nbsp;$callback<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">__construct</span><span style="color: #006600">(</span><span style="color: #0000CC">NS_Socket&nbsp;$socket</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$data</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$callback</span><span style="color: #006600">=</span><span style="color: #0000CC">false</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$socket</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">data&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$data</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">length&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">strlen</span><span style="color: #006600">(</span><span style="color: #0000CC">$data</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">callback&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$callback</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Fetch&nbsp;data&nbsp;from&nbsp;the&nbsp;internal&nbsp;buffer<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;int&nbsp;$length<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;string<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Fetch_Data</span><span style="color: #006600">(</span><span style="color: #0000CC">$length</span><span style="color: #006600">=</span><span style="color: #0000CC">16384</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$s&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">substr</span><span style="color: #006600">(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">data</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">pointer</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$length</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">$s</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Get&nbsp;availability&nbsp;of&nbsp;data<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;bool<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Waiting_Data</span><span style="color: #006600">()&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">pointer&nbsp;</span><span style="color: #006600">&lt;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">length</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Write&nbsp;data&nbsp;to&nbsp;socket&nbsp;and&nbsp;advance&nbsp;buffer&nbsp;pointer<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;int&nbsp;$length<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;1.1<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Write</span><span style="color: #006600">(</span><span style="color: #0000CC">$length</span><span style="color: #006600">=</span><span style="color: #0000CC">16384</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">pointer&nbsp;</span><span style="color: #006600">+=&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Write</span><span style="color: #006600">(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Fetch_Data</span><span style="color: #006600">(</span><span style="color: #0000CC">$length</span><span style="color: #006600">));<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;NS_Write_Buffer&nbsp;destructor<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">__destruct</span><span style="color: #006600">()&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">callback&nbsp;</span><span style="color: #006600">!==&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">)&nbsp;</span><span style="color: #0000CC">call_user_func</span><span style="color: #006600">(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">callback</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Waiting_Data</span><span style="color: #006600">());<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />}<br /><br /><br /></span><span style="color: #FF9900">/**<br />&nbsp;*&nbsp;Base&nbsp;handler&nbsp;class<br />&nbsp;*<br />&nbsp;*&nbsp;@package&nbsp;nanoserv<br />&nbsp;*&nbsp;@subpackage&nbsp;Core<br />&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;*/<br /></span><span style="color: #006600">abstract&nbsp;class&nbsp;</span><span style="color: #0000CC">NS_Handler&nbsp;</span><span style="color: #006600">{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Attached&nbsp;socket<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;NS_Socket<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;</span><span style="color: #0000CC">$socket</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Set&nbsp;a&nbsp;stream&nbsp;context&nbsp;option<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;string&nbsp;$wrapper<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;string&nbsp;$opt<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;mixed&nbsp;$val<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;bool<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Set_Option</span><span style="color: #006600">(</span><span style="color: #0000CC">$wrapper</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$opt</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$val</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Set_Option</span><span style="color: #006600">(</span><span style="color: #0000CC">$wrapper</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$opt</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$val</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />}<br /><br /><br /></span><span style="color: #FF9900">/**<br />&nbsp;*&nbsp;Datagram&nbsp;listener&nbsp;/&nbsp;handler&nbsp;class<br />&nbsp;*<br />&nbsp;*&nbsp;@package&nbsp;nanoserv<br />&nbsp;*&nbsp;@subpackage&nbsp;Core<br />&nbsp;*&nbsp;@since&nbsp;0.9.61<br />&nbsp;*/<br /></span><span style="color: #006600">abstract&nbsp;class&nbsp;</span><span style="color: #0000CC">NS_Datagram_Handler&nbsp;</span><span style="color: #006600">extends&nbsp;</span><span style="color: #0000CC">NS_Handler&nbsp;</span><span style="color: #006600">{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Is&nbsp;the&nbsp;listener&nbsp;active&nbsp;?<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;bool<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;</span><span style="color: #0000CC">$active&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;NS_Datagram_Handler&nbsp;constructor<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;string&nbsp;$addr<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;string&nbsp;$handler_classname<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;mixed&nbsp;$handler_options<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">__construct</span><span style="color: #006600">(</span><span style="color: #0000CC">$addr</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket&nbsp;</span><span style="color: #006600">=&nbsp;new&nbsp;</span><span style="color: #0000CC">NS_Server_Socket</span><span style="color: #006600">(</span><span style="color: #0000CC">$addr</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Activate&nbsp;the&nbsp;listener<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;bool<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9.61<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Activate</span><span style="color: #006600">()&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;try&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$ret&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Listen</span><span style="color: #006600">(</span><span style="color: #0000CC">true</span><span style="color: #006600">))&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">active&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">true</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">$ret</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;catch&nbsp;(</span><span style="color: #0000CC">NS_Server_Exception&nbsp;$e</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;throw&nbsp;new&nbsp;</span><span style="color: #0000CC">NS_Server_Exception</span><span style="color: #006600">(</span><span style="color: #0000CC">$e</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">getMessage</span><span style="color: #006600">(),&nbsp;</span><span style="color: #0000CC">$e</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">getCode</span><span style="color: #006600">(),&nbsp;</span><span style="color: #0000CC">$e</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">addr</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Deactivate&nbsp;the&nbsp;listener<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9.61<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Deactivate</span><span style="color: #006600">()&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Close</span><span style="color: #006600">();<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">active&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Send&nbsp;data&nbsp;over&nbsp;the&nbsp;connection<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;string&nbsp;$to&nbsp;in&nbsp;the&nbsp;form&nbsp;of&nbsp;"&lt;ip_address&gt;:&lt;port&gt;"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;string&nbsp;$data<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;int<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9.61<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Write</span><span style="color: #006600">(</span><span style="color: #0000CC">$to</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$data</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Write_To</span><span style="color: #006600">(</span><span style="color: #0000CC">$to</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$data</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Event&nbsp;called&nbsp;on&nbsp;data&nbsp;reception<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;string&nbsp;$from<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;string&nbsp;$data<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9.61<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">on_Read</span><span style="color: #006600">(</span><span style="color: #0000CC">$from</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$data</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;NS_Datagram_Handler&nbsp;destructor<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">__destruct</span><span style="color: #006600">()&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Deactivate</span><span style="color: #006600">();<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />}<br /><br /><br /></span><span style="color: #FF9900">/**<br />&nbsp;*&nbsp;Connection&nbsp;handler&nbsp;class<br />&nbsp;*<br />&nbsp;*&nbsp;@package&nbsp;nanoserv<br />&nbsp;*&nbsp;@subpackage&nbsp;Core<br />&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;*/<br /></span><span style="color: #006600">abstract&nbsp;class&nbsp;</span><span style="color: #0000CC">NS_Connection_Handler&nbsp;</span><span style="color: #006600">extends&nbsp;</span><span style="color: #0000CC">NS_Handler&nbsp;</span><span style="color: #006600">{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**#@+<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Cause&nbsp;of&nbsp;connection&nbsp;failure<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;int<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">const&nbsp;</span><span style="color: #0000CC">FAIL_NORESPONSE&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">1</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;</span><span style="color: #0000CC">FAIL_TIMEOUT&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">2</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**#@-*/<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Send&nbsp;data&nbsp;over&nbsp;the&nbsp;connection<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;string&nbsp;$data<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;mixed&nbsp;$callback<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;NS_Write_Buffer<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Write</span><span style="color: #006600">(</span><span style="color: #0000CC">$data</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$callback</span><span style="color: #006600">=</span><span style="color: #0000CC">false</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">Nanoserv</span><span style="color: #006600">::</span><span style="color: #0000CC">New_Write_Buffer</span><span style="color: #006600">(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$data</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$callback</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Connect<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;int&nbsp;$timeout&nbsp;timeout&nbsp;in&nbsp;seconds<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Connect</span><span style="color: #006600">(</span><span style="color: #0000CC">$timeout</span><span style="color: #006600">=</span><span style="color: #0000CC">false</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;try&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Connect</span><span style="color: #006600">(</span><span style="color: #0000CC">$timeout</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;catch&nbsp;(</span><span style="color: #0000CC">NS_Client_Exception&nbsp;$e</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;throw&nbsp;new&nbsp;</span><span style="color: #0000CC">NS_Client_Exception</span><span style="color: #006600">(</span><span style="color: #0000CC">$e</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">getMessage</span><span style="color: #006600">(),&nbsp;</span><span style="color: #0000CC">$e</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">getCode</span><span style="color: #006600">(),&nbsp;</span><span style="color: #0000CC">$e</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">addr</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Disconnect<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Disconnect</span><span style="color: #006600">()&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Close</span><span style="color: #006600">();<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">Nanoserv</span><span style="color: #006600">::</span><span style="color: #0000CC">Free_Connection</span><span style="color: #006600">(</span><span style="color: #0000CC">$this</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Event&nbsp;called&nbsp;on&nbsp;received&nbsp;connection<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">on_Accept</span><span style="color: #006600">()&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Event&nbsp;called&nbsp;on&nbsp;established&nbsp;connection<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">on_Connect</span><span style="color: #006600">()&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Event&nbsp;called&nbsp;on&nbsp;failed&nbsp;connection<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;int&nbsp;$failcode&nbsp;see&nbsp;NS_Connection_Handler::FAIL_*&nbsp;constants<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">on_Connect_Fail</span><span style="color: #006600">(</span><span style="color: #0000CC">$failcode</span><span style="color: #006600">)&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Event&nbsp;called&nbsp;on&nbsp;disconnection<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">on_Disconnect</span><span style="color: #006600">()&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Event&nbsp;called&nbsp;on&nbsp;data&nbsp;reception<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;string&nbsp;$data<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">on_Read</span><span style="color: #006600">(</span><span style="color: #0000CC">$data</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Event&nbsp;called&nbsp;before&nbsp;forking<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;2.0<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">on_Fork_Prepare</span><span style="color: #006600">()&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Event&nbsp;called&nbsp;after&nbsp;forking,&nbsp;both&nbsp;on&nbsp;master&nbsp;and&nbsp;child&nbsp;processes<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;2.0<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">on_Fork_Done</span><span style="color: #006600">()&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />}<br /><br /><br /></span><span style="color: #FF9900">/**<br />&nbsp;*&nbsp;Listener&nbsp;class<br />&nbsp;*<br />&nbsp;*&nbsp;@package&nbsp;nanoserv<br />&nbsp;*&nbsp;@subpackage&nbsp;Core<br />&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;*/<br /></span><span style="color: #006600">class&nbsp;</span><span style="color: #0000CC">NS_Listener&nbsp;</span><span style="color: #006600">{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Attached&nbsp;socket<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;NS_Server_Socket<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;</span><span style="color: #0000CC">$socket</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Name&nbsp;of&nbsp;the&nbsp;handler&nbsp;class<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;string<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@see&nbsp;NS_Connetion_Handler<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;</span><span style="color: #0000CC">$handler_classname</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Handler&nbsp;options<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;this&nbsp;is&nbsp;passed&nbsp;as&nbsp;the&nbsp;first&nbsp;constructor&nbsp;parameter&nbsp;of&nbsp;each&nbsp;spawned&nbsp;connection&nbsp;handlers<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;mixed<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;</span><span style="color: #0000CC">$handler_options</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Is&nbsp;the&nbsp;listener&nbsp;active&nbsp;?<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;bool<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;</span><span style="color: #0000CC">$active&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;If&nbsp;set&nbsp;the&nbsp;listener&nbsp;will&nbsp;fork()&nbsp;a&nbsp;new&nbsp;process&nbsp;for&nbsp;each&nbsp;accepted&nbsp;connection<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;bool<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;</span><span style="color: #0000CC">$forking&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;NS_Listener&nbsp;constructor<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;string&nbsp;$addr<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;string&nbsp;$handler_classname<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;mixed&nbsp;$handler_options<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">__construct</span><span style="color: #006600">(</span><span style="color: #0000CC">$addr</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$handler_classname</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$handler_options</span><span style="color: #006600">=</span><span style="color: #0000CC">false</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$forking</span><span style="color: #006600">=</span><span style="color: #0000CC">false</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket&nbsp;</span><span style="color: #006600">=&nbsp;new&nbsp;</span><span style="color: #0000CC">NS_Server_Socket</span><span style="color: #006600">(</span><span style="color: #0000CC">$addr</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">handler_classname&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$handler_classname</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">handler_options&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$handler_options</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">forking&nbsp;</span><span style="color: #006600">=&nbsp;(</span><span style="color: #0000CC">$forking&nbsp;</span><span style="color: #006600">&amp;&amp;&nbsp;</span><span style="color: #0000CC">is_callable</span><span style="color: #006600">(</span><span style="color: #CC0000">"pcntl_fork"</span><span style="color: #006600">));<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Set&nbsp;a&nbsp;stream&nbsp;context&nbsp;option<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;string&nbsp;$wrapper<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;string&nbsp;$opt<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;mixed&nbsp;$val<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;bool<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Set_Option</span><span style="color: #006600">(</span><span style="color: #0000CC">$wrapper</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$opt</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$val</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Set_Option</span><span style="color: #006600">(</span><span style="color: #0000CC">$wrapper</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$opt</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$val</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Sets&nbsp;wether&nbsp;the&nbsp;listener&nbsp;should&nbsp;fork()&nbsp;a&nbsp;new&nbsp;process&nbsp;for&nbsp;each&nbsp;accepted&nbsp;connection<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;bool&nbsp;$forking<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;bool<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Set_Forking</span><span style="color: #006600">(</span><span style="color: #0000CC">$forking</span><span style="color: #006600">=</span><span style="color: #0000CC">true</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$forking&nbsp;</span><span style="color: #006600">&amp;&amp;&nbsp;!</span><span style="color: #0000CC">is_callable</span><span style="color: #006600">(</span><span style="color: #CC0000">"pcntl_fork"</span><span style="color: #006600">))&nbsp;return&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">forking&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$forking</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">true</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Activate&nbsp;the&nbsp;listener<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;bool<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Activate</span><span style="color: #006600">()&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;try&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$ret&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Listen</span><span style="color: #006600">())&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">active&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">true</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">$ret</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;catch&nbsp;(</span><span style="color: #0000CC">NS_Server_Exception&nbsp;$e</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;throw&nbsp;new&nbsp;</span><span style="color: #0000CC">NS_Server_Exception</span><span style="color: #006600">(</span><span style="color: #0000CC">$e</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">getMessage</span><span style="color: #006600">(),&nbsp;</span><span style="color: #0000CC">$e</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">getCode</span><span style="color: #006600">(),&nbsp;</span><span style="color: #0000CC">$e</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">addr</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Deactivate&nbsp;the&nbsp;listener<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">Deactivate</span><span style="color: #006600">()&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Close</span><span style="color: #006600">();<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">active&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;NS_Listener&nbsp;destructor<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">__destruct</span><span style="color: #006600">()&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Deactivate</span><span style="color: #006600">();<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />}<br /><br /><br /></span><span style="color: #FF9900">/**<br />&nbsp;*&nbsp;Shared&nbsp;object&nbsp;class&nbsp;for&nbsp;inter-process&nbsp;communications<br />&nbsp;*<br />&nbsp;*&nbsp;@package&nbsp;nanoserv<br />&nbsp;*&nbsp;@subpackage&nbsp;Core<br />&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;*/<br /></span><span style="color: #006600">class&nbsp;</span><span style="color: #0000CC">NS_Shared_Object&nbsp;</span><span style="color: #006600">{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;caller&nbsp;process&nbsp;pid<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;int<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;public&nbsp;</span><span style="color: #0000CC">$caller_pid</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;shared&nbsp;object&nbsp;unique&nbsp;identifier<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;int<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;</span><span style="color: #0000CC">$_oid</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;wrapped&nbsp;object<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;object<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">private&nbsp;</span><span style="color: #0000CC">$wrapped</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;static&nbsp;instance&nbsp;counter<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;int<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;public&nbsp;</span><span style="color: #0000CC">$shared_count&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">0</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;NS_Shared_Object&nbsp;constructor<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;If&nbsp;$o&nbsp;is&nbsp;omited,&nbsp;a&nbsp;new&nbsp;StdClass&nbsp;object&nbsp;will&nbsp;be&nbsp;created&nbsp;and&nbsp;wrapped<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;object&nbsp;$o<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">public&nbsp;function&nbsp;</span><span style="color: #0000CC">__construct</span><span style="color: #006600">(</span><span style="color: #0000CC">$o</span><span style="color: #006600">=</span><span style="color: #0000CC">false</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$o&nbsp;</span><span style="color: #006600">===&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">)&nbsp;</span><span style="color: #0000CC">$o&nbsp;</span><span style="color: #006600">=&nbsp;new&nbsp;</span><span style="color: #0000CC">StdClass</span><span style="color: #006600">();<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">_oid&nbsp;</span><span style="color: #006600">=&nbsp;++</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$shared_count</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">wrapped&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$o</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000CC">__get</span><span style="color: #006600">(</span><span style="color: #0000CC">$k</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">Nanoserv</span><span style="color: #006600">::</span><span style="color: #0000CC">$child_process</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">Nanoserv</span><span style="color: #006600">::</span><span style="color: #0000CC">$master_pipe</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Ask_Master</span><span style="color: #006600">(array(</span><span style="color: #CC0000">"oid"&nbsp;</span><span style="color: #006600">=&gt;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">_oid</span><span style="color: #006600">,&nbsp;</span><span style="color: #CC0000">"action"&nbsp;</span><span style="color: #006600">=&gt;&nbsp;</span><span style="color: #CC0000">"G"</span><span style="color: #006600">,&nbsp;</span><span style="color: #CC0000">"var"&nbsp;</span><span style="color: #006600">=&gt;&nbsp;</span><span style="color: #0000CC">$k</span><span style="color: #006600">));<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;else&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">wrapped</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">$k</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000CC">__set</span><span style="color: #006600">(</span><span style="color: #0000CC">$k</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$v</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">Nanoserv</span><span style="color: #006600">::</span><span style="color: #0000CC">$child_process</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">Nanoserv</span><span style="color: #006600">::</span><span style="color: #0000CC">$master_pipe</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Ask_Master</span><span style="color: #006600">(array(</span><span style="color: #CC0000">"oid"&nbsp;</span><span style="color: #006600">=&gt;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">_oid</span><span style="color: #006600">,&nbsp;</span><span style="color: #CC0000">"action"&nbsp;</span><span style="color: #006600">=&gt;&nbsp;</span><span style="color: #CC0000">"S"</span><span style="color: #006600">,&nbsp;</span><span style="color: #CC0000">"var"&nbsp;</span><span style="color: #006600">=&gt;&nbsp;</span><span style="color: #0000CC">$k</span><span style="color: #006600">,&nbsp;</span><span style="color: #CC0000">"val"&nbsp;</span><span style="color: #006600">=&gt;&nbsp;</span><span style="color: #0000CC">$v</span><span style="color: #006600">),&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;else&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">wrapped</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">$k&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$v</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000CC">__call</span><span style="color: #006600">(</span><span style="color: #0000CC">$m</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$a</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">Nanoserv</span><span style="color: #006600">::</span><span style="color: #0000CC">$child_process</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">Nanoserv</span><span style="color: #006600">::</span><span style="color: #0000CC">$master_pipe</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Ask_Master</span><span style="color: #006600">(array(</span><span style="color: #CC0000">"oid"&nbsp;</span><span style="color: #006600">=&gt;&nbsp;</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">_oid</span><span style="color: #006600">,&nbsp;</span><span style="color: #CC0000">"action"&nbsp;</span><span style="color: #006600">=&gt;&nbsp;</span><span style="color: #CC0000">"C"</span><span style="color: #006600">,&nbsp;</span><span style="color: #CC0000">"func"&nbsp;</span><span style="color: #006600">=&gt;&nbsp;</span><span style="color: #0000CC">$m</span><span style="color: #006600">,&nbsp;</span><span style="color: #CC0000">"args"&nbsp;</span><span style="color: #006600">=&gt;&nbsp;</span><span style="color: #0000CC">$a</span><span style="color: #006600">));<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;else&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">call_user_func_array</span><span style="color: #006600">(array(</span><span style="color: #0000CC">$this</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">wrapped</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$m</span><span style="color: #006600">),&nbsp;</span><span style="color: #0000CC">$a</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />}<br /><br /><br /></span><span style="color: #FF9900">/**<br />&nbsp;*&nbsp;Server&nbsp;/&nbsp;multiplexer&nbsp;class<br />&nbsp;*<br />&nbsp;*&nbsp;@package&nbsp;nanoserv<br />&nbsp;*&nbsp;@subpackage&nbsp;Core<br />&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;*/<br /></span><span style="color: #006600">final&nbsp;class&nbsp;</span><span style="color: #0000CC">Nanoserv&nbsp;</span><span style="color: #006600">{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;nanoserv&nbsp;current&nbsp;version&nbsp;number<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;string<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">const&nbsp;</span><span style="color: #0000CC">VERSION&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">NS_VERSION</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Registered&nbsp;listeners<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;array<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;private&nbsp;</span><span style="color: #0000CC">$listeners&nbsp;</span><span style="color: #006600">=&nbsp;array();<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Write&nbsp;buffers<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;array<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;private&nbsp;</span><span style="color: #0000CC">$write_buffers&nbsp;</span><span style="color: #006600">=&nbsp;array();<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Active&nbsp;connections<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;array<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;private&nbsp;</span><span style="color: #0000CC">$connections&nbsp;</span><span style="color: #006600">=&nbsp;array();<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Active&nbsp;datagram&nbsp;handlers<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;array<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;private&nbsp;</span><span style="color: #0000CC">$dgram_handlers&nbsp;</span><span style="color: #006600">=&nbsp;array();<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Shared&nbsp;objects<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;array<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;private&nbsp;</span><span style="color: #0000CC">$shared_objects&nbsp;</span><span style="color: #006600">=&nbsp;array();<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Forked&nbsp;process&nbsp;pipes<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;array<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;private&nbsp;</span><span style="color: #0000CC">$forked_pipes&nbsp;</span><span style="color: #006600">=&nbsp;array();<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Timers<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;array<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;private&nbsp;</span><span style="color: #0000CC">$timers&nbsp;</span><span style="color: #006600">=&nbsp;array();<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Number&nbsp;of&nbsp;active&nbsp;connection&nbsp;handler&nbsp;processes<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;int<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;public&nbsp;</span><span style="color: #0000CC">$nb_forked_processes&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">0</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Maximum&nbsp;number&nbsp;of&nbsp;active&nbsp;children&nbsp;before&nbsp;incoming&nbsp;connections&nbsp;get&nbsp;delayed<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;int<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;public&nbsp;</span><span style="color: #0000CC">$max_forked_processes&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">64</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Are&nbsp;we&nbsp;master&nbsp;or&nbsp;child&nbsp;process&nbsp;?<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;bool<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;public&nbsp;</span><span style="color: #0000CC">$child_process&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Forked&nbsp;server&nbsp;handled&nbsp;connection<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;NS_Connection_Handler<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;private&nbsp;</span><span style="color: #0000CC">$forked_connection</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Forked&nbsp;server&nbsp;pipe&nbsp;to&nbsp;the&nbsp;master&nbsp;process<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@var&nbsp;NS_Socket<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;public&nbsp;</span><span style="color: #0000CC">$master_pipe</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Class&nbsp;Nanoserv&nbsp;should&nbsp;not&nbsp;be&nbsp;instanciated&nbsp;but&nbsp;used&nbsp;statically<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">private&nbsp;function&nbsp;</span><span style="color: #0000CC">__construct</span><span style="color: #006600">()&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Register&nbsp;a&nbsp;new&nbsp;listener<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;For&nbsp;consistency&nbsp;New_Listener()&nbsp;will&nbsp;also&nbsp;wrap&nbsp;Nanoserv::New_Datagram_Handler()&nbsp;if&nbsp;the&nbsp;given&nbsp;addr&nbsp;is&nbsp;of&nbsp;type&nbsp;"udp"<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;string&nbsp;$addr<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;string&nbsp;$handler_classname<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;mixed&nbsp;$handler_options<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;NS_Listener<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@see&nbsp;NS_Listener<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@see&nbsp;NS_Datagram_Handler<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000CC">New_Listener</span><span style="color: #006600">(</span><span style="color: #0000CC">$addr</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$handler_classname</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$handler_options</span><span style="color: #006600">=</span><span style="color: #0000CC">false</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">strtolower</span><span style="color: #006600">(</span><span style="color: #0000CC">strtok</span><span style="color: #006600">(</span><span style="color: #0000CC">$addr</span><span style="color: #006600">,&nbsp;</span><span style="color: #CC0000">":"</span><span style="color: #006600">))&nbsp;==&nbsp;</span><span style="color: #CC0000">"udp"</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$l&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">New_Datagram_Handler</span><span style="color: #006600">(</span><span style="color: #0000CC">$addr</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$handler_classname</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;else&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$l&nbsp;</span><span style="color: #006600">=&nbsp;new&nbsp;</span><span style="color: #0000CC">NS_Listener</span><span style="color: #006600">(</span><span style="color: #0000CC">$addr</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$handler_classname</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$handler_options</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$listeners</span><span style="color: #006600">[]&nbsp;=&nbsp;</span><span style="color: #0000CC">$l</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">$l</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Deactivate&nbsp;and&nbsp;free&nbsp;a&nbsp;previously&nbsp;registered&nbsp;listener<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;For&nbsp;consistency&nbsp;Free_Listener()&nbsp;will&nbsp;also&nbsp;wrap&nbsp;Nanoserv::Free_Datagram_Handler()&nbsp;if&nbsp;the&nbsp;given&nbsp;object&nbsp;is&nbsp;an&nbsp;instance&nbsp;of&nbsp;NS_Datagram_Handler<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;NS_Listener&nbsp;$l<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;bool<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@see&nbsp;NS_Listener<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@see&nbsp;NS_Datagram_Handler<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000CC">Free_Listener</span><span style="color: #006600">(</span><span style="color: #0000CC">$l</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$l&nbsp;</span><span style="color: #006600">instanceof&nbsp;</span><span style="color: #0000CC">NS_Listener</span><span style="color: #006600">)&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foreach&nbsp;(</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$listeners&nbsp;</span><span style="color: #006600">as&nbsp;</span><span style="color: #0000CC">$k&nbsp;</span><span style="color: #006600">=&gt;&nbsp;</span><span style="color: #0000CC">$v</span><span style="color: #006600">)&nbsp;if&nbsp;(</span><span style="color: #0000CC">$v&nbsp;</span><span style="color: #006600">===&nbsp;</span><span style="color: #0000CC">$l</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unset(</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$listeners</span><span style="color: #006600">[</span><span style="color: #0000CC">$k</span><span style="color: #006600">]);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">true</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;else&nbsp;if&nbsp;(</span><span style="color: #0000CC">$l&nbsp;</span><span style="color: #006600">instanceof&nbsp;</span><span style="color: #0000CC">NS_Datagram_Handler</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">Free_Datagram_Handler</span><span style="color: #006600">(</span><span style="color: #0000CC">$l</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Register&nbsp;a&nbsp;new&nbsp;write&nbsp;buffer<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;This&nbsp;method&nbsp;is&nbsp;used&nbsp;by&nbsp;NS_Connection_Handler::Write()&nbsp;and&nbsp;should&nbsp;not&nbsp;be&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;called&nbsp;unless&nbsp;you&nbsp;really&nbsp;know&nbsp;what&nbsp;you&nbsp;are&nbsp;doing<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;NS_Socket&nbsp;$socket<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;string&nbsp;$data<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;mixed&nbsp;$callback<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;NS_Write_Buffer<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@see&nbsp;NS_Connection_Handler::Write()<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000CC">New_Write_Buffer</span><span style="color: #006600">(</span><span style="color: #0000CC">NS_Socket&nbsp;$socket</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$data</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$callback</span><span style="color: #006600">=</span><span style="color: #0000CC">false</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">strlen</span><span style="color: #006600">(</span><span style="color: #0000CC">$data</span><span style="color: #006600">)&nbsp;==&nbsp;</span><span style="color: #0000CC">0</span><span style="color: #006600">)&nbsp;return&nbsp;</span><span style="color: #0000CC">true</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$wb&nbsp;</span><span style="color: #006600">=&nbsp;new&nbsp;</span><span style="color: #0000CC">NS_Write_Buffer</span><span style="color: #006600">(</span><span style="color: #0000CC">$socket</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$data</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$callback</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$write_buffers</span><span style="color: #006600">[</span><span style="color: #0000CC">$socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">id</span><span style="color: #006600">][]&nbsp;=&nbsp;</span><span style="color: #0000CC">$wb</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">$wb</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Free&nbsp;a&nbsp;registered&nbsp;write&nbsp;buffer<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;int&nbsp;$sid&nbsp;socket&nbsp;id<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000CC">Free_Write_Buffers</span><span style="color: #006600">(</span><span style="color: #0000CC">$sid</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unset(</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$write_buffers</span><span style="color: #006600">[</span><span style="color: #0000CC">$sid</span><span style="color: #006600">]);<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Register&nbsp;a&nbsp;new&nbsp;outgoing&nbsp;connection<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;string&nbsp;$addr<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;string&nbsp;$handler_classname<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;mixed&nbsp;$handler_options<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;NS_Connection_Handler<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@see&nbsp;NS_Connection_Handler<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000CC">New_Connection</span><span style="color: #006600">(</span><span style="color: #0000CC">$addr</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$handler_classname</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$handler_options</span><span style="color: #006600">=</span><span style="color: #0000CC">false</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$sck&nbsp;</span><span style="color: #006600">=&nbsp;new&nbsp;</span><span style="color: #0000CC">NS_Client_Socket</span><span style="color: #006600">(</span><span style="color: #0000CC">$addr</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$h&nbsp;</span><span style="color: #006600">=&nbsp;new&nbsp;</span><span style="color: #0000CC">$handler_classname</span><span style="color: #006600">(</span><span style="color: #0000CC">$handler_options</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$h</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$sck</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$connections</span><span style="color: #006600">[</span><span style="color: #0000CC">$sck</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">id</span><span style="color: #006600">]&nbsp;=&nbsp;</span><span style="color: #0000CC">$h</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">$h</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Free&nbsp;an&nbsp;allocated&nbsp;connection<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;NS_Connection_Handler&nbsp;$h<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;bool<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000CC">Free_Connection</span><span style="color: #006600">(</span><span style="color: #0000CC">NS_Connection_Handler&nbsp;$h</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unset(</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$connections</span><span style="color: #006600">[</span><span style="color: #0000CC">$h</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">id</span><span style="color: #006600">]);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">Free_Write_Buffers</span><span style="color: #006600">(</span><span style="color: #0000CC">$h</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">id</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$h</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">pending_connect&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$h</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">pending_crypto&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$child_process&nbsp;</span><span style="color: #006600">&amp;&amp;&nbsp;(</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$forked_connection&nbsp;</span><span style="color: #006600">===&nbsp;</span><span style="color: #0000CC">$h</span><span style="color: #006600">))&nbsp;exit();<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">true</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Register&nbsp;a&nbsp;new&nbsp;datagram&nbsp;(udp)&nbsp;handler<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;string&nbsp;$addr<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;string&nbsp;$handler_classname<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;NS_Datagram_Handler<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@see&nbsp;NS_Datagram_Handler<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9.61<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000CC">New_Datagram_Handler</span><span style="color: #006600">(</span><span style="color: #0000CC">$addr</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$handler_classname</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$h&nbsp;</span><span style="color: #006600">=&nbsp;new&nbsp;</span><span style="color: #0000CC">$handler_classname</span><span style="color: #006600">(</span><span style="color: #0000CC">$addr</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$dgram_handlers</span><span style="color: #006600">[</span><span style="color: #0000CC">$h</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">id</span><span style="color: #006600">]&nbsp;=&nbsp;</span><span style="color: #0000CC">$h</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">$h</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Deactivate&nbsp;and&nbsp;free&nbsp;a&nbsp;datagram&nbsp;handler<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;NS_Datagram_Handler&nbsp;$h<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;bool<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9.61<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000CC">Free_Datagram_Handler</span><span style="color: #006600">(</span><span style="color: #0000CC">NS_Datagram_Handler&nbsp;$h</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unset(</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$dgram_handlers</span><span style="color: #006600">[</span><span style="color: #0000CC">$h</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">id</span><span style="color: #006600">]);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">true</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Register&nbsp;a&nbsp;new&nbsp;shared&nbsp;object<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;shared&nbsp;objects&nbsp;allow&nbsp;forked&nbsp;processes&nbsp;to&nbsp;use&nbsp;objects&nbsp;stored&nbsp;on&nbsp;the&nbsp;master&nbsp;process<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;if&nbsp;$o&nbsp;is&nbsp;ommited,&nbsp;a&nbsp;new&nbsp;StdClass&nbsp;empty&nbsp;object&nbsp;is&nbsp;created<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;object&nbsp;$o<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;NS_Shared_Object<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000CC">New_Shared_Object</span><span style="color: #006600">(</span><span style="color: #0000CC">$o&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$shr&nbsp;</span><span style="color: #006600">=&nbsp;new&nbsp;</span><span style="color: #0000CC">NS_Shared_Object</span><span style="color: #006600">(</span><span style="color: #0000CC">$o</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$shared_objects</span><span style="color: #006600">[</span><span style="color: #0000CC">$shr</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">_oid</span><span style="color: #006600">]&nbsp;=&nbsp;</span><span style="color: #0000CC">$shr</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">$shr</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Free&nbsp;a&nbsp;shared&nbsp;object<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;NS_Shared_Object&nbsp;$o<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000CC">Free_Shared_Object</span><span style="color: #006600">(</span><span style="color: #0000CC">NS_Shared_Object&nbsp;$o</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unset(</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$shared_objects</span><span style="color: #006600">[</span><span style="color: #0000CC">$o</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">_oid</span><span style="color: #006600">]);<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Register&nbsp;a&nbsp;new&nbsp;timer&nbsp;callback<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;int&nbsp;$delay&nbsp;specified&nbsp;in&nbsp;seconds<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;mixed&nbsp;$callback&nbsp;may&nbsp;be&nbsp;"function"&nbsp;or&nbsp;array($obj,&nbsp;"method")<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;NS_Timer<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000CC">New_Timer</span><span style="color: #006600">(</span><span style="color: #0000CC">$delay</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$callback</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$time_t&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">time</span><span style="color: #006600">()&nbsp;+&nbsp;</span><span style="color: #0000CC">$delay</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$t&nbsp;</span><span style="color: #006600">=&nbsp;new&nbsp;</span><span style="color: #0000CC">NS_Timer</span><span style="color: #006600">(</span><span style="color: #0000CC">$time_t</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$callback</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$timers</span><span style="color: #006600">[</span><span style="color: #0000CC">$time_t</span><span style="color: #006600">][]&nbsp;=&nbsp;</span><span style="color: #0000CC">$t</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">ksort</span><span style="color: #006600">(</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$timers</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">$t</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Clear&nbsp;all&nbsp;existing&nbsp;timers<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;int&nbsp;number&nbsp;of&nbsp;timers&nbsp;cleared<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;2.0<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000CC">Clear_Timers</span><span style="color: #006600">()&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$ret&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">count</span><span style="color: #006600">(</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$timers</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$timers&nbsp;</span><span style="color: #006600">=&nbsp;array();<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">$ret</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Get&nbsp;all&nbsp;registered&nbsp;NS_Connection_Handler&nbsp;objects<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Note:&nbsp;connections&nbsp;created&nbsp;by&nbsp;fork()ing&nbsp;listeners&nbsp;can&nbsp;not&nbsp;be&nbsp;retreived&nbsp;this&nbsp;way<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;bool&nbsp;$include_pending_connect<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;array<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000CC">Get_Connections</span><span style="color: #006600">(</span><span style="color: #0000CC">$include_pending_connect</span><span style="color: #006600">=</span><span style="color: #0000CC">false</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$ret&nbsp;</span><span style="color: #006600">=&nbsp;array();<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foreach&nbsp;(</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$connections&nbsp;</span><span style="color: #006600">as&nbsp;</span><span style="color: #0000CC">$c</span><span style="color: #006600">)&nbsp;if&nbsp;(</span><span style="color: #0000CC">$c</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">connected&nbsp;</span><span style="color: #006600">||&nbsp;</span><span style="color: #0000CC">$include_pending_connect</span><span style="color: #006600">)&nbsp;</span><span style="color: #0000CC">$ret</span><span style="color: #006600">[]&nbsp;=&nbsp;</span><span style="color: #0000CC">$c</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">$ret</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Get&nbsp;all&nbsp;registered&nbsp;NS_Listener&nbsp;objects<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;bool&nbsp;$include_inactive<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;array<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000CC">Get_Listeners</span><span style="color: #006600">(</span><span style="color: #0000CC">$include_inactive</span><span style="color: #006600">=</span><span style="color: #0000CC">false</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$ret&nbsp;</span><span style="color: #006600">=&nbsp;array();<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foreach&nbsp;(</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$listeners&nbsp;</span><span style="color: #006600">as&nbsp;</span><span style="color: #0000CC">$l</span><span style="color: #006600">)&nbsp;if&nbsp;(</span><span style="color: #0000CC">$l</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">active&nbsp;</span><span style="color: #006600">||&nbsp;</span><span style="color: #0000CC">$include_inactive</span><span style="color: #006600">)&nbsp;</span><span style="color: #0000CC">$ret</span><span style="color: #006600">[]&nbsp;=&nbsp;</span><span style="color: #0000CC">$l</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">$ret</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Set&nbsp;the&nbsp;maximum&nbsp;number&nbsp;of&nbsp;allowed&nbsp;children&nbsp;processes&nbsp;before&nbsp;delaying&nbsp;incoming&nbsp;connections<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Note:&nbsp;this&nbsp;setting&nbsp;only&nbsp;affect&nbsp;and&nbsp;applies&nbsp;to&nbsp;forking&nbsp;listeners<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;int&nbsp;$i<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;2.0<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000CC">Set_Max_Children</span><span style="color: #006600">(</span><span style="color: #0000CC">$i</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$max_forked_processes&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$i</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Flush&nbsp;all&nbsp;write&nbsp;buffers<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;2.0<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000CC">Flush_Write_Buffers</span><span style="color: #006600">()&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while&nbsp;(</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$write_buffers</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">Run</span><span style="color: #006600">(</span><span style="color: #0000CC">1</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Fork&nbsp;and&nbsp;setup&nbsp;IPC&nbsp;sockets<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;int&nbsp;the&nbsp;pid&nbsp;of&nbsp;the&nbsp;created&nbsp;process,&nbsp;0&nbsp;if&nbsp;child&nbsp;process<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9.63<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000CC">Fork</span><span style="color: #006600">()&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$has_shared&nbsp;</span><span style="color: #006600">=&nbsp;(</span><span style="color: #0000CC">NS_Shared_Object</span><span style="color: #006600">::</span><span style="color: #0000CC">$shared_count&nbsp;</span><span style="color: #006600">&gt;&nbsp;</span><span style="color: #0000CC">0</span><span style="color: #006600">))&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;list(</span><span style="color: #0000CC">$s1</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$s2</span><span style="color: #006600">)&nbsp;=&nbsp;</span><span style="color: #0000CC">NS_IPC_Socket</span><span style="color: #006600">::</span><span style="color: #0000CC">Pair</span><span style="color: #006600">();<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$pid&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">pcntl_fork</span><span style="color: #006600">();<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$pid&nbsp;</span><span style="color: #006600">===&nbsp;</span><span style="color: #0000CC">0</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$child_process&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">true</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$has_shared</span><span style="color: #006600">)&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$master_pipe&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$s2</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;else&nbsp;if&nbsp;(</span><span style="color: #0000CC">$pid&nbsp;</span><span style="color: #006600">&gt;&nbsp;</span><span style="color: #0000CC">0</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;++</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$nb_forked_processes</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$has_shared</span><span style="color: #006600">)&nbsp;{&nbsp;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$s1</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">pid&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$pid</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$forked_pipes</span><span style="color: #006600">[</span><span style="color: #0000CC">$pid</span><span style="color: #006600">]&nbsp;=&nbsp;</span><span style="color: #0000CC">$s1</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">$pid</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">/**<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;Enter&nbsp;main&nbsp;loop<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;int&nbsp;$loops&nbsp;if&nbsp;omited&nbsp;nanoserv&nbsp;will&nbsp;enter&nbsp;an&nbsp;endless&nbsp;loop<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;array&nbsp;$user_streams&nbsp;if&nbsp;specified,&nbsp;user&nbsp;streams&nbsp;will&nbsp;be&nbsp;polled&nbsp;along&nbsp;with&nbsp;internal&nbsp;streams<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;array&nbsp;the&nbsp;user&nbsp;streams&nbsp;with&nbsp;pending&nbsp;data<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@since&nbsp;0.9<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">static&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000CC">Run</span><span style="color: #006600">(</span><span style="color: #0000CC">$loops</span><span style="color: #006600">=</span><span style="color: #0000CC">false</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$user_streams</span><span style="color: #006600">=array())&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$tmp&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">0</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$ret&nbsp;</span><span style="color: #006600">=&nbsp;array();<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while&nbsp;(</span><span style="color: #0000CC">$loops&nbsp;</span><span style="color: #006600">!==&nbsp;</span><span style="color: #0000CC">0</span><span style="color: #006600">)&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$t&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">time</span><span style="color: #006600">();<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">//&nbsp;Timers<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">foreach&nbsp;(</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$timers&nbsp;</span><span style="color: #006600">as&nbsp;</span><span style="color: #0000CC">$tmr_t&nbsp;</span><span style="color: #006600">=&gt;&nbsp;</span><span style="color: #0000CC">$tmr_a</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$tmr_t&nbsp;</span><span style="color: #006600">&gt;&nbsp;</span><span style="color: #0000CC">$t</span><span style="color: #006600">)&nbsp;break;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foreach&nbsp;(</span><span style="color: #0000CC">$tmr_a&nbsp;</span><span style="color: #006600">as&nbsp;</span><span style="color: #0000CC">$tmr</span><span style="color: #006600">)&nbsp;if&nbsp;(</span><span style="color: #0000CC">$tmr</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">active</span><span style="color: #006600">)&nbsp;</span><span style="color: #0000CC">call_user_func</span><span style="color: #006600">(</span><span style="color: #0000CC">$tmr</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">callback</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unset(</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$timers</span><span style="color: #006600">[</span><span style="color: #0000CC">$tmr_t</span><span style="color: #006600">]);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">//&nbsp;Write&nbsp;buffers&nbsp;to&nbsp;non&nbsp;blocked&nbsp;sockets<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">foreach&nbsp;(</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$write_buffers&nbsp;</span><span style="color: #006600">as&nbsp;</span><span style="color: #0000CC">$write_buffers</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(!</span><span style="color: #0000CC">$write_buffers&nbsp;</span><span style="color: #006600">||&nbsp;</span><span style="color: #0000CC">$write_buffers</span><span style="color: #006600">[</span><span style="color: #0000CC">0</span><span style="color: #006600">]-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">blocked&nbsp;</span><span style="color: #006600">||&nbsp;!</span><span style="color: #0000CC">$write_buffers</span><span style="color: #006600">[</span><span style="color: #0000CC">0</span><span style="color: #006600">]-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">connected</span><span style="color: #006600">)&nbsp;continue;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foreach&nbsp;(</span><span style="color: #0000CC">$write_buffers&nbsp;</span><span style="color: #006600">as&nbsp;</span><span style="color: #0000CC">$wb</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while&nbsp;(</span><span style="color: #0000CC">$wb</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Waiting_Data</span><span style="color: #006600">()&nbsp;&amp;&amp;&nbsp;!</span><span style="color: #0000CC">$wb</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">blocked</span><span style="color: #006600">)&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$wb</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Write</span><span style="color: #006600">();<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(!</span><span style="color: #0000CC">$wb</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Waiting_Data</span><span style="color: #006600">())&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">array_shift</span><span style="color: #006600">(</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$write_buffers</span><span style="color: #006600">[</span><span style="color: #0000CC">$wb</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">id</span><span style="color: #006600">]);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(!</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$write_buffers</span><span style="color: #006600">[</span><span style="color: #0000CC">$wb</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">id</span><span style="color: #006600">])&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">Free_Write_Buffers</span><span style="color: #006600">(</span><span style="color: #0000CC">$wb</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">id</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unset(</span><span style="color: #0000CC">$handler</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$write_buffers</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$l</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$c</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$wbs</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$wb</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$data</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">//&nbsp;Prepare&nbsp;socket&nbsp;arrays<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$fd_lookup_r&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$fd_lookup_w&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$rfd&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$wfd&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$efd&nbsp;</span><span style="color: #006600">=&nbsp;array();<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foreach&nbsp;(</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$listeners&nbsp;</span><span style="color: #006600">as&nbsp;</span><span style="color: #0000CC">$l</span><span style="color: #006600">)&nbsp;if&nbsp;((</span><span style="color: #0000CC">$l</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">active</span><span style="color: #006600">)&nbsp;&amp;&amp;&nbsp;((!</span><span style="color: #0000CC">$l</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">forking</span><span style="color: #006600">)&nbsp;||&nbsp;(</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$nb_forked_processes&nbsp;</span><span style="color: #006600">&lt;=&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$max_forked_processes</span><span style="color: #006600">)))&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$rfd</span><span style="color: #006600">[]&nbsp;=&nbsp;</span><span style="color: #0000CC">$l</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$fd_lookup_r</span><span style="color: #006600">[(int)</span><span style="color: #0000CC">$l</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">]&nbsp;=&nbsp;</span><span style="color: #0000CC">$l</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foreach&nbsp;(</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$connections&nbsp;</span><span style="color: #006600">as&nbsp;</span><span style="color: #0000CC">$c</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$c</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">pending_crypto&nbsp;</span><span style="color: #006600">&amp;&amp;&nbsp;</span><span style="color: #0000CC">$c</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Enable_Crypto</span><span style="color: #006600">())&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$c</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">on_Accept</span><span style="color: #006600">();<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;else&nbsp;if&nbsp;(</span><span style="color: #0000CC">$c</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">connected</span><span style="color: #006600">)&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$rfd</span><span style="color: #006600">[]&nbsp;=&nbsp;</span><span style="color: #0000CC">$c</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$fd_lookup_r</span><span style="color: #006600">[(int)</span><span style="color: #0000CC">$c</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">]&nbsp;=&nbsp;</span><span style="color: #0000CC">$c</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;else&nbsp;if&nbsp;(</span><span style="color: #0000CC">$c</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">connect_timeout&nbsp;</span><span style="color: #006600">&lt;&nbsp;</span><span style="color: #0000CC">$t</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$c</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">on_Connect_Fail</span><span style="color: #006600">(</span><span style="color: #0000CC">NS_Connection_Handler</span><span style="color: #006600">::</span><span style="color: #0000CC">FAIL_TIMEOUT</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">Free_Connection</span><span style="color: #006600">(</span><span style="color: #0000CC">$c</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;else&nbsp;if&nbsp;(</span><span style="color: #0000CC">$c</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">pending_connect</span><span style="color: #006600">)&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$wfd</span><span style="color: #006600">[]&nbsp;=&nbsp;</span><span style="color: #0000CC">$c</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$fd_lookup_w</span><span style="color: #006600">[(int)</span><span style="color: #0000CC">$c</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">]&nbsp;=&nbsp;</span><span style="color: #0000CC">$c</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foreach&nbsp;(</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$dgram_handlers&nbsp;</span><span style="color: #006600">as&nbsp;</span><span style="color: #0000CC">$l</span><span style="color: #006600">)&nbsp;if&nbsp;(</span><span style="color: #0000CC">$l</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">active</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$rfd</span><span style="color: #006600">[]&nbsp;=&nbsp;</span><span style="color: #0000CC">$l</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$fd_lookup_r</span><span style="color: #006600">[(int)</span><span style="color: #0000CC">$l</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">]&nbsp;=&nbsp;</span><span style="color: #0000CC">$l</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foreach&nbsp;(</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$write_buffers&nbsp;</span><span style="color: #006600">as&nbsp;</span><span style="color: #0000CC">$wbs</span><span style="color: #006600">)&nbsp;if&nbsp;(</span><span style="color: #0000CC">$wbs</span><span style="color: #006600">[</span><span style="color: #0000CC">0</span><span style="color: #006600">]-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">blocked</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$wfd</span><span style="color: #006600">[]&nbsp;=&nbsp;</span><span style="color: #0000CC">$wbs</span><span style="color: #006600">[</span><span style="color: #0000CC">0</span><span style="color: #006600">]-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$fd_lookup_w</span><span style="color: #006600">[(int)</span><span style="color: #0000CC">$wbs</span><span style="color: #006600">[</span><span style="color: #0000CC">0</span><span style="color: #006600">]-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">]&nbsp;=&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$connections</span><span style="color: #006600">[</span><span style="color: #0000CC">$wbs</span><span style="color: #006600">[</span><span style="color: #0000CC">0</span><span style="color: #006600">]-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">id</span><span style="color: #006600">];<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foreach&nbsp;(</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$forked_pipes&nbsp;</span><span style="color: #006600">as&nbsp;</span><span style="color: #0000CC">$fp</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$rfd</span><span style="color: #006600">[]&nbsp;=&nbsp;</span><span style="color: #0000CC">$fp</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$fd_lookup_r</span><span style="color: #006600">[(int)</span><span style="color: #0000CC">$fp</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">fd</span><span style="color: #006600">]&nbsp;=&nbsp;</span><span style="color: #0000CC">$fp</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$user_streams</span><span style="color: #006600">)&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foreach&nbsp;((array)</span><span style="color: #0000CC">$user_streams</span><span style="color: #006600">[</span><span style="color: #0000CC">0</span><span style="color: #006600">]&nbsp;as&nbsp;</span><span style="color: #0000CC">$tmp_r</span><span style="color: #006600">)&nbsp;</span><span style="color: #0000CC">$rfd</span><span style="color: #006600">[]&nbsp;=&nbsp;</span><span style="color: #0000CC">$tmp_r</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foreach&nbsp;((array)</span><span style="color: #0000CC">$user_streams</span><span style="color: #006600">[</span><span style="color: #0000CC">1</span><span style="color: #006600">]&nbsp;as&nbsp;</span><span style="color: #0000CC">$tmp_w</span><span style="color: #006600">)&nbsp;</span><span style="color: #0000CC">$wfd</span><span style="color: #006600">[]&nbsp;=&nbsp;</span><span style="color: #0000CC">$tmp_w</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">//&nbsp;Main&nbsp;select<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">if&nbsp;((</span><span style="color: #0000CC">$rfd&nbsp;</span><span style="color: #006600">||&nbsp;</span><span style="color: #0000CC">$wfd</span><span style="color: #006600">)&nbsp;&amp;&amp;&nbsp;(@</span><span style="color: #0000CC">stream_select</span><span style="color: #006600">(</span><span style="color: #0000CC">$rfd</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$wfd</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$efd</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">1</span><span style="color: #006600">)))&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foreach&nbsp;(</span><span style="color: #0000CC">$rfd&nbsp;</span><span style="color: #006600">as&nbsp;</span><span style="color: #0000CC">$act_rfd</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$handler&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$fd_lookup_r</span><span style="color: #006600">[(int)</span><span style="color: #0000CC">$act_rfd</span><span style="color: #006600">];<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(!isset(</span><span style="color: #0000CC">$handler</span><span style="color: #006600">))&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">//&nbsp;User&nbsp;stream<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$ret</span><span style="color: #006600">[</span><span style="color: #0000CC">0</span><span style="color: #006600">][]&nbsp;=&nbsp;</span><span style="color: #0000CC">$act_rfd</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;else&nbsp;if&nbsp;(</span><span style="color: #0000CC">$handler&nbsp;</span><span style="color: #006600">instanceof&nbsp;</span><span style="color: #0000CC">NS_Connection_Handler</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(!</span><span style="color: #0000CC">$handler</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">connected</span><span style="color: #006600">)&nbsp;continue;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$data&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$handler</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Read</span><span style="color: #006600">();<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">strlen</span><span style="color: #006600">(</span><span style="color: #0000CC">$data</span><span style="color: #006600">)&nbsp;===&nbsp;</span><span style="color: #0000CC">0</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$handler</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Eof</span><span style="color: #006600">())&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">//&nbsp;Disconnected&nbsp;socket<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$handler</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">connected&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$handler</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">on_Disconnect</span><span style="color: #006600">();<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">Free_Connection</span><span style="color: #006600">(</span><span style="color: #0000CC">$handler</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;else&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">//&nbsp;Data&nbsp;available<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$handler</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">on_Read</span><span style="color: #006600">(</span><span style="color: #0000CC">$data</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;else&nbsp;if&nbsp;(</span><span style="color: #0000CC">$handler&nbsp;</span><span style="color: #006600">instanceof&nbsp;</span><span style="color: #0000CC">NS_Datagram_Handler</span><span style="color: #006600">)&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$from&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #CC0000">""</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$data&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$handler</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Read_From</span><span style="color: #006600">(</span><span style="color: #0000CC">$from</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$handler</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">on_Read</span><span style="color: #006600">(</span><span style="color: #0000CC">$from</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$data</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;else&nbsp;if&nbsp;(</span><span style="color: #0000CC">$handler&nbsp;</span><span style="color: #006600">instanceof&nbsp;</span><span style="color: #0000CC">NS_Listener</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while&nbsp;(</span><span style="color: #0000CC">$fd&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$handler</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Accept</span><span style="color: #006600">())&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">//&nbsp;New&nbsp;connection&nbsp;accepted<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$sck&nbsp;</span><span style="color: #006600">=&nbsp;new&nbsp;</span><span style="color: #0000CC">NS_Socket</span><span style="color: #006600">(</span><span style="color: #0000CC">$fd</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$handler</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">crypto_type</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$hnd&nbsp;</span><span style="color: #006600">=&nbsp;new&nbsp;</span><span style="color: #0000CC">$handler</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">handler_classname</span><span style="color: #006600">(</span><span style="color: #0000CC">$handler</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">handler_options</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$hnd</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$sck</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$handler</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">forking</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$hnd</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">on_Fork_Prepare</span><span style="color: #006600">();<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">Fork</span><span style="color: #006600">()&nbsp;===&nbsp;</span><span style="color: #0000CC">0</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$hnd</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">on_Fork_Done</span><span style="color: #006600">();<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$write_buffers&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$listeners&nbsp;</span><span style="color: #006600">=&nbsp;array();<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$connections&nbsp;</span><span style="color: #006600">=&nbsp;array(</span><span style="color: #0000CC">$sck</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">id&nbsp;</span><span style="color: #006600">=&gt;&nbsp;</span><span style="color: #0000CC">$hnd</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$forked_connection&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$hnd</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">Clear_Timers</span><span style="color: #006600">();<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$sck</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Setup</span><span style="color: #006600">())&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$hnd</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">on_Accept</span><span style="color: #006600">();<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$handler&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$hnd&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$sck&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$l&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$c&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$wbs&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$wb&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$fd_lookup_r&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$fd_lookup_w&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$loops&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$hnd</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">on_Fork_Done</span><span style="color: #006600">();<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$nb_forked_processes&nbsp;</span><span style="color: #006600">&gt;=&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$max_forked_processes</span><span style="color: #006600">)&nbsp;break;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;else&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$connections</span><span style="color: #006600">[</span><span style="color: #0000CC">$sck</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">id</span><span style="color: #006600">]&nbsp;=&nbsp;</span><span style="color: #0000CC">$hnd</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$sck</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Setup</span><span style="color: #006600">())&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$hnd</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">on_Accept</span><span style="color: #006600">();<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unset(</span><span style="color: #0000CC">$sck</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$hnd</span><span style="color: #006600">);<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;else&nbsp;if&nbsp;(</span><span style="color: #0000CC">$handler&nbsp;</span><span style="color: #006600">instanceof&nbsp;</span><span style="color: #0000CC">NS_IPC_Socket</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;while&nbsp;(</span><span style="color: #0000CC">$ipcm&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$handler</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Read</span><span style="color: #006600">())&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;((!</span><span style="color: #0000CC">$ipcq&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">unserialize</span><span style="color: #006600">(</span><span style="color: #0000CC">$ipcm</span><span style="color: #006600">))&nbsp;||&nbsp;(!</span><span style="color: #0000CC">is_object</span><span style="color: #006600">(</span><span style="color: #0000CC">$o&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$shared_objects</span><span style="color: #006600">[</span><span style="color: #0000CC">$ipcq</span><span style="color: #006600">[</span><span style="color: #CC0000">"oid"</span><span style="color: #006600">]])))&nbsp;continue;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">NS_Shared_Object</span><span style="color: #006600">::</span><span style="color: #0000CC">$caller_pid&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$handler</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">pid</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;switch&nbsp;(</span><span style="color: #0000CC">$ipcq</span><span style="color: #006600">[</span><span style="color: #CC0000">"action"</span><span style="color: #006600">])&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case&nbsp;</span><span style="color: #CC0000">"G"</span><span style="color: #006600">:<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$handler</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Write</span><span style="color: #006600">(</span><span style="color: #0000CC">serialize</span><span style="color: #006600">(</span><span style="color: #0000CC">$o</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">$ipcq</span><span style="color: #006600">[</span><span style="color: #CC0000">"var"</span><span style="color: #006600">]));<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case&nbsp;</span><span style="color: #CC0000">"S"</span><span style="color: #006600">:<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$o</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">$ipcq</span><span style="color: #006600">[</span><span style="color: #CC0000">"var"</span><span style="color: #006600">]&nbsp;=&nbsp;</span><span style="color: #0000CC">$ipcq</span><span style="color: #006600">[</span><span style="color: #CC0000">"val"</span><span style="color: #006600">];<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case&nbsp;</span><span style="color: #CC0000">"C"</span><span style="color: #006600">:<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$handler</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Write</span><span style="color: #006600">(</span><span style="color: #0000CC">serialize</span><span style="color: #006600">(</span><span style="color: #0000CC">call_user_func_array</span><span style="color: #006600">(array(</span><span style="color: #0000CC">$o</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$ipcq</span><span style="color: #006600">[</span><span style="color: #CC0000">"func"</span><span style="color: #006600">]),&nbsp;</span><span style="color: #0000CC">$ipcq</span><span style="color: #006600">[</span><span style="color: #CC0000">"args"</span><span style="color: #006600">])));<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unset(</span><span style="color: #0000CC">$o</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$ipcq</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">$ipcm</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foreach&nbsp;(</span><span style="color: #0000CC">$wfd&nbsp;</span><span style="color: #006600">as&nbsp;</span><span style="color: #0000CC">$act_wfd</span><span style="color: #006600">)&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$handler&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">$fd_lookup_w</span><span style="color: #006600">[</span><span style="color: #0000CC">$act_wfd</span><span style="color: #006600">];<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(!isset(</span><span style="color: #0000CC">$handler</span><span style="color: #006600">))&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">//&nbsp;User&nbsp;stream<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$ret</span><span style="color: #006600">[</span><span style="color: #0000CC">1</span><span style="color: #006600">][]&nbsp;=&nbsp;</span><span style="color: #0000CC">$act_wfd</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;else&nbsp;if&nbsp;(</span><span style="color: #0000CC">$handler</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">connected</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">//&nbsp;Unblock&nbsp;buffered&nbsp;write<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">if&nbsp;(</span><span style="color: #0000CC">$handler</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Eof</span><span style="color: #006600">())&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$handler</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">on_Disconnect</span><span style="color: #006600">();<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">Free_Connection</span><span style="color: #006600">(</span><span style="color: #0000CC">$handler</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;else&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$handler</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">blocked&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;else&nbsp;if&nbsp;(</span><span style="color: #0000CC">$handler</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">pending_connect</span><span style="color: #006600">)&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF9900">//&nbsp;Pending&nbsp;connect<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #006600">if&nbsp;(</span><span style="color: #0000CC">$handler</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Eof</span><span style="color: #006600">())&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$handler</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">on_Connect_Fail</span><span style="color: #006600">(</span><span style="color: #0000CC">NS_Connection_Handler</span><span style="color: #006600">::</span><span style="color: #0000CC">FAIL_NORESPONSE</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">Free_Connection</span><span style="color: #006600">(</span><span style="color: #0000CC">$handler</span><span style="color: #006600">);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;else&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$handler</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">Setup</span><span style="color: #006600">();<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$handler</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">connected&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">true</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$handler</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">socket</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">pending_connect&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000CC">$handler</span><span style="color: #006600">-&gt;</span><span style="color: #0000CC">on_Connect</span><span style="color: #006600">();<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$nb_forked_processes&nbsp;</span><span style="color: #006600">&amp;&amp;&nbsp;!</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$child_process</span><span style="color: #006600">)&nbsp;while&nbsp;(((</span><span style="color: #0000CC">$pid&nbsp;</span><span style="color: #006600">=&nbsp;</span><span style="color: #0000CC">pcntl_wait</span><span style="color: #006600">(</span><span style="color: #0000CC">$tmp</span><span style="color: #006600">,&nbsp;</span><span style="color: #0000CC">WNOHANG</span><span style="color: #006600">))&nbsp;&gt;&nbsp;</span><span style="color: #0000CC">0</span><span style="color: #006600">)&nbsp;&amp;&amp;&nbsp;</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$nb_forked_processes</span><span style="color: #006600">--)&nbsp;unset(</span><span style="color: #0000CC">self</span><span style="color: #006600">::</span><span style="color: #0000CC">$forked_pipes</span><span style="color: #006600">[</span><span style="color: #0000CC">$pid</span><span style="color: #006600">]);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$loops&nbsp;</span><span style="color: #006600">!==&nbsp;</span><span style="color: #0000CC">false</span><span style="color: #006600">)&nbsp;--</span><span style="color: #0000CC">$loops</span><span style="color: #006600">;<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;(</span><span style="color: #0000CC">$ret</span><span style="color: #006600">)&nbsp;{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000CC">$ret</span><span style="color: #006600">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br /><br />}<br /><br /></span><span style="color: #0000CC">?&gt;<br /></span>
-</span>
-</code>
+<?php
+
+/**
+ *
+ * nanoserv - a sockets daemon toolkit for PHP 5.1+
+ * 
+ * Copyright (C) 2004-2009 Vincent Negrier aka. sIX <six at aegis-corp.org>
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
+ *
+ * @package nanoserv
+ * @subpackage Core
+ */
+
+/**
+ * nanoserv current version number
+ * @var string
+ */
+define("NS_VERSION", "2.0.0-dev");
+
+/**
+ * Base exception class
+ *
+ * @package nanoserv
+ * @subpackage Core
+ * @since 2.0
+ */
+class NS_Exception extends Exception {
+
+	public $addr;
+
+	public function __construct($errmsg, $errno, $addr) {
+
+		parent::__construct($errmsg, $errno);
+
+		$this->addr = $addr;
+
+	}
+
+}
+
+/**
+ * Server exception class
+ *
+ * @package nanoserv
+ * @subpackage Core
+ * @since 2.0
+ */
+class NS_Server_Exception extends NS_Exception {
+
+	public $listener;
+
+	public function __construct($errmsg, $errno, $addr, NS_Listener $listener = NULL) {
+
+		parent::__construct($errmsg, $errno, $addr);
+
+		$this->listener = $listener;
+	
+	}
+
+}
+
+/**
+ * Client exception class
+ *
+ * @package nanoserv
+ * @subpackage Core
+ * @since 2.0
+ */
+class NS_Client_Exception extends NS_Exception {
+
+	public $handler;
+
+	public function __construct($errmsg, $errno, $addr, NS_Handler $handler = NULL) {
+
+		parent::__construct($errmsg, $errno, $addr);
+
+		$this->handler = $handler;
+	
+	}
+
+}
+
+/**
+ * Base socket class
+ *
+ * @package nanoserv
+ * @subpackage Core
+ * @since 0.9
+ */
+class NS_Socket {
+
+	/**
+	 * Maximum number of bytes read by Read()
+	 * @var int
+	 */
+	const DEFAULT_READ_LENGTH = 16384;
+	
+	/**
+	 * Internal Socket unique ID
+	 * @var int
+	 */
+	public $id;
+	
+	/**
+	 * Socket stream descriptor
+	 * @var resource
+	 */
+	public $fd;
+
+	/**
+	 * Is the socket connected ?
+	 * @var bool
+	 */
+	public $connected = false;
+	
+	/**
+	 * Is the socket waiting to be connected ?
+	 * @var bool
+	 */
+	public $pending_connect = false;
+	
+	/**
+	 * Is the socket waiting for ssl/tls handshake ?
+	 * @var bool
+	 */
+	public $pending_crypto = false;
+	
+	/**
+	 * Is the socket blocked ?
+	 * @var bool
+	 */
+	public $blocked = false;
+	
+	/**
+	 * Stream context
+	 * @var resource
+	 */
+	protected $context;
+	
+	/**
+	 * Crypto type
+	 * @var int
+	 */
+	public $crypto_type;
+	
+	/**
+	 * Attached handler
+	 * @var NS_Connection_Handler
+	 */
+	public $handler;
+	
+	/**
+	 * Static instance counter
+	 * @var int
+	 */
+	private static $sck_cnt;
+	
+	/**
+	 * NS_Socket contructor
+	 *
+	 * @param resource $fd
+	 */
+	public function __construct($fd = false, $crypto_type=false) {
+
+		if ($fd === false) {
+		
+			$this->context = stream_context_create();
+
+		} else {
+
+			$this->fd = $fd;
+			$this->connected = true;
+			$this->Set_Blocking(false);
+			$this->Set_Timeout(0);
+
+			if ($crypto_type !== false) $this->crypto_type = $crypto_type;
+		
+		}
+	
+		$this->id = ++NS_Socket::$sck_cnt;
+	
+	}
+	
+	/**
+	 * Get stream options
+	 *
+	 * @return array
+	 * @since 0.9
+	 */
+	public function Get_Options() {
+
+		if ($this->fd) {
+
+			return stream_context_get_options($this->fd);
+
+		} else {
+
+			return stream_context_get_options($this->context);
+
+		}
+
+	}
+	
+	/**
+	 * Set a stream context option
+	 *
+	 * @param string $wrapper
+	 * @param string $opt
+	 * @param mixed $val
+	 * @return bool
+	 * @since 0.9
+	 */
+	public function Set_Option($wrapper, $opt, $val) {
+
+		if ($this->fd) {
+
+			return stream_context_set_option($this->fd, $wrapper, $opt, $val);
+
+		} else {
+
+			return stream_context_set_option($this->context, $wrapper, $opt, $val);
+
+		}
+	
+	}
+	
+	/**
+	 * Set timeout
+	 * 
+	 * @param int $timeout
+	 * @return bool
+	 * @since 0.9
+	 */
+	protected function Set_Timeout($timeout) {
+
+		return stream_set_timeout($this->fd, $timeout);
+	
+	}
+	
+	/**
+	 * Sets wether the socket is blocking or not
+	 *
+	 * @param bool $block
+	 * @return bool
+	 * @since 0.9
+	 */
+	protected function Set_Blocking($block) {
+
+		return stream_set_blocking($this->fd, $block);
+
+	}
+
+	/**
+	 * Set the stream write buffer (PHP defaults to 8192 bytes)
+	 *
+	 * @param int $buffer_size
+	 * @return int
+	 * @since 2.0
+	 */
+	protected function Set_Write_Buffer($buffer_size) {
+
+		return stream_set_write_buffer($this->fd, $buffer_size);
+	
+	}
+	
+	/**
+	 * Enable or disable ssl/tls crypto on the socket
+	 *
+	 * @param bool $enable
+	 * @param int $type 
+	 * @return mixed
+	 * @since 0.9
+	 */
+	public function Enable_Crypto($enable=true, $type=false) {
+
+		if ($type !== false) $this->crypto_type = $type;
+		
+		// Workaround for http://bugs.php.net/bug.php?id=45808
+		$this->Set_Blocking(true);
+		$this->Set_Timeout(1);
+		
+		$ret = stream_socket_enable_crypto($this->fd, $enable, $this->crypto_type);
+		
+		// Workaround for http://bugs.php.net/bug.php?id=45808
+		$this->Set_Blocking(false);
+		$this->Set_Timeout(0);
+		
+		$this->pending_crypto = $ret === 0;
+
+		return $ret;
+		
+	}
+	
+	/**
+	 * Setup crypto if needed
+	 *
+	 * @return bool
+	 * @since 0.9
+	 */
+	public function Setup() {
+
+		if (isset($this->crypto_type)) return $this->Enable_Crypto();
+
+		return true;
+		
+	}
+	
+	/**
+	 * Get local socket name
+	 *
+	 * @return string
+	 * @since 0.9
+	 */
+	public function Get_Name() {
+
+		return stream_socket_get_name($this->fd, false);
+
+	}
+	
+	/**
+	 * Get remote socket name
+	 *
+	 * @return string
+	 * @since 0.9
+	 */
+	public function Get_Peer_Name() {
+
+		return stream_socket_get_name($this->fd, true);
+
+	}
+	
+	/**
+	 * Read data from the socket and return it
+	 *
+	 * @param int $length maximum read length
+	 * @return string
+	 * @since 0.9
+	 */
+	public function Read() {
+
+		return fread($this->fd, self::DEFAULT_READ_LENGTH);
+
+	}
+
+	/**
+	 * Read data from a non connected socket and return it
+	 *
+	 * @param string &$addr contains the message sender address upon return
+	 * @param int $length maximum read length
+	 * @return string
+	 * @since 0.9.61
+	 */
+	public function Read_From(&$addr, $length=16384) {
+
+		return stream_socket_recvfrom($this->fd, $length, NULL, $addr);
+
+	}
+	
+	/**
+	 * Write data to the socket
+	 *
+	 * write returns the number of bytes written to the socket
+	 *
+	 * @param string $data
+	 * @return int
+	 * @since 0.9
+	 */
+	public function Write($data) {
+
+		$nb = fwrite($this->fd, $data);
+
+		if ($nb != strlen($data)) $this->blocked = true;
+
+		return $nb;
+	
+	}
+	
+	/**
+	 * Write data to a non connected socket
+	 *
+	 * @param string $to in the form of "<ip_address>:<port>"
+	 * @param string $data
+	 * @return int
+	 * @since 0.9.61
+	 */
+	public function Write_To($to, $data) {
+
+		return stream_socket_sendto($this->fd, $data, NULL, $to);
+	
+	}
+	
+	/**
+	 * Query end of stream status
+	 *
+	 * @return bool
+	 * @since 0.9
+	 */
+	public function Eof() {
+
+		if (!is_resource($this->fd)) return true;
+		
+		stream_socket_recvfrom($this->fd, 1, STREAM_PEEK);
+		
+		return (feof($this->fd));
+
+	}
+	
+	/**
+	 * Close the socket
+	 * @since 0.9
+	 */
+	public function Close() {
+
+		if ($this->connected) fclose($this->fd);
+
+		$this->connected = $this->pending_connect = false;
+
+	}
+
+	/**
+	 * NS_Socket destructor
+	 */
+	public function __destruct() {
+
+		Nanoserv::Free_Write_Buffers($this->id);
+
+		$this->Close();
+
+	}
+
+}
+
+/**
+ * Server socket class
+ *
+ * @package nanoserv
+ * @subpackage Core
+ * @since 0.9
+ */
+class NS_Server_Socket extends NS_Socket {
+
+	/**
+	 * Listen address (format is 'proto://addr:port')
+	 * @var string
+	 */
+	public $address;
+
+	/**
+	 * Real listen address (format is 'proto://addr:port')
+	 * @var string
+	 */
+	private $real_address;
+
+	/**
+	 * NS_Socket_Server constructor
+	 */
+	public function __construct($addr) {
+
+		parent::__construct();
+		
+		$this->address = $addr;
+
+		$proto = strtolower(strtok($addr, ":"));
+		$s = strtok("");
+
+		if ($proto == "udp") {
+
+			$this->real_address = $addr;
+		
+		} else {
+		
+			$this->real_address = "tcp:" . $s;
+
+			if ($proto != "tcp") switch ($proto) {
+
+				case "ssl":		$this->crypto_type = STREAM_CRYPTO_METHOD_SSLv23_SERVER;	break;
+				case "tls":		$this->crypto_type = STREAM_CRYPTO_METHOD_TLS_SERVER;		break;
+				case "sslv2":	$this->crypto_type = STREAM_CRYPTO_METHOD_SSLv2_SERVER;		break;
+				case "sslv3":	$this->crypto_type = STREAM_CRYPTO_METHOD_SSLv3_SERVER;		break;
+
+				default:		if (defined($cname = "STREAM_CRYPTO_METHOD_".strtoupper($proto)."_SERVER")) $this->crypto_type = constant($cname);
+			
+			}
+
+		}
+	
+	}
+
+	/**
+	 * Start listening and accepting connetions
+	 *
+	 * @return bool
+	 * @since 0.9
+	 */
+	public function Listen($bind_only=false) {
+
+		$errno = $errstr = false;
+		
+		$this->fd = stream_socket_server($this->real_address, $errno, $errstr, STREAM_SERVER_BIND | ($bind_only ? 0 : STREAM_SERVER_LISTEN), $this->context);
+
+		if ($this->fd === false) {
+
+			throw new NS_Server_Exception("cannot listen to {$this->real_address}: {$errstr}", $errno, $this->real_address);
+		
+		}
+
+		$this->Set_Blocking(false);
+		$this->Set_Timeout(0);
+		
+		return true;
+
+	}
+
+	/**
+	 * Accept connection
+	 *
+	 * @return resource
+	 * @since 0.9
+	 */
+	public function Accept() {
+
+		return @stream_socket_accept($this->fd, 0);
+
+	}
+
+}
+
+
+/**
+ * Client socket class
+ *
+ * @package nanoserv
+ * @subpackage Core
+ * @since 0.9
+ */
+class NS_Client_Socket extends NS_Socket {
+
+	/**
+	 * Connect timeout (seconds)
+	 * @var int
+	 */
+	const CONNECT_TIMEOUT = 10;
+	
+	/**
+	 * Peer address (format is 'proto://addr:port')
+	 * @var string
+	 */
+	public $address;
+
+	/**
+	 * Connect timeout (timestamp)
+	 * @var int
+	 */
+	public $connect_timeout;
+	
+	/**
+	 * NS_Socket_Client constructor
+	 */
+	public function __construct($addr) {
+
+		parent::__construct();
+		
+		$this->address = $addr;
+
+		$proto = strtolower(strtok($addr, ":"));
+		$s = strtok("");
+
+		if ($proto == "udp") {
+
+			$this->real_address = $addr;
+		
+		} else {
+		
+			$this->real_address = "tcp:" . $s;
+
+			if ($proto != "tcp") switch ($proto) {
+
+				case "ssl":		$this->crypto_type = STREAM_CRYPTO_METHOD_SSLv23_CLIENT;	break;
+				case "tls":		$this->crypto_type = STREAM_CRYPTO_METHOD_TLS_CLIENT;		break;
+				case "sslv2":	$this->crypto_type = STREAM_CRYPTO_METHOD_SSLv2_CLIENT;		break;
+				case "sslv3":	$this->crypto_type = STREAM_CRYPTO_METHOD_SSLv3_CLIENT;		break;
+
+				default:		if (defined($cname = "STREAM_CRYPTO_METHOD_".strtoupper($proto)."_CLIENT")) $this->crypto_type = constant($cname);
+			
+			}
+
+		}
+	
+	}
+
+	/**
+	 * Connect to the peer address
+	 *
+	 * @param int $timeout connection timeout in seconds
+	 * @return bool
+	 * @since 0.9
+	 */
+	public function Connect($timeout=false) {
+
+		$errno = $errstr = false;
+
+		$this->fd = stream_socket_client($this->real_address, $errno, $errstr, 3, STREAM_CLIENT_ASYNC_CONNECT | STREAM_CLIENT_CONNECT, $this->context);
+
+		if ($this->fd === false) {
+
+			throw new NS_Client_Exception("cannot connect to {$this->real_address}: {$errstr}", $errno, $this->real_address);
+		
+		}
+
+		if ($timeout === false) $timeout = self::CONNECT_TIMEOUT;
+		
+		$this->connect_timeout = time() + $timeout;
+		$this->pending_connect = true;
+		$this->connected = false;
+		$this->Set_Blocking(false);
+		$this->Set_Timeout(0);
+		
+		return true;
+
+	}
+
+}
+
+
+/**
+ * IPC Socket class
+ *
+ * @package nanoserv
+ * @subpackage Core
+ * @since 0.9
+ */
+class NS_IPC_Socket extends NS_Socket {
+
+	/**
+	 * Maximum size of inter process communication packets
+	 * @var int
+	 */
+	const IPC_MAX_PACKET_SIZE = 1048576;
+
+	/**
+	 * pid number of the remote forked process
+	 * @var int
+	 */
+	public $pid;
+	
+	/**
+	 * IPC Socket constructor
+	 *
+	 * @param resource $fd
+	 * @param int $pid
+	 */
+	public function __construct($fd, $pid=false) {
+
+		parent::__construct($fd);
+		
+		$this->Set_Write_Buffer(self::IPC_MAX_PACKET_SIZE);
+		
+		$this->pid = $pid;
+
+	}
+
+	/**
+	 * Read data from IPC socket
+	 *
+	 * @return string
+	 * @since 0.9
+	 */
+	public function Read() {
+
+		return fread($this->fd, self::IPC_MAX_PACKET_SIZE);
+	
+	}
+
+	/**
+	 * Creates a pair of connected, indistinguishable pipes
+	 *
+	 * Returns an array of two NS_Socket objects
+	 *
+	 * @param int $domain
+	 * @param int $type
+	 * @param int $proto
+	 * @return array
+	 * @since 0.9
+	 */
+	static public function Pair($domain=STREAM_PF_UNIX, $type=STREAM_SOCK_DGRAM, $proto=0) {
+
+		list($s1, $s2) = stream_socket_pair($domain, $type, $proto);
+
+		return array(new NS_IPC_Socket($s1), new NS_IPC_Socket($s2));
+	
+	}
+	
+	/**
+	 * Ask the master process for object data
+	 *
+	 * @param array $request
+	 * @param bool $need_response
+	 * @return mixed
+	 * @since 0.9
+	 */
+	public function Ask_Master($request, $need_response=true) {
+
+		$this->Write(serialize($request));
+
+		if (!$need_response) return;
+		
+		$rfd = array($this->fd);
+		$dfd = array();
+		
+		if (@stream_select($rfd, $dfd, $dfd, 600)) return unserialize($this->Read());
+
+	}
+
+}
+
+/**
+ * Timer class
+ *
+ * Do not instanciate NS_Timer but use the Nanoserv::New_Timer() method instead
+ *
+ * @package nanoserv
+ * @subpackage Core
+ * @since 0.9
+ */
+class NS_Timer {
+
+	/**
+	 * System time
+	 * @var int
+	 */
+	public $time;
+
+	/**
+	 * Timer callback
+	 * @var mixed
+	 */
+	public $callback;
+
+	/**
+	 * Timer status
+	 * @var bool
+	 */
+	public $active = true;
+	
+	/**
+	 * NS_Timer constructor
+	 *
+	 * @param int $time
+	 * @param mixed $callback
+	 * @since 0.9
+	 * @see Nanoserv::New_Timer()
+	 */
+	public function __construct($time, $callback) {
+
+		$this->time = $time;
+		$this->callback = $callback;
+	
+	}
+
+	/**
+	 * Activate timer
+	 *
+	 * Timers are activated by default, and Activate should only be used after a call do Deactivate()
+	 *
+	 * @see NS_Timer::Deactivate()
+	 */
+	public function Activate() {
+
+		$this->active = true;
+
+	}
+
+	/**
+	 * Deactivate timer
+	 */
+	public function Deactivate() {
+
+		$this->active = false;
+
+	}
+
+}
+
+
+/**
+ * Write buffer class
+ *
+ * @package nanoserv
+ * @subpackage Core
+ * @since 0.9
+ */
+class NS_Write_Buffer {
+
+	/**
+	 * Attached socket
+	 * @var NS_Socket
+	 */
+	public $socket;
+	
+	/**
+	 * Buffered data
+	 * @var string
+	 */
+	private $data;
+
+	/**
+	 * Buffered data pointer
+	 * @var int
+	 */
+	private $pointer = 0;
+	
+	/**
+	 * Data length in bytes
+	 * @var int
+	 */
+	private $length;
+	
+	/**
+	 * End-of-write Callback
+	 * @var mixed
+	 */
+	private $callback = false;
+
+	/**
+	 * NS_Write_Buffer constructor
+	 *
+	 * @param NS_Socket $socket
+	 * @param string $data
+	 * @param mixed $callback
+	 */
+	public function __construct(NS_Socket $socket, $data, $callback=false) {
+
+		$this->socket = $socket;
+		$this->data = $data;
+		$this->length = strlen($data);
+		$this->callback = $callback;
+	
+	}
+	
+	/**
+	 * Fetch data from the internal buffer
+	 *
+	 * @param int $length
+	 * @return string
+	 * @since 0.9
+	 */
+	public function Fetch_Data($length=16384) {
+
+		$s = substr($this->data, $this->pointer, $length);
+
+		return $s;
+	
+	}
+
+	/**
+	 * Get availability of data
+	 *
+	 * @return bool
+	 * @since 0.9
+	 */
+	public function Waiting_Data() {
+
+		return $this->pointer < $this->length;
+		
+	}
+
+	/**
+	 * Write data to socket and advance buffer pointer
+	 *
+	 * @param int $length
+	 * @since 1.1
+	 */
+	public function Write($length=16384) {
+
+		$this->pointer += $this->socket->Write($this->Fetch_Data($length));
+	
+	}
+	
+	/**
+	 * NS_Write_Buffer destructor
+	 */
+	public function __destruct() {
+
+		if ($this->callback !== false) call_user_func($this->callback, $this->Waiting_Data());
+	
+	}
+
+}
+
+
+/**
+ * Base handler class
+ *
+ * @package nanoserv
+ * @subpackage Core
+ * @since 0.9
+ */
+abstract class NS_Handler {
+
+	/**
+	 * Attached socket
+	 * @var NS_Socket
+	 */
+	public $socket;
+
+	/**
+	 * Set a stream context option
+	 *
+	 * @param string $wrapper
+	 * @param string $opt
+	 * @param mixed $val
+	 * @return bool
+	 * @since 0.9
+	 */
+	public function Set_Option($wrapper, $opt, $val) {
+
+		return $this->socket->Set_Option($wrapper, $opt, $val);
+	
+	}
+
+}
+
+
+/**
+ * Datagram listener / handler class
+ *
+ * @package nanoserv
+ * @subpackage Core
+ * @since 0.9.61
+ */
+abstract class NS_Datagram_Handler extends NS_Handler {
+
+	/**
+	 * Is the listener active ?
+	 * @var bool
+	 */
+	public $active = false;
+
+	/**
+	 * NS_Datagram_Handler constructor
+	 *
+	 * @param string $addr
+	 * @param string $handler_classname
+	 * @param mixed $handler_options
+	 */
+	public function __construct($addr) {
+
+		$this->socket = new NS_Server_Socket($addr);
+	
+	}
+	
+	/**
+	 * Activate the listener
+	 *
+	 * @return bool
+	 * @since 0.9.61
+	 */
+	public function Activate() {
+
+		try {
+		
+			if ($ret = $this->socket->Listen(true)) $this->active = true;
+			
+			return $ret;
+	
+		} catch (NS_Server_Exception $e) {
+
+			throw new NS_Server_Exception($e->getMessage(), $e->getCode(), $e->addr, $this);
+		
+		}
+	
+	}
+
+	/**
+	 * Deactivate the listener
+	 * @since 0.9.61
+	 */
+	public function Deactivate() {
+
+		$this->socket->Close();
+		$this->active = false;
+	
+	}
+
+	/**
+	 * Send data over the connection
+	 *
+	 * @param string $to in the form of "<ip_address>:<port>"
+	 * @param string $data
+	 * @return int
+	 * @since 0.9.61
+	 */
+	public function Write($to, $data) {
+
+		return $this->socket->Write_To($to, $data);
+	
+	}
+
+	/**
+	 * Event called on data reception
+	 *
+	 * @param string $from
+	 * @param string $data
+	 * @since 0.9.61
+	 */
+	public function on_Read($from, $data) {
+
+	}
+	
+	/**
+	 * NS_Datagram_Handler destructor
+	 */
+	public function __destruct() {
+
+		$this->Deactivate();
+
+	}
+	
+}
+
+
+/**
+ * Connection handler class
+ *
+ * @package nanoserv
+ * @subpackage Core
+ * @since 0.9
+ */
+abstract class NS_Connection_Handler extends NS_Handler {
+
+	/**#@+
+	 * Cause of connection failure
+	 * @var int
+	 */
+	const FAIL_NORESPONSE = 1;
+	const FAIL_TIMEOUT = 2;
+	/**#@-*/
+	
+	/**
+	 * Send data over the connection
+	 *
+	 * @param string $data
+	 * @param mixed $callback
+	 * @return NS_Write_Buffer
+	 * @since 0.9
+	 */
+	public function Write($data, $callback=false) {
+
+		return Nanoserv::New_Write_Buffer($this->socket, $data, $callback);
+
+	}
+
+	/**
+	 * Connect
+	 *
+	 * @param int $timeout timeout in seconds
+	 * @since 0.9
+	 */
+	public function Connect($timeout=false) {
+
+		try {
+		
+			$this->socket->Connect($timeout);
+
+		} catch (NS_Client_Exception $e) {
+
+			throw new NS_Client_Exception($e->getMessage(), $e->getCode(), $e->addr, $this);
+		
+		}
+	
+	}
+	
+	/**
+	 * Disconnect
+	 */
+	public function Disconnect() {
+
+		$this->socket->Close();
+
+		Nanoserv::Free_Connection($this);
+	
+	}
+	
+	/**
+	 * Event called on received connection
+	 * @since 0.9
+	 */
+	public function on_Accept() {
+
+	}
+
+	/**
+	 * Event called on established connection
+	 * @since 0.9
+	 */
+	public function on_Connect() {
+		
+	}
+
+	/**
+	 * Event called on failed connection
+	 *
+	 * @param int $failcode see NS_Connection_Handler::FAIL_* constants
+	 * @since 0.9
+	 */
+	public function on_Connect_Fail($failcode) {
+		
+	}
+	
+	/**
+	 * Event called on disconnection
+	 * @since 0.9
+	 */
+	public function on_Disconnect() {
+
+	}
+
+	/**
+	 * Event called on data reception
+	 *
+	 * @param string $data
+	 * @since 0.9
+	 */
+	public function on_Read($data) {
+
+	}
+
+	/**
+	 * Event called before forking
+	 *
+	 * @since 2.0
+	 */
+	public function on_Fork_Prepare() {
+
+	}
+
+	/**
+	 * Event called after forking, both on master and child processes
+	 *
+	 * @since 2.0
+	 */
+	public function on_Fork_Done() {
+
+	}
+
+}
+
+
+/**
+ * Listener class
+ *
+ * @package nanoserv
+ * @subpackage Core
+ * @since 0.9
+ */
+class NS_Listener {
+
+	/**
+	 * Attached socket
+	 * @var NS_Server_Socket
+	 */
+	public $socket;
+
+	/**
+	 * Name of the handler class
+	 * @var string
+	 * @see NS_Connetion_Handler
+	 */
+	public $handler_classname;
+
+	/**
+	 * Handler options
+	 *
+	 * this is passed as the first constructor parameter of each spawned connection handlers
+	 *
+	 * @var mixed
+	 */
+	public $handler_options;
+
+	/**
+	 * Is the listener active ?
+	 * @var bool
+	 */
+	public $active = false;
+	
+	/**
+	 * If set the listener will fork() a new process for each accepted connection
+	 * @var bool
+	 */
+	public $forking = false;
+	
+	/**
+	 * NS_Listener constructor
+	 *
+	 * @param string $addr
+	 * @param string $handler_classname
+	 * @param mixed $handler_options
+	 */
+	public function __construct($addr, $handler_classname, $handler_options=false, $forking=false) {
+
+		$this->socket = new NS_Server_Socket($addr);
+		$this->handler_classname = $handler_classname;
+		$this->handler_options = $handler_options;
+		$this->forking = ($forking && is_callable("pcntl_fork"));
+	
+	}
+
+	/**
+	 * Set a stream context option
+	 *
+	 * @param string $wrapper
+	 * @param string $opt
+	 * @param mixed $val
+	 * @return bool
+	 * @since 0.9
+	 */
+	public function Set_Option($wrapper, $opt, $val) {
+
+		return $this->socket->Set_Option($wrapper, $opt, $val);
+	
+	}
+	
+	/**
+	 * Sets wether the listener should fork() a new process for each accepted connection
+	 *
+	 * @param bool $forking
+	 * @return bool
+	 * @since 0.9
+	 */
+	public function Set_Forking($forking=true) {
+
+		if ($forking && !is_callable("pcntl_fork")) return false;
+		
+		$this->forking = $forking;
+
+		return true;
+	
+	}
+	
+	/**
+	 * Activate the listener
+	 *
+	 * @return bool
+	 * @since 0.9
+	 */
+	public function Activate() {
+
+		try {
+		
+			if ($ret = $this->socket->Listen()) $this->active = true;
+			
+			return $ret;
+	
+		} catch (NS_Server_Exception $e) {
+
+			throw new NS_Server_Exception($e->getMessage(), $e->getCode(), $e->addr, $this);
+
+		}
+	
+	}
+
+	/**
+	 * Deactivate the listener
+	 * @since 0.9
+	 */
+	public function Deactivate() {
+
+		$this->socket->Close();
+		$this->active = false;
+	
+	}
+
+	/**
+	 * NS_Listener destructor
+	 */
+	public function __destruct() {
+
+		$this->Deactivate();
+
+	}
+
+}
+
+
+/**
+ * Shared object class for inter-process communications
+ *
+ * @package nanoserv
+ * @subpackage Core
+ * @since 0.9
+ */
+class NS_Shared_Object {
+
+	/**
+	 * caller process pid
+	 * @var int
+	 */
+	static public $caller_pid;
+	
+	/**
+	 * shared object unique identifier
+	 * @var int
+	 */
+	public $_oid;
+	
+	/**
+	 * wrapped object
+	 * @var object
+	 */
+	private $wrapped;
+
+	/**
+	 * static instance counter
+	 * @var int
+	 */
+	static public $shared_count = 0;
+	
+	/**
+	 * NS_Shared_Object constructor
+	 *
+	 * If $o is omited, a new StdClass object will be created and wrapped
+	 *
+	 * @param object $o
+	 */
+	public function __construct($o=false) {
+
+		if ($o === false) $o = new StdClass();
+
+		$this->_oid = ++self::$shared_count;
+		$this->wrapped = $o;
+	
+	}
+	
+	public function __get($k) {
+
+		if (Nanoserv::$child_process) {
+
+			return Nanoserv::$master_pipe->Ask_Master(array("oid" => $this->_oid, "action" => "G", "var" => $k));
+			
+		} else {
+		
+			return $this->wrapped->$k;
+
+		}
+
+	}
+
+	public function __set($k, $v) {
+
+		if (Nanoserv::$child_process) {
+
+			Nanoserv::$master_pipe->Ask_Master(array("oid" => $this->_oid, "action" => "S", "var" => $k, "val" => $v), false);
+		
+		} else {
+		
+			$this->wrapped->$k = $v;
+
+		}
+	
+	}
+
+	public function __call($m, $a) {
+
+		if (Nanoserv::$child_process) {
+
+			return Nanoserv::$master_pipe->Ask_Master(array("oid" => $this->_oid, "action" => "C", "func" => $m, "args" => $a));
+
+		} else {
+		
+			return call_user_func_array(array($this->wrapped, $m), $a);
+
+		}
+	
+	}
+
+}
+
+
+/**
+ * Server / multiplexer class
+ *
+ * @package nanoserv
+ * @subpackage Core
+ * @since 0.9
+ */
+final class Nanoserv {
+
+	/**
+	 * nanoserv current version number
+	 * @var string
+	 */
+	const VERSION = NS_VERSION;
+	
+	/**
+	 * Registered listeners
+	 * @var array
+	 */
+	static private $listeners = array();
+
+	/**
+	 * Write buffers
+	 * @var array
+	 */
+	static private $write_buffers = array();
+	
+	/**
+	 * Active connections
+	 * @var array
+	 */
+	static private $connections = array();
+	
+	/**
+	 * Active datagram handlers
+	 * @var array
+	 */
+	static private $dgram_handlers = array();
+	
+	/**
+	 * Shared objects
+	 * @var array
+	 */
+	static private $shared_objects = array();
+
+	/**
+	 * Forked process pipes
+	 * @var array
+	 */
+	static private $forked_pipes = array();
+	
+	/**
+	 * Timers
+	 * @var array
+	 */
+	static private $timers = array();
+	
+	/**
+	 * Number of active connection handler processes
+	 * @var int
+	 */
+	static public $nb_forked_processes = 0;
+	
+	/**
+	 * Maximum number of active children before incoming connections get delayed
+	 * @var int
+	 */
+	static public $max_forked_processes = 64;
+	
+	/**
+	 * Are we master or child process ?
+	 * @var bool
+	 */
+	static public $child_process = false;
+	
+	/**
+	 * Forked server handled connection
+	 * @var NS_Connection_Handler
+	 */
+	static private $forked_connection;
+	
+	/**
+	 * Forked server pipe to the master process
+	 * @var NS_Socket
+	 */
+	static public $master_pipe;
+	
+	/**
+	 * Class Nanoserv should not be instanciated but used statically
+	 */
+	private function __construct() {
+
+	}
+	
+	/**
+	 * Register a new listener
+	 *
+	 * For consistency New_Listener() will also wrap Nanoserv::New_Datagram_Handler() if the given addr is of type "udp"
+	 *
+	 * @param string $addr
+	 * @param string $handler_classname
+	 * @param mixed $handler_options
+	 * @return NS_Listener
+	 * @see NS_Listener
+	 * @see NS_Datagram_Handler
+	 * @since 0.9
+	 */
+	static public function New_Listener($addr, $handler_classname, $handler_options=false) {
+
+		if (strtolower(strtok($addr, ":")) == "udp") {
+
+			$l = self::New_Datagram_Handler($addr, $handler_classname);
+		
+		} else {
+		
+			$l = new NS_Listener($addr, $handler_classname, $handler_options);
+			self::$listeners[] = $l;
+
+		}
+		
+		return $l;
+
+	}
+
+	/**
+	 * Deactivate and free a previously registered listener
+	 *
+	 * For consistency Free_Listener() will also wrap Nanoserv::Free_Datagram_Handler() if the given object is an instance of NS_Datagram_Handler
+	 *
+	 * @param NS_Listener $l
+	 * @return bool
+	 * @see NS_Listener
+	 * @see NS_Datagram_Handler
+	 * @since 0.9
+	 */
+	static public function Free_Listener($l) {
+
+		if ($l instanceof NS_Listener) {
+		
+			foreach (self::$listeners as $k => $v) if ($v === $l) {
+
+				unset(self::$listeners[$k]);
+				return true;
+			
+			}
+
+		} else if ($l instanceof NS_Datagram_Handler) {
+
+			return self::Free_Datagram_Handler($l);
+		
+		}
+		
+		return false;
+	
+	}
+
+	/**
+	 * Register a new write buffer
+	 *
+	 * This method is used by NS_Connection_Handler::Write() and should not be 
+	 * called unless you really know what you are doing
+	 *
+	 * @param NS_Socket $socket
+	 * @param string $data
+	 * @param mixed $callback
+	 * @return NS_Write_Buffer
+	 * @see NS_Connection_Handler::Write()
+	 * @since 0.9
+	 */
+	static public function New_Write_Buffer(NS_Socket $socket, $data, $callback=false) {
+
+		if (strlen($data) == 0) return true;
+		
+		$wb = new NS_Write_Buffer($socket, $data, $callback);
+
+		self::$write_buffers[$socket->id][] = $wb;
+
+		return $wb;
+	
+	}
+
+	/**
+	 * Free a registered write buffer
+	 *
+	 * @param int $sid socket id
+	 * @since 0.9
+	 */
+	static public function Free_Write_Buffers($sid) {
+
+		unset(self::$write_buffers[$sid]);
+	
+	}
+	
+	/**
+	 * Register a new outgoing connection
+	 * 
+	 * @param string $addr
+	 * @param string $handler_classname
+	 * @param mixed $handler_options
+	 * @return NS_Connection_Handler
+	 * @see NS_Connection_Handler
+	 * @since 0.9
+	 */
+	static public function New_Connection($addr, $handler_classname, $handler_options=false) {
+
+		$sck = new NS_Client_Socket($addr);
+		$h = new $handler_classname($handler_options);
+
+		$h->socket = $sck;
+
+		self::$connections[$sck->id] = $h;
+		
+		return $h;
+	
+	}
+	
+	/**
+	 * Free an allocated connection
+	 *
+	 * @param NS_Connection_Handler $h
+	 * @return bool
+	 * @since 0.9
+	 */
+	static public function Free_Connection(NS_Connection_Handler $h) {
+
+		unset(self::$connections[$h->socket->id]);
+		self::Free_Write_Buffers($h->socket->id);
+
+		$h->socket->pending_connect = $h->socket->pending_crypto = false;
+
+		if (self::$child_process && (self::$forked_connection === $h)) exit();
+
+		return true;
+	
+	}
+
+	/**
+	 * Register a new datagram (udp) handler
+	 *
+	 * @param string $addr
+	 * @param string $handler_classname
+	 * @return NS_Datagram_Handler
+	 * @see NS_Datagram_Handler
+	 * @since 0.9.61
+	 */
+	static public function New_Datagram_Handler($addr, $handler_classname) {
+
+		$h = new $handler_classname($addr);
+		self::$dgram_handlers[$h->socket->id] = $h;
+
+		return $h;
+	
+	}
+	
+	/**
+	 * Deactivate and free a datagram handler
+	 *
+	 * @param NS_Datagram_Handler $h
+	 * @return bool
+	 * @since 0.9.61
+	 */
+	static public function Free_Datagram_Handler(NS_Datagram_Handler $h) {
+
+		unset(self::$dgram_handlers[$h->socket->id]);
+
+		return true;
+
+	}
+	
+	/**
+	 * Register a new shared object
+	 *
+	 * shared objects allow forked processes to use objects stored on the master process
+	 * if $o is ommited, a new StdClass empty object is created
+	 *
+	 * @param object $o
+	 * @return NS_Shared_Object
+	 * @since 0.9
+	 */
+	static public function New_Shared_Object($o = false) {
+
+		$shr = new NS_Shared_Object($o);
+
+		self::$shared_objects[$shr->_oid] = $shr;
+
+		return $shr;
+	
+	}
+	
+	/**
+	 * Free a shared object
+	 *
+	 * @param NS_Shared_Object $o
+	 * @since 0.9
+	 */
+	static public function Free_Shared_Object(NS_Shared_Object $o) {
+
+		unset(self::$shared_objects[$o->_oid]);
+	
+	}
+	
+	/**
+	 * Register a new timer callback
+	 *
+	 * @param int $delay specified in seconds
+	 * @param mixed $callback may be "function" or array($obj, "method")
+	 * @return NS_Timer
+	 * @since 0.9
+	 */
+	static public function New_Timer($delay, $callback) {
+
+		$time_t = time() + $delay;
+		
+		$t = new NS_Timer($time_t, $callback);
+		
+		self::$timers[$time_t][] = $t;
+
+		ksort(self::$timers);
+		
+		return $t;
+	
+	}
+	
+	/**
+	 * Clear all existing timers
+	 *
+	 * @return int number of timers cleared
+	 * @since 2.0
+	 */
+	static public function Clear_Timers() {
+
+		$ret = count(self::$timers);
+		
+		self::$timers = array();
+
+		return $ret;
+	
+	}
+	
+	/**
+	 * Get all registered NS_Connection_Handler objects
+	 *
+	 * Note: connections created by fork()ing listeners can not be retreived this way
+	 *
+	 * @param bool $include_pending_connect
+	 * @return array
+	 * @since 0.9
+	 */
+	static public function Get_Connections($include_pending_connect=false) {
+
+		$ret = array();
+		
+		foreach (self::$connections as $c) if ($c->socket->connected || $include_pending_connect) $ret[] = $c;
+
+		return $ret;
+	
+	}
+	
+	/**
+	 * Get all registered NS_Listener objects
+	 *
+	 * @param bool $include_inactive
+	 * @return array
+	 * @since 0.9
+	 */
+	static public function Get_Listeners($include_inactive=false) {
+
+		$ret = array();
+		
+		foreach (self::$listeners as $l) if ($l->active || $include_inactive) $ret[] = $l;
+
+		return $ret;
+	
+	}
+	
+	/**
+	 * Set the maximum number of allowed children processes before delaying incoming connections
+	 *
+	 * Note: this setting only affect and applies to forking listeners
+	 *
+	 * @param int $i
+	 * @since 2.0
+	 */
+	static public function Set_Max_Children($i) {
+
+		self::$max_forked_processes = $i;
+
+	}
+	
+	/**
+	 * Flush all write buffers
+	 *
+	 * @since 2.0
+	 */
+	static public function Flush_Write_Buffers() {
+
+		while (self::$write_buffers) {
+
+			self::Run(1);
+
+		}
+	
+	}
+	
+	/**
+	 * Fork and setup IPC sockets
+	 *
+	 * @return int the pid of the created process, 0 if child process
+	 * @since 0.9.63
+	 */
+	static public function Fork() {
+
+		if ($has_shared = (NS_Shared_Object::$shared_count > 0)) {
+
+			list($s1, $s2) = NS_IPC_Socket::Pair();
+		
+		}
+		
+		$pid = pcntl_fork();
+
+		if ($pid === 0) {
+
+			self::$child_process = true;
+
+			if ($has_shared) {
+			
+				self::$master_pipe = $s2;
+
+			}
+			
+		} else if ($pid > 0) {
+
+			++self::$nb_forked_processes;
+
+			if ($has_shared) { 
+
+				$s1->pid = $pid;
+				self::$forked_pipes[$pid] = $s1;
+			
+			}
+		
+		}
+
+		return $pid;
+	
+	}
+	
+	/**
+	 * Enter main loop
+	 *
+	 * @param int $loops if omited nanoserv will enter an endless loop
+     * @param array $user_streams if specified, user streams will be polled along with internal streams
+	 * @return array the user streams with pending data
+	 * @since 0.9
+	 */
+	static public function Run($loops=false, $user_streams=array()) {
+
+		$tmp = 0;
+		
+		$ret = array();
+		
+		while ($loops !== 0) {
+		
+			$t = time();
+
+			// Timers
+
+			foreach (self::$timers as $tmr_t => $tmr_a) {
+
+				if ($tmr_t > $t) break;
+
+				foreach ($tmr_a as $tmr) if ($tmr->active) call_user_func($tmr->callback);
+
+				unset(self::$timers[$tmr_t]);
+
+			}
+			
+			// Write buffers to non blocked sockets
+
+			foreach (self::$write_buffers as $write_buffers) {
+
+				if (!$write_buffers || $write_buffers[0]->socket->blocked || !$write_buffers[0]->socket->connected) continue;
+
+				foreach ($write_buffers as $wb) {
+
+					while ($wb->Waiting_Data() && !$wb->socket->blocked) {
+							
+						$wb->Write();
+						
+						if (!$wb->Waiting_Data()) {
+								
+							array_shift(self::$write_buffers[$wb->socket->id]);
+							if (!self::$write_buffers[$wb->socket->id]) self::Free_Write_Buffers($wb->socket->id);
+
+						}
+
+					}
+				
+				}
+
+			}
+		
+			unset($handler, $write_buffers, $l, $c, $wbs, $wb, $data);
+			
+			// Prepare socket arrays
+
+			$fd_lookup_r = $fd_lookup_w = $rfd = $wfd = $efd = array();
+
+			foreach (self::$listeners as $l) if (($l->active) && ((!$l->forking) || (self::$nb_forked_processes <= self::$max_forked_processes))) {
+				
+				$rfd[] = $l->socket->fd;
+				$fd_lookup_r[(int)$l->socket->fd] = $l;
+			
+			}
+
+			foreach (self::$connections as $c) {
+
+				if ($c->socket->pending_crypto && $c->socket->Enable_Crypto()) {
+
+					$c->on_Accept();
+
+				} else if ($c->socket->connected) {
+				
+					$rfd[] = $c->socket->fd;
+					$fd_lookup_r[(int)$c->socket->fd] = $c;
+
+				} else if ($c->socket->connect_timeout < $t) {
+
+					$c->on_Connect_Fail(NS_Connection_Handler::FAIL_TIMEOUT);
+					self::Free_Connection($c);
+				
+				} else if ($c->socket->pending_connect) {
+				
+					$wfd[] = $c->socket->fd;
+					$fd_lookup_w[(int)$c->socket->fd] = $c;
+
+				}
+				
+			}
+
+			foreach (self::$dgram_handlers as $l) if ($l->active) {
+
+				$rfd[] = $l->socket->fd;
+				$fd_lookup_r[(int)$l->socket->fd] = $l;
+			
+			}
+			
+			foreach (self::$write_buffers as $wbs) if ($wbs[0]->socket->blocked) {
+
+				$wfd[] = $wbs[0]->socket->fd;
+				$fd_lookup_w[(int)$wbs[0]->socket->fd] = self::$connections[$wbs[0]->socket->id];
+			
+			}
+
+			foreach (self::$forked_pipes as $fp) {
+
+				$rfd[] = $fp->fd;
+				$fd_lookup_r[(int)$fp->fd] = $fp;
+			
+			}
+
+			if ($user_streams) {
+			
+				foreach ((array)$user_streams[0] as $tmp_r) $rfd[] = $tmp_r;
+				foreach ((array)$user_streams[1] as $tmp_w) $wfd[] = $tmp_w;
+			
+			}
+			
+			// Main select
+			
+			if (($rfd || $wfd) && (@stream_select($rfd, $wfd, $efd, 1))) {
+
+				foreach ($rfd as $act_rfd) {
+
+					$handler = $fd_lookup_r[(int)$act_rfd];
+					
+					if (!isset($handler)) {
+
+						// User stream
+
+						$ret[0][] = $act_rfd;
+					
+					} else if ($handler instanceof NS_Connection_Handler) {
+
+						if (!$handler->socket->connected) continue;
+						
+						$data = $handler->socket->Read();
+
+						if (strlen($data) === 0) {
+
+							if ($handler->socket->Eof()) {
+							
+								// Disconnected socket
+								
+								$handler->socket->connected = false;
+								
+								$handler->on_Disconnect();
+								self::Free_Connection($handler);
+
+							}
+
+						} else {
+
+							// Data available
+							
+							$handler->on_Read($data);
+						
+						}
+					
+					} else if ($handler instanceof NS_Datagram_Handler) {
+						
+						$from = "";
+						$data = $handler->socket->Read_From($from);
+
+						$handler->on_Read($from, $data);
+					
+					} else if ($handler instanceof NS_Listener) {
+
+						while ($fd = $handler->socket->Accept()) {
+
+							// New connection accepted
+							
+							$sck = new NS_Socket($fd, $handler->socket->crypto_type);
+
+							$hnd = new $handler->handler_classname($handler->handler_options);
+							$hnd->socket = $sck;
+
+							if ($handler->forking) {
+
+								$hnd->on_Fork_Prepare();
+								
+								if (self::Fork() === 0) {
+
+									$hnd->on_Fork_Done();
+									
+									self::$write_buffers = self::$listeners = array();
+									self::$connections = array($sck->id => $hnd);
+									self::$forked_connection = $hnd;
+
+									self::Clear_Timers();
+									
+									if ($sck->Setup()) {
+										
+										$hnd->on_Accept();
+
+									}
+
+									$handler = $hnd = $sck = $l = $c = $wbs = $wb = $fd_lookup_r = $fd_lookup_w = $loops = false;
+
+									break;
+									
+								} 
+
+								$hnd->on_Fork_Done();
+
+								if (self::$nb_forked_processes >= self::$max_forked_processes) break;
+							
+							} else {
+							
+								self::$connections[$sck->id] = $hnd;
+
+								if ($sck->Setup()) {
+
+									$hnd->on_Accept();
+
+								}
+
+							}
+						
+							unset($sck, $hnd);
+
+						}
+						
+					} else if ($handler instanceof NS_IPC_Socket) {
+
+						while ($ipcm = $handler->Read()) {
+						
+							if ((!$ipcq = unserialize($ipcm)) || (!is_object($o = self::$shared_objects[$ipcq["oid"]]))) continue;
+
+							NS_Shared_Object::$caller_pid = $handler->pid;
+							
+							switch ($ipcq["action"]) {
+
+								case "G":
+								$handler->Write(serialize($o->$ipcq["var"]));
+								break;
+
+								case "S":
+								$o->$ipcq["var"] = $ipcq["val"];
+								break;
+
+								case "C":
+								$handler->Write(serialize(call_user_func_array(array($o, $ipcq["func"]), $ipcq["args"])));
+								break;
+							
+							}
+
+						}
+					
+						unset($o, $ipcq, $ipcm);
+						
+					}
+
+				}
+
+				foreach ($wfd as $act_wfd) {
+					
+					$handler = $fd_lookup_w[$act_wfd];
+					
+					if (!isset($handler)) {
+
+						// User stream
+
+						$ret[1][] = $act_wfd;
+					
+					} else if ($handler->socket->connected) {
+
+						// Unblock buffered write
+						
+						if ($handler->socket->Eof()) {
+
+							$handler->on_Disconnect();
+							self::Free_Connection($handler);
+						
+						} else {
+						
+							$handler->socket->blocked = false;
+
+						}
+
+					} else if ($handler->socket->pending_connect) {
+					
+						// Pending connect
+
+						if ($handler->socket->Eof()) {
+
+							$handler->on_Connect_Fail(NS_Connection_Handler::FAIL_NORESPONSE);
+							self::Free_Connection($handler);
+						
+						} else {
+
+							$handler->socket->Setup();
+							$handler->socket->connected = true;
+							$handler->socket->pending_connect = false;
+							$handler->on_Connect();
+
+						}
+
+					}
+				
+				}
+				
+			}
+
+			if (self::$nb_forked_processes && !self::$child_process) while ((($pid = pcntl_wait($tmp, WNOHANG)) > 0) && self::$nb_forked_processes--) unset(self::$forked_pipes[$pid]);
+			
+			if ($loops !== false) --$loops;
+
+			if ($ret) {
+
+				return $ret;
+			
+			}
+		
+		}
+	
+	}
+
+}
+
+?>
