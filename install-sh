@@ -5,27 +5,32 @@
 # script is now PHP based, as we rely on it anyhow;
 # we'll only guess PHP location in the sh part of it
 
-echo -n "searching php binary... "
-for PHP_BIN in	\
-	`which php`	\
-	`which php-cgi`	\
-	`which php-cli`	\
-	/usr/local/bin/php	\
-	/usr/local/bin/php*c[lg]i*	\
-	/usr/local/bin/php*[5432]*	\
-	/usr/bin/php	\
-	/usr/bin/php*c[lg]i*	\
-	/usr/bin/php*[5432]*	
-do
-	if [ -x $PHP_BIN ]
-	then
-		echo "[1;32m"$PHP_BIN"[0m"
-		break;
-	fi
-done
-
-
 if [ -z "$PHP_BIN" ]
+then
+	echo "PHP_BIN environment variable not supplied. "
+	echo -n "searching php binary... "
+	for PHP_BIN in	\
+		`which php`	\
+		`which php-cgi`	\
+		`which php-cli`	\
+		/usr/local/bin/php	\
+		/usr/local/bin/php*c[lg]i*	\
+		/usr/local/bin/php*[5432]*	\
+		/usr/bin/php	\
+		/usr/bin/php*c[lg]i*	\
+		/usr/bin/php*[5432]*	
+	do
+		if [ -x $PHP_BIN ]
+		then
+			echo "[1;32m"$PHP_BIN"[0m"
+			break;
+		fi
+	done
+fi
+
+
+#check if $PHP_BIN is not set or is not a file
+if [ -z "$PHP_BIN" -o ! -f "$PHP_BIN" ]
 then
 
 	echo "[31mNOT FOUND[0m"
@@ -99,22 +104,28 @@ fi
 
 # ---------------------------------------------------------- line100 --- sh --
 <?php
-
+$prefix_args = find_prefix();
+if (isset($prefix_args['prefix'])) {
+	$PREFIX=$prefix_args['prefix'];
+	echo "Found install prefix of: ". $PREFIX."\n";
+} else {
+	$PREFIX = '';
+}
 # -- Default installation directories.
 $setup = array(
-	"BIN" => "/usr/sbin",
-	"LIB" => "/usr/lib/nanoweb",
-	"CONF" => "/etc/nanoweb",
-	"LOG" => "/var/log/nanoweb",
-	"WWWROOT" => "/var/www/localhost",
-	"DOC" => "/usr/share/doc/nanoweb",
-	"NWGROUP" => "www-data",
-	"NWUSER" => "www-data",
+	"BIN" => $PREFIX."/usr/sbin",
+	"LIB" => $PREFIX."/usr/lib/nanoweb",
+	"CONF" => $PREFIX."/etc/nanoweb",
+	"LOG" => $PREFIX."/var/log/nanoweb",
+	"WWWROOT" => $PREFIX."/var/www/localhost",
+	"DOC" => $PREFIX."/usr/share/doc/nanoweb",
+	"NWGROUP" => "root",
+	"NWUSER" => "root",
 	"INETD" => "1",
 	"INIT" => "1",
-	"PHP" => "/usr/local/bin/php",
-	"MANDIR" => "/usr/share/man",
-	"SSLDIR" => "/etc/ssl/certs",
+	"PHP" => $PREFIX."/usr/bin/php",
+	"MANDIR" => $PREFIX."/usr/share/man",
+	"SSLDIR" => $PREFIX."/etc/ssl/certs",
 	"DONE" => ''
 );
 
@@ -157,7 +168,9 @@ $help = array(
 error_reporting(255);
 unlink("/tmp/nanoweb.install.php.tmp");
 init_defines();
+if (!isset($cmd_args["force"])) {
 initial_config_values(); // fetches values from previous nanoweb.conf - smart update
+}
 
 # --------------------------------------------------------- forced install --
 
@@ -360,8 +373,10 @@ function initial_config_values() {
 
 	global $setup;
 
-	if ($binary = getenv("PHP_BIN")) {
-		$setup["PHP"] = $binary;
+	if (!isset($setup["PHP"])) {
+		if ($binary = getenv("PHP_BIN")) {
+			$setup["PHP"] = $binary;
+		}
 	}
 
 	if ($uu = dirname(`which nanoweb.php`)) {
@@ -414,11 +429,30 @@ function parse_cmdline() {
 		case "--verbose":
 		$ret["verbose"]=true;
 		break;
-	
+
 	}
 
 	return($ret);
 
+}
+
+function find_prefix() {
+	$ret=array();
+	
+	foreach($_SERVER["argv"] as $k => $arg) {
+
+		if ($arg ==  "-p") {
+			$ret["prefix"]=$_SERVER["argv"][$k+1];
+		}
+
+		if (strpos($arg, "--prefix") !== FALSE) {
+			list ($zero, $prefix) = explode('=', $arg);
+			$ret["prefix"]=$prefix;
+
+		}
+	}
+
+	return($ret);
 }
 
 
@@ -531,6 +565,7 @@ function install_conf() {
 		install_files("conf/modules.conf", "$CONF/modules.conf");
 		install_files("conf/vhosts.conf", "$CONF/vhosts.conf");
 		
+		/*
 		if (file_exists("/etc/mime.types")) {
 		
 			make_symlink("/etc/mime.types", "$CONF/mime.types");
@@ -540,6 +575,8 @@ function install_conf() {
 			install_files("conf/mime.types", "$CONF/mime.types");
 
 		}
+		*/
+		install_files("conf/mime.types", "$CONF/mime.types");
 
 		#-- update config files with install-sh settings
 		patch_configs();
@@ -562,6 +599,7 @@ function install_conf() {
 
 
 function update_config_files_new_version() {
+	global $PREFIX;
    extract($GLOBALS["setup"]);
 
    $trans = array(
@@ -584,7 +622,7 @@ function update_config_files_new_version() {
          'ServerTheme' => "ServerTheme = default \n",
          'DisableMimeMagic' => "DisableMimeMagic = 0 \n",
 	 /* 2.1.1 */
-         'LogDir' => "LogDir = /var/log/nanoweb/ \n",
+         'LogDir' => "LogDir = '.$PREFIX.'/var/log/nanoweb/ \n",
       ),
       "modules.conf" => array(
          /* 1.9.0 */
@@ -816,6 +854,7 @@ function add_bootup_scripts() {
 
 function patch_configs() {
 
+	global $PREFIX;
 	extract($GLOBALS["setup"]);
 
 	echo bold("Adjusting configuration files with your settings\n");
@@ -829,6 +868,9 @@ function patch_configs() {
 			$conf = preg_replace('# /usr/lib/nanoweb#m', " $LIB", $conf);
 			$conf = preg_replace('# /etc/nanoweb#m', " $CONF", $conf);
 			$conf = preg_replace('# /var/www/localhost#m', " $WWWROOT", $conf);
+			$conf = preg_replace('# /var/run/nanoweb\.pid#m', " ".$PREFIX."/var/run/nanoweb.pid", $conf);
+			$conf = preg_replace('# /var/log/nanoweb#m', " ".$PREFIX."/var/log/nanoweb", $conf);
+			$conf = preg_replace('# 80#m', " 8443", $conf);
 
 			$conf = preg_replace('#(\nGroup\s+=\s*)www-data#m', "$1" . $NWGROUP, $conf);
 			$conf = preg_replace('#(\nUser\s+=\s*)www-data#m', "$1" . $NWUSER, $conf);
@@ -856,6 +898,7 @@ function patch_binaries() {
 		if ($bin = @implode("", @file($BIN . $bf))) {
 
 			$bin = preg_replace('|^#!/usr/local/bin/php|', "#!" . $PHP, $bin);
+			$bin = preg_replace('|/etc/nanoweb|',  $CONF, $bin);
 			$bin = preg_replace('|/usr/sbin/nanoweb.php|', $BIN . "/nanoweb.php", $bin);
 
 			if ($f = @fopen($BIN . $bf, "w")) {
