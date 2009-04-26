@@ -195,13 +195,12 @@ class mod_rewrite {
 
 		for ($r_no = 0; $r_no < count($rules); $r_no++) {
 
-
 			list($r_regex, $r_replacement, $r_eval, $r_flags) = $rules[$r_no];
 			$r_posteval = '';
-			$r_negate = $f_flags & NW_R_NEGATE ? 1 : 0;
+			$r_negate = $r_flags & NW_R_NEGATE ? 1 : 0;
 
 			// ======================================== RewriteRule ===========
-			if ($r_flags ^ NW_R_COND) {
+			if ( (NW_R_COND & $r_flags) == 0 ) {
 
 				// replaces %N's and $N's from last Rules/Conds
 				$this->backreferences($r_regex, 1);
@@ -290,7 +289,11 @@ class mod_rewrite {
 					$cond_match =
 					preg_match($r_replacement, $r_regex, $this->last_cond);
 				}
-				$cond_match = $cond_forced OR ($cond_match XOR $r_negate);
+				if ($cond_forced) {
+					$cond_match = $cond_forced;
+				} else {
+					$cond_match = ($cond_match XOR $r_negate);
+				}
  
 				// skip following RewriteConds + RewriteRule
 				if ((! $cond_match) && (! $cond_or)) {
